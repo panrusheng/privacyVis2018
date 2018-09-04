@@ -36,7 +36,7 @@ const Home = () => (
 
 const About = () => (
   <div>
-    <h2>About</h2>
+    <h2>About: secret code: {process.env.REACT_APP_SECRET_CODE}</h2>
   </div>
 );
 
