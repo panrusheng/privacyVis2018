@@ -16,6 +16,9 @@ export default class Attribute extends React.Component {
           <div className="operation">
             <span className="label">Correlation Filter:</span>
             <Slider
+              min={0.3}
+              max={1}
+              step={0.01}
               onChange={value => this.setState({ filterValue: value })}
               value={this.state.filterValue}
             />
