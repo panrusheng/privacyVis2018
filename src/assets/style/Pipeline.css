@@ -1,0 +1,56 @@
+.pipeline-view .pipeline-btn-group {
+  display: flex;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button {
+  position: relative;
+  flex: 1;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 28px;
+  background-color: white;
+  border-bottom: 1px solid rgba(130, 130, 130, 0.5);
+  font-size: 24px;
+  cursor: pointer;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button.active {
+  background-color: #808080;
+  color: white;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button.active::after {
+  background-color: #808080;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button.active:hover {
+  background-color: #808080;
+  color: white;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button.active:hover::after {
+  background-color: #808080;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button:hover {
+  background-color: #ececec;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button:hover::after {
+  background-color: #ececec;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button::after {
+  z-index: 4;
+  content: ' ';
+  /* box-shadow: 0px -1px 1px #8a8a8a; */
+  display: block;
+  height: 57px;
+  width: 57px;
+  position: absolute;
+  transform: rotateZ(45deg);
+  right: -28px;
+  border-right: 1px solid rgba(138, 138, 138, 0.5);
+  border-top: 1px solid rgba(138, 138, 138, 0.5);
+  background-color: white;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button:last-child::after {
+  content: none;
+}
+.pipeline-view .pipeline-btn-group .pipeline-button:first-child {
+  padding-left: 0;
+}
