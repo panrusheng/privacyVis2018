@@ -6,9 +6,13 @@
   display: flex;
   align-items: flex-end;
   cursor: pointer;
+  min-height: 32px;
 }
 .data-view .tabs .tab {
   padding: 0 5px;
+  min-height: 32px;
+  display: flex;
+  align-items: flex-end;
 }
 .data-view .tabs .tab:first-child {
   padding-left: 0;

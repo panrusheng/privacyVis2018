@@ -21,6 +21,7 @@ export default class Pipeline extends React.Component {
         name: 'Result Verification'
       }
     ];
+
     return (
       <div className="pipeline-view">
         <div className="pipeline-btn-group">
@@ -32,7 +33,7 @@ export default class Pipeline extends React.Component {
               }
               key={item.id}
             >
-              {item.name}
+              <span className="content">{item.name}</span>
             </div>
           ))}
         </div>
