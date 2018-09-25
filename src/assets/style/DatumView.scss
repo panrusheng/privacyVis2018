@@ -1,11 +1,12 @@
 .data-view {
-  padding: 15px;
+  padding: 10px;
   border-right: 1px solid rgba($color: #8a8a8a, $alpha: .5);
   .tabs {
     display: flex;
     align-items: flex-end;
     cursor: pointer;
     min-height: 32px;
+    padding-bottom: 5px;
 
     .tab {
       padding: 0 5px;
@@ -16,6 +17,7 @@
   
       &:first-child {
         padding-left: 0;
+        padding-bottom:2.5px;
       }
 
       &:last-child {

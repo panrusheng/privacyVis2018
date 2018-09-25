@@ -1,5 +1,5 @@
 .data-view {
-  padding: 15px;
+  padding: 10px;
   border-right: 1px solid rgba(138, 138, 138, 0.5);
 }
 .data-view .tabs {
@@ -7,6 +7,7 @@
   align-items: flex-end;
   cursor: pointer;
   min-height: 32px;
+  padding-bottom: 5px;
 }
 .data-view .tabs .tab {
   padding: 0 5px;
@@ -16,6 +17,7 @@
 }
 .data-view .tabs .tab:first-child {
   padding-left: 0;
+  padding-bottom: 2.5px;
 }
 .data-view .tabs .tab:last-child {
   padding-right: 0;

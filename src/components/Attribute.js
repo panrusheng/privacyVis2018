@@ -1,6 +1,8 @@
 import React from 'react';
 import { Switch, Slider } from 'antd';
 import '../assets/style/Attribute.scss';
+import '../components/AttrView/AttrNetwork';
+import AttrNetwork from '../components/AttrView/AttrNetwork';
 
 export default class Attribute extends React.Component {
   state = {
@@ -9,12 +11,14 @@ export default class Attribute extends React.Component {
   };
 
   render() {
+    let data;
+    let canvas;
     return (
       <div className="attribute-view">
         <div className="title">Attribute View</div>
         <div className="attr-operations">
           <div className="operation">
-            <span className="label">Correlation Filter:</span>
+            <span className="label">Correlation filter:</span>
             <Slider
               min={0.3}
               max={1}
@@ -24,14 +28,18 @@ export default class Attribute extends React.Component {
             />
           </div>
           <div className="operation">
-            <span className="label">Merge Attribute:</span>
+            <span className="label">Merge attribute:</span>
             <Switch
               checked={this.state.mergeAttribute}
               onChange={value => this.setState({ mergeAttribute: value })}
             />
           </div>
         </div>
-        <div>TODO</div>
+        <div className="attr-network">
+          <svg width="100%" height="100%">
+            <AttrNetwork data={data} canvas={canvas} />
+          </svg>
+        </div>
       </div>
     );
   }

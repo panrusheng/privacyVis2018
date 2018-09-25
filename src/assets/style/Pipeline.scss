@@ -4,7 +4,7 @@
     .pipeline-button {
       position: relative;
       flex: 1;
-      height: 80px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center; 
@@ -44,13 +44,13 @@
       &::after {
         z-index: 4;
         content: " ";
-        /* box-shadow: 0px -1px 1px #8a8a8a; */
+        // box-shadow: 0px -1px 1px #8a8a8a;
         display: block;
-        height: 57px;
-        width: 57px;
+        height: 41px;
+        width: 41px;
         position: absolute;
         transform: rotateZ(45deg);
-        right: -28px;
+        right: -21px;
         border-right: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
         border-top: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
         background-color: white;
