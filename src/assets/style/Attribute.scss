@@ -1,0 +1,37 @@
+.attribute-view {
+  padding: 15px;
+  border-right: 1px solid rgba($color: #8a8a8a, $alpha: .5);
+  border-bottom: 1px solid rgba($color: #8a8a8a, $alpha: .5);
+
+  .title {
+    font-size: 24px;
+    text-align: left;
+  }
+
+  .attr-operations {
+    display: flex;
+
+    .operation {
+      display: flex;
+      margin-right: 20px;
+      align-items: center;
+
+      .label {
+        flex-shrink: 0;
+        margin-right: 10px;
+      }
+
+      .ant-slider {
+        flex: 1;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:first-child {
+        flex: 1;
+      }
+    }
+  }
+}
