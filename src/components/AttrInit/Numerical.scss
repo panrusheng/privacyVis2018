@@ -1,0 +1,30 @@
+.numberical-view {
+  .svg {
+  }
+  .line {
+    fill: none;
+    stroke: #e0e8ff;
+    stroke-width: 3;
+  }
+
+  .overlay {
+  fill: none;
+  pointer-events: all;
+  }
+
+  /* Style the dots by assigning a fill and stroke */
+  .dot {
+    fill: #e0e8ff;
+    stroke: #fff;
+  }
+
+  .focus circle {
+  fill: none;
+  stroke: steelblue;
+  }
+
+  .area {
+    fill: aliceblue;
+  }
+
+}

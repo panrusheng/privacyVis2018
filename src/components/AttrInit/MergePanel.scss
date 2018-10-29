@@ -1,0 +1,70 @@
+.merge-panel {
+  width: 340px;
+  padding: 15px;
+  box-shadow: 0 0 1px #808080;
+  border-radius: 3px;
+  background-color: white;
+  position: absolute;
+  & > div {
+    margin-top: 8px;
+  }
+
+  & > div:first-child {
+    margin-top: 0;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .group-list {
+    .groups {
+      line-height: 48px;
+    }
+    .group {
+      display: inline-block;
+      height: 32px;
+      border-radius: 16px;
+      background-color: #e0e8ff;
+      vertical-align: middle;
+      padding: 4px 10px;
+      margin-right: 8px;
+      cursor: pointer;
+      .name {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+  .button {
+    height: 40px;
+    width: 120px;
+    border-radius: 20px;
+    background-color: lightsteelblue;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .group-name-input {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid grey;
+  }
+
+  .empty {
+    text-align: center;
+    color: lightgrey;
+  }
+
+  .group-name {
+    margin-bottom: 18px;
+  }
+}

@@ -1,0 +1,31 @@
+.attr-init {
+  display: flex;
+  overflow-x: auto;
+  position: relative;
+  .chart {
+    min-width: 320px;
+    flex: 1;
+  }
+
+  .attr-info {
+    height: 120px;
+    text-align: center;
+    .title {
+      font-size: 24px;
+    font-weight: 500;
+    }
+
+    .form-block {
+      padding: 5px 0;
+      .ant-checkbox-wrapper {
+        margin-right: 5px;
+      }
+      input {
+        border: none;
+        outline: none;
+        border-bottom: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
+        text-align: center;
+      }
+    }
+  }
+}
