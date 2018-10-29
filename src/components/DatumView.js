@@ -1,5 +1,5 @@
 import React from 'react';
-import '../assets/style/DatumView.scss';
+import './DatumView.scss';
 
 export default class DatumView extends React.Component {
   state = {
