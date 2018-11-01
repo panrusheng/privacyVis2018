@@ -8,9 +8,14 @@
 .app .row {
   display: flex;
 }
+.app > .row {
+  height: 100%;
+}
 .app .col {
   display: flex;
   flex-direction: column;
+  max-height: 1020px;
+  overflow: hidden;
 }
 .app .col > div {
   flex: 1;

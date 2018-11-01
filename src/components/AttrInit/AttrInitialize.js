@@ -30,38 +30,58 @@ export default class AttrInitialize extends React.Component {
     groups: undefined,
     attrName: undefined,
     attrSize: {
-      height: 1000,
-      width: 300
+      height: 0,
+      width: 0
     }
   };
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
+    console.log('mount');
+    console.log(this.wrapper);
     if (this.props.store.selectedAttributes.length <= 0) return;
-
     if (this.wrapper) {
-      const { width } = this.wrapper.getBoundingClientRect();
-      this.setState({
-        attrSize: {
-          width: width / this.props.store.selectedAttributes.length - 20
-        }
-      });
+      this.setSize();
     }
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+  componentDidUpdate(prevProps) {
+    this.setSize();
+  }
+
+  setSize() {
+    const dom = this.wrapper;
+    console.log(dom);
+    const count = (this.props.store.selectedAttributes || []).length;
+    if (!count || !dom) return;
+    const { height: h, width: w } = dom.getBoundingClientRect();
+    let width = Math.ceil(w / count);
+    if (width < 320 || !width) {
+      width = 320;
+    }
+    const height = Math.ceil(h - 220);
+
+    if (
+      height === this.state.attrSize.height &&
+      width === this.state.attrSize.width
+    )
+      return;
+
+    this.setState({
+      attrSize: {
+        height,
+        width
+      }
+    });
   }
 
   handleResize() {
-    if (this.props.store.selectedAttributes.length <= 0) return;
+    if (
+      !this.props.store.selectedAttributes ||
+      this.props.store.selectedAttributes.length <= 0
+    )
+      return;
     if (this.wrapper) {
-      const { width } = this.wrapper.getBoundingClientRect();
-      this.setState({
-        attrSize: {
-          width: width / this.props.store.selectedAttributes.length - 20
-        }
-      });
+      this.setSize();
     }
   }
 
@@ -151,9 +171,13 @@ export default class AttrInitialize extends React.Component {
   render() {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
-
     return (
-      <div className="attr-init" ref={dom => (this.wrapper = dom)}>
+      <div
+        className="attr-init"
+        ref={dom => {
+          if (dom) this.wrapper = dom;
+        }}
+      >
         {selectedAttributes.map(attr => (
           <div className="chart" key={attr.attrName}>
             <div className="attr-info">
