@@ -1,12 +1,14 @@
 @import '~antd/dist/antd.css';
 
 .app {
-  text-align: center;
-  display: flex;
+
   max-height: 1080px;
   max-width: 1920px;
   width: 100%;
   height: 100%;
+  .row {
+    display: flex;
+  }
 
   .col {
     display: flex;
@@ -17,9 +19,79 @@
   }
   .col:first-child {
     width: 540px;
+    flex-shrink: 0;
   }
 
   .col:last-child {
     flex: 2;
+  }
+
+  .pipeline-btn-group {
+    display: flex;
+    .pipeline-button {
+      position: relative;
+      flex: 1;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+      padding-left: 28px;
+      background-color: white;
+      border-bottom: 1px solid rgba($color: #828282, $alpha: .5);
+      font-size: 24px;
+      cursor: pointer;
+
+      .content {
+        z-index: 5;
+      }
+
+      &.active {
+        background-color: #808080;
+        color: white;
+        &::after {
+          background-color: #808080;
+        }
+      }
+
+      &.active:hover {
+        background-color: #808080;
+        color: white;
+        &::after {
+          background-color: #808080;
+        }
+      }
+
+      &:hover {
+        background-color: #ececec;
+        &::after {
+          background-color: #ececec;
+        }
+      }
+
+      &::after {
+        z-index: 4;
+        content: " ";
+        // box-shadow: 0px -1px 1px #8a8a8a;
+        display: block;
+        height: 41px;
+        width: 41px;
+        position: absolute;
+        transform: rotateZ(45deg);
+        right: -21px;
+        border-right: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
+        border-top: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
+        background-color: white;
+      }
+
+      &:last-child {
+        &::after {
+          content: none;
+        }
+      }
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
   }
 }

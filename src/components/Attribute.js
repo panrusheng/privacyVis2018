@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Slider } from 'antd';
-import '../assets/style/Attribute.scss';
+import './Attribute.scss';
 import '../components/AttrView/AttrNetwork';
 import AttrNetwork from '../components/AttrView/AttrNetwork';
 
