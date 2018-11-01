@@ -19,9 +19,17 @@ class AppStore {
   @observable
   selectedAttributes = []; // selected attributes of the current data set
 
+  @observable
+  systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
+
   @action
   getDataSetList() {
     // TODO: fetch all data sets
+  }
+
+  @action
+  getAttrList(dataset) {
+    //TODO: fetch all attrs with descriptions
   }
 
   @action
