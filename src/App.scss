@@ -10,12 +10,19 @@
     display: flex;
   }
 
+  > .row {
+    height: 100%;
+  }
+
   .col {
     display: flex;
     flex-direction: column;
     & > div {
       flex: 1;
     }
+
+    max-height: 1020px;
+    overflow: hidden;
   }
   .col:first-child {
     width: 540px;

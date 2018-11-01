@@ -7,9 +7,7 @@ export default class Pipeline extends React.Component {
     const { current = 1 } = this.props;
 
     return (
-      <div className="pipeline-view">
-        <div>{current === 1 && <AttrInitialize />}</div>
-      </div>
+      <div className="pipeline-view">{current === 1 && <AttrInitialize />}</div>
     );
   }
 }
