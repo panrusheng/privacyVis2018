@@ -45,7 +45,7 @@ export default class MergePanel extends React.Component {
 
   removeSelectedGroup(name) {
     const selectedGroups = this.state.selectedGroups.slice();
-    const index = selectedGroups.findIndex(item => item === name);
+    const index = selectedGroups.findIndex(item => item.name === name);
     if (index >= 0) {
       selectedGroups.splice(index, 1);
       this.setState({ selectedGroups });
@@ -53,6 +53,10 @@ export default class MergePanel extends React.Component {
   }
 
   handleConfirm() {
+    const { groupName, selectedGroups } = this.state;
+    const disabled = !groupName || selectedGroups.length === 0;
+    if (disabled) return;
+
     this.props.confirmMerge &&
       this.props.confirmMerge(this.state.groupName, this.state.selectedGroups);
   }
@@ -63,20 +67,25 @@ export default class MergePanel extends React.Component {
 
   render() {
     const { groups = [], current = {} } = this.props;
-    const { selectedGroups } = this.state;
+    const { selectedGroups, groupName } = this.state;
+    const disabled = !groupName || selectedGroups.length === 0;
 
     return (
       <div className="merge-panel">
-        <div className="title">Merge groups</div>
-        <div className="list-title">current: {current.name}</div>
+        <div className="title">Merge Groups</div>
+        <div className="list-title">Current: {current.name}</div>
         <div className="group-list">
-          <div className="list-title">groups:</div>
+          <div className="list-title">Groups:</div>
           <div className="groups">
             {groups.map(
               item =>
                 item.name !== current.name && (
                   <div
-                    className="group"
+                    className={`group ${
+                      selectedGroups.findIndex(t => t.name === item.name) >= 0
+                        ? 'active'
+                        : ''
+                    }`}
                     key={item.name}
                     onClick={() => this.addSelectedGroup(item)}
                   >
@@ -92,7 +101,7 @@ export default class MergePanel extends React.Component {
             {selectedGroups.length > 0 ? (
               selectedGroups.map(item => (
                 <div
-                  className="group"
+                  className="group active"
                   key={item.name}
                   onClick={() => this.removeSelectedGroup(item.name)}
                 >
@@ -114,7 +123,10 @@ export default class MergePanel extends React.Component {
           />
         </div>
         <div className="row">
-          <div className="button" onClick={this.handleConfirm}>
+          <div
+            className={`button ${!disabled ? '' : 'disabled'}`}
+            onClick={this.handleConfirm}
+          >
             Confirm
           </div>
           <div className="button" onClick={this.handleClose}>
