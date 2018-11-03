@@ -139,6 +139,17 @@ class AppStore {
   }
 
   @action
+  removeBreakPoint(attrName, pIndex) {
+    const index = this.selectedAttributes.findIndex(
+      item => item.attrName === attrName
+    );
+    if (index < 0) return;
+    const attr = Object.assign({}, this.selectedAttributes[index]);
+    attr.breakPoints.splice(pIndex, 1);
+    this.selectedAttributes.splice(index, 1, attr);
+  }
+
+  @action
   updateAttr(attrName, value) {
     const index = this.selectedAttributes.findIndex(
       item => item.attrName === attrName
