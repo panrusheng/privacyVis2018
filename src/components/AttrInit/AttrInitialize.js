@@ -20,6 +20,7 @@ export default class AttrInitialize extends React.Component {
     this.confirmMerge = this.confirmMerge.bind(this);
     this.addBreakPoint = this.addBreakPoint.bind(this);
     this.setSize = this.setSize.bind(this);
+    this.removeBreakPoint = this.removeBreakPoint.bind(this);
   }
 
   state = {
@@ -53,7 +54,6 @@ export default class AttrInitialize extends React.Component {
 
   setSize() {
     const dom = this.wrapper;
-    console.log(dom);
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
@@ -123,6 +123,10 @@ export default class AttrInitialize extends React.Component {
     this.props.store.addBreakPoint(attrName, point);
   }
 
+  removeBreakPoint(attrName, index) {
+    this.props.store.removeBreakPoint(attrName, index);
+  }
+
   toggleAttrSensitive(attrName) {
     const attr = this.props.store.selectedAttributes.find(
       item => item.attrName === attrName
@@ -159,6 +163,7 @@ export default class AttrInitialize extends React.Component {
         return (
           <Numerical
             addBreakPoint={this.addBreakPoint}
+            removeBreakPoint={this.removeBreakPoint}
             attr={attr}
             {...attrSize}
           />

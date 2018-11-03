@@ -31,6 +31,7 @@ export default class Numerical extends React.Component {
   draw(dom, attr, width, height, margin) {
     const data = normalize(attr.data.map(item => item.value));
     const breakPoints = attr.breakPoints;
+    // const breakPoints = [0.1, 0.3, 0.5, 0.9];
     dom.innerHTML = '';
 
     const xScale = d3
@@ -52,6 +53,7 @@ export default class Numerical extends React.Component {
         return yScale(i);
       })
       .curve(d3.curveMonotoneY);
+
     const area = d3
       .area()
       .x0(width / 2)
@@ -107,6 +109,44 @@ export default class Numerical extends React.Component {
       .data([data])
       .attr('class', 'area')
       .attr('d', areaNeg);
+
+    svg
+      .selectAll('rect')
+      .data(breakPoints)
+      .enter()
+      .append('rect')
+      .attr('fill', '#6994a5')
+      .attr('rx', 2)
+      .attr('ry', 2)
+      .attr('x', () => {
+        return 0;
+      })
+      .attr('y', d => {
+        return d * ((height - 2) / height) * yScale(data.length - 1);
+      })
+      .attr('height', 4)
+      .attr('width', width)
+      .attr('border-radius', 2)
+      .on('mouseover', () => {
+        d3.event.target.setAttribute('height', 8);
+        const y = parseFloat(d3.event.target.getAttribute('y'));
+        d3.event.target.setAttribute('y', y - 2);
+        d3.event.target.setAttribute('rx', 4);
+        d3.event.target.setAttribute('ry', 4);
+      })
+      .on('mouseout', () => {
+        d3.event.target.setAttribute('height', 4);
+        const y = parseFloat(d3.event.target.getAttribute('y'));
+        d3.event.target.setAttribute('y', y + 2);
+        d3.event.target.setAttribute('rx', 2);
+        d3.event.target.setAttribute('ry', 2);
+      })
+      .on('click', (d, i) => {
+        d3.event.stopPropagation();
+        this.props.removeBreakPoint &&
+          this.props.removeBreakPoint(this.props.attr.attrName, i);
+      })
+      .attr('class', 'break-point');
   }
 
   static getMockData() {
@@ -136,15 +176,31 @@ export default class Numerical extends React.Component {
   }
 
   handleChartClick(e) {
-    const {
-      height,
-      width,
-      margin: { top, bottom, left, right }
-    } = this.props;
-    const rect = e.target.getBoundingClientRect();
-    const x = e.clientX - rect.left; //x position within the element.
-    const y = e.clientY - rect.top; //y position within the element.
-    const point = y / (height - top - bottom);
+    const type = e.target.tagName;
+    let point;
+
+    switch (type) {
+      case 'path': {
+        const { height } = this.props;
+        const { top } = e.target.getBoundingClientRect();
+        const y = e.clientY - top;
+        point = y / height;
+        break;
+      }
+      case 'svg': {
+        const {
+          height,
+          margin: { top }
+        } = this.props;
+        const y = e.clientY - e.target.getBoundingClientRect().top;
+        point = (y - top) / height;
+        break;
+      }
+      default: {
+        point = -1;
+      }
+    }
+
     if (point > 0 && point < 1) {
       this.props.addBreakPoint &&
         this.props.addBreakPoint(this.props.attr.attrName, point);
