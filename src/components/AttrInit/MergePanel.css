@@ -4,7 +4,6 @@
   box-shadow: 0 0 1px #808080;
   border-radius: 3px;
   background-color: white;
-  position: absolute;
 }
 .merge-panel > div {
   margin-top: 8px;
@@ -29,6 +28,9 @@
   margin-right: 8px;
   cursor: pointer;
 }
+.merge-panel .group-list .group.active {
+  background-color: #c0d8ff;
+}
 .merge-panel .group-list .group .name {
   height: 100%;
   display: flex;
@@ -39,12 +41,17 @@
   height: 40px;
   width: 120px;
   border-radius: 20px;
-  background-color: lightsteelblue;
+  background-color: #1890ff;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: white;
   cursor: pointer;
+}
+.merge-panel .button.disabled {
+  background-color: #ececec;
+  color: white;
 }
 .merge-panel .row {
   display: flex;

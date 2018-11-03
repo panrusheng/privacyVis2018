@@ -93,6 +93,10 @@ export default class AttrInitialize extends React.Component {
 
   hideMenu() {
     this.setState({ open: false });
+
+    hideMenu({
+      id: 'merge-panel-menu'
+    });
   }
 
   openMenu(data, attrName, event) {
