@@ -3,11 +3,10 @@ import './AttrInitialize.scss';
 import Numerical from './Numerical.js';
 import Categorical from './Categorical.js';
 import { ContextMenu, ContextMenuTrigger } from 'react-contextmenu';
-import { showMenu, hideMenu } from 'react-contextmenu/modules/actions';
+import { hideMenu } from 'react-contextmenu/modules/actions';
 import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
-import { toJS } from 'mobx';
-import { Checkbox, Input } from 'antd';
+import { Checkbox } from 'antd';
 
 @inject(['store'])
 @observer
@@ -20,6 +19,7 @@ export default class AttrInitialize extends React.Component {
     this.handleResize = this.handleResize.bind(this);
     this.confirmMerge = this.confirmMerge.bind(this);
     this.addBreakPoint = this.addBreakPoint.bind(this);
+    this.setSize = this.setSize.bind(this);
   }
 
   state = {
@@ -36,16 +36,19 @@ export default class AttrInitialize extends React.Component {
   };
 
   componentDidMount() {
-    console.log('mount');
-    console.log(this.wrapper);
+    window.addEventListener('resize', this.setSize);
     if (this.props.store.selectedAttributes.length <= 0) return;
     if (this.wrapper) {
       this.setSize();
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     this.setSize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.setSize);
   }
 
   setSize() {
@@ -58,7 +61,10 @@ export default class AttrInitialize extends React.Component {
     if (width < 320 || !width) {
       width = 320;
     }
-    const height = Math.ceil(h - 220);
+
+    width -= 20; //for margin
+
+    const height = Math.ceil(h - 180);
 
     if (
       height === this.state.attrSize.height &&

@@ -32,7 +32,7 @@ export default class Numerical extends React.Component {
     const data = normalize(attr.data.map(item => item.value));
     const breakPoints = attr.breakPoints;
     dom.innerHTML = '';
-    const n = data.length + 1;
+
     const xScale = d3
       .scaleLinear()
       .domain([-1, 1])
@@ -40,7 +40,7 @@ export default class Numerical extends React.Component {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, n - 1])
+      .domain([0, data.length - 1])
       .range([0, height]);
 
     const line = d3
