@@ -7,20 +7,21 @@ export default class DatumView extends React.Component {
   };
   render() {
     const { currentView } = this.state;
-    const tabs = [
-      {
-        name: 'Table View',
-        id: 1
-      },
-      {
-        name: 'Graph View',
-        id: 2
-      }
-    ];
+    // const tabs = [
+    //   {
+    //     name: 'Table View',
+    //     id: 1
+    //   },
+    //   {
+    //     name: 'Graph View',
+    //     id: 2
+    //   }
+    // ];
 
     return (
       <div className="data-view">
-        <div className="tabs">
+        <div className="title">Table View</div>
+        {/* <div className="tabs">
           {tabs.map((item, index) => (
             <React.Fragment key={item.id}>
               <div
@@ -32,7 +33,7 @@ export default class DatumView extends React.Component {
               {index !== tabs.length - 1 && '/'}
             </React.Fragment>
           ))}
-        </div>
+        </div> */}
       </div>
     );
   }

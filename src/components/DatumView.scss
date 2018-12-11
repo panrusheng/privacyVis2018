@@ -1,34 +1,8 @@
 .data-view {
   padding: 10px;
   border-right: 1px solid rgba($color: #8a8a8a, $alpha: .5);
-  .tabs {
-    display: flex;
-    align-items: flex-end;
-    cursor: pointer;
-    min-height: 32px;
-    padding-bottom: 5px;
-
-    .tab {
-      padding: 0 5px;
-      min-height: 32px;
-      display: flex;
-      align-items: flex-end;
-      // transition: all .1s ease-in-out;
-  
-      &:first-child {
-        padding-left: 0;
-        padding-bottom:2.5px;
-      }
-
-      &:last-child {
-        padding-right: 0;
-      }
-    }
-      
-    .tab.active {
-      font-size: 24px;
-      line-height: 24px;
-      vertical-align: bottom;
-    }
-  }
+  .title {
+    font-size: 24px;
+    text-align: left;
+    padding-bottom: 10px; }
 }
