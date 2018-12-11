@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-// import { toJS } from 'mobx';
+import { toJS } from 'mobx';
 
 export default class AttrNetwork extends Component {
   constructor(props) {
@@ -21,6 +21,7 @@ export default class AttrNetwork extends Component {
     let margin = 20;
     let { ww, hh } = canvas;
     let { nodes, links } = data;
+    const merge = 'child' in nodes[0];
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
@@ -37,10 +38,8 @@ export default class AttrNetwork extends Component {
       .select(gDOM)
       .attr('width', ww)
       .attr('height', hh);
-    g.selectAll('line').remove();
-    g.selectAll('circle').remove();
-    g.selectAll('marker').remove();
-    let defs = g.append('defs');
+    g.selectAll('.n2d').remove();
+    let defs = g.append('defs').attr('class', 'n2d');
 
     defs
       .append('marker')
@@ -48,8 +47,8 @@ export default class AttrNetwork extends Component {
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 13)
       .attr('refY', 0)
-      .attr('markerWidth', 7)
-      .attr('markerHeight', 7)
+      .attr('markerWidth', 4)
+      .attr('markerHeight', 4)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-4L10,0L0,4L3,0')
@@ -57,21 +56,46 @@ export default class AttrNetwork extends Component {
 
     const link = g
       .append('g')
+      .attr('class', 'n2d')
       .selectAll('line')
       .data(links)
       .enter()
       .append('line')
       .style('opacity', d => (d.value >= filter ? d.value : 0))
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y)
+      .attr('x1', d => nodes[d.source.index].x)
+      .attr('y1', d => nodes[d.source.index].y)
+      .attr('x2', d => nodes[d.target.index].x)
+      .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#999')
-      .style('stroke-width', 2);
+      .style('stroke-width', 4)
+      .on('click', d => {
+        // if (merge) {
+        //   // d3.select(this).style('opacity', 0);
+        //   d3.selectAll('.edgeDetail').remove();
+        //   let x1 = nodes[d.source.index].x,
+        //     x2 = nodes[d.source.index].x,
+        //     y1 = nodes[d.target.index].y,
+        //     y2 = nodes[d.source.index].y;
+        //   let dx1 = x2 - x1, dy1 = y2 - y1, dx2 = 0, dy2 = 1;
+        //   let l = Math.Sqrt(dx1 * dx1 + dy1 * dy1), w = 10;
+        //   if (l == 0) return -1;
+        //   let angle = Math.Acos((dx1 * dx2 + dy1 * dy2) / l);
+        //   let edgeDetail = g.append('g')
+        //     .attr('class', 'edgeDetail')
+        //     .attr('transform', 'translate('+x1+','+y2+') rotate('+angle+')');
+        //     edgeDetail.append('rect')
+        //     .attr('x', -w)
+        //     .attr('y', 0)
+        //     .attr('width', 2*w)
+        //     .attr('height', l)
+        //     .style('fill', '#5639fe');
+        // }
+      });
 
     const node = g
       .append('g')
+      .attr('class', 'n2d')
       .selectAll('circle')
       .data(nodes)
       .enter()
@@ -81,9 +105,23 @@ export default class AttrNetwork extends Component {
       .style('stroke-width', 3)
       .style('fill', '#fff')
       .attr('cx', d => d.x)
-      .attr('cy', d => d.y);
+      .attr('cy', d => d.y)
+      .on('mouseover', d => {});
 
-    node.append('title').text(d => d.id);
+    const text = g
+      .append('g')
+      .attr('class', 'n2d')
+      .selectAll('text')
+      .data(nodes)
+      .enter()
+      .append('text')
+      .attr('dy', -5)
+      .attr('dx', d => (d.x < ww - 60 ? 6 : -6))
+      .attr('x', d => d.x)
+      .attr('y', d => d.y)
+      .attr('text-anchor', d => (d.x < ww - 60 ? 'start' : 'end'))
+      .text(d => d.id)
+      .style('fill', '#333');
   }
 
   render() {

@@ -22,6 +22,60 @@ class AppStore {
   @observable
   systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
 
+  @observable
+  GBN = {
+    nodes: [
+      { id: 'Myriel', attrName: 1 },
+      { id: 'Napoleon', attrName: 3 },
+      { id: 'Mlle', attrName: 1 },
+      { id: 'Mme', attrName: 3 },
+      { id: 'CountessdeLo', attrName: 1 },
+      { id: 'Geborand', attrName: 2 },
+      { id: 'Champtercier', attrName: 1 },
+      { id: 'Chaptercier', attrName: 1 },
+      { id: 'Champtrcier', attrName: 3 },
+      { id: 'Cmptercier', attrName: 2 },
+      { id: 'Chaptercier', attrName: 3 },
+      { id: 'Champtier', attrName: 1 },
+      { id: 'Champteer', attrName: 2 },
+      { id: 'Champier', attrName: 2 },
+      { id: 'mptercier', attrName: 1 }
+    ],
+    links: [
+      { source: 0, target: 1, value: 0.2 },
+      { source: 2, target: 6, value: 0.8 },
+      { source: 3, target: 4, value: 0.7 },
+      { source: 1, target: 3, value: 0.4 },
+      { source: 5, target: 6, value: 0.4 },
+      { source: 1, target: 5, value: 0.6 },
+      { source: 2, target: 3, value: 0.8 },
+      { source: 3, target: 0, value: 0.6 },
+      { source: 1, target: 4, value: 0.5 },
+      { source: 5, target: 3, value: 0.3 },
+      { source: 0, target: 5, value: 0.8 },
+      { source: 7, target: 5, value: 0.8 },
+      { source: 2, target: 8, value: 0.8 },
+      { source: 11, target: 5, value: 0.8 },
+      { source: 7, target: 3, value: 0.8 },
+      { source: 9, target: 2, value: 0.8 },
+      { source: 2, target: 10, value: 0.8 },
+      { source: 12, target: 6, value: 0.8 },
+      { source: 14, target: 13, value: 0.8 },
+      { source: 10, target: 8, value: 0.8 },
+      { source: 10, target: 2, value: 0.8 },
+      { source: 11, target: 3, value: 0.8 },
+      { source: 12, target: 8, value: 0.8 },
+      { source: 4, target: 7, value: 0.8 },
+      { source: 13, target: 5, value: 0.8 },
+      { source: 14, target: 3, value: 0.8 },
+      { source: 5, target: 9, value: 0.8 },
+      { source: 9, target: 8, value: 0.8 },
+      { source: 3, target: 10, value: 0.8 },
+      { source: 1, target: 12, value: 0.8 },
+      { source: 11, target: 14, value: 0.8 }
+    ]
+  };
+
   @action
   getDataSetList() {
     // TODO: fetch all data sets
@@ -158,6 +212,14 @@ class AppStore {
     const attr = Object.assign({}, this.selectedAttributes[index], value);
     this.selectedAttributes.splice(index, 1, attr);
   }
+
+  @action
+  //request new GBN after re-defining events
+  updateGBN() {}
+
+  @action
+  //modify GBN interactively
+  editGBN() {}
 }
 
 export default AppStore;

@@ -5,6 +5,7 @@ import './Attribute.scss';
 import '../components/AttrView/AttrNetwork';
 import AttrNetwork from '../components/AttrView/AttrNetwork';
 import { inject } from 'mobx-react';
+import { toJS } from 'mobx';
 @inject(['store'])
 export default class Attribute extends React.Component {
   state = {
@@ -45,7 +46,7 @@ export default class Attribute extends React.Component {
       .selectAll('img')
       .attr('class', 'lodDisable');
   }
-  forceDirected(n, l, ww, hh) {
+  forceDirected(n, l) {
     // let links = l.map(function (i) { return { source: i.start, target: i.end, value: i.weight }; });
     // let nodes = n.map(function (i) { return { id: i.eventName, group: i.attrName }; });
     const links = l;
@@ -59,12 +60,12 @@ export default class Attribute extends React.Component {
           .forceLink(links)
           .distance(10)
           .strength(1)
-          .iterations(100)
+          .iterations(1)
       )
       .force('x', d3.forceX())
       .force('y', d3.forceY())
       .stop();
-    // Use a timeout to allow the rest of the page to load first.
+
     for (
       var i = 0,
         iter = Math.ceil(
@@ -79,42 +80,67 @@ export default class Attribute extends React.Component {
 
     return { nodes: nodes, links: links };
   }
+  mergeGraph(n, l) {
+    let attrN = [],
+      attrL = [],
+      attrDic = {},
+      linkDic = {},
+      nodeDic = [];
+    for (let i = 0; i < n.length; i++) {
+      if (!(n[i].attrName in attrDic)) {
+        attrDic[n[i].attrName] = { no: attrN.length, child: [] };
+        attrN.push({ id: n[i].attrName });
+      }
+      nodeDic.push({
+        id: attrDic[n[i].attrName].no,
+        no: attrDic[n[i].attrName].child.length
+      });
+      attrDic[n[i].attrName].child.push(n[i].id);
+    }
+    for (let i = 0; i < attrN.length; i++) {
+      attrN[i].child = attrDic[attrN[i].id].child;
+    }
+    for (let i = 0; i < l.length; i++) {
+      const sA = nodeDic[l[i].source];
+      const tA = nodeDic[l[i].target];
+      if (sA.id == tA.id) continue;
+      const label = sA.id + ',' + tA.id;
+      const obl = { source: sA.id, target: tA.id };
+      if (!(label in linkDic)) {
+        linkDic[label] = { no: attrL.length, child: [], value: 0 };
+        attrL.push(obl);
+      }
+      linkDic[label].child.push(obl);
+      linkDic[label].value =
+        linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
+    }
+    for (let i = 0; i < attrL.length; i++) {
+      const label = attrL[i].source + ',' + attrL[i].target;
+      attrL[i].value = linkDic[label].value;
+      attrL[i].child = linkDic[label].child;
+    }
+    return { nodes: attrN, links: attrL };
+  }
+
+  copy(o) {
+    var output, v, key;
+    output = Array.isArray(o) ? [] : {};
+    for (key in o) {
+      v = o[key];
+      output[key] = typeof v === 'object' ? this.copy(v) : v;
+    }
+    return output;
+  }
 
   render() {
-    let data;
+    let data = this.copy(this.props.store.GBN);
     let canvas;
-    data = {
-      nodes: [
-        { id: 'Myriel', attrName: 1 },
-        { id: 'Napoleon', attrName: 3 },
-        { id: 'Mlle', attrName: 1 },
-        { id: 'Mme', attrName: 3 },
-        { id: 'CountessdeLo', attrName: 1 },
-        { id: 'Geborand', attrName: 2 },
-        { id: 'Champtercier', attrName: 1 }
-      ],
-      links: [
-        { source: 0, target: 1, value: 0.2 },
-        { source: 2, target: 6, value: 0.8 },
-        { source: 3, target: 4, value: 0.7 },
-        { source: 1, target: 3, value: 0.4 },
-        { source: 5, target: 6, value: 0.4 },
-        { source: 1, target: 5, value: 0.6 },
-        { source: 2, target: 3, value: 0.8 },
-        { source: 3, target: 0, value: 0.6 },
-        { source: 1, target: 4, value: 0.5 },
-        { source: 5, target: 3, value: 0.3 },
-        { source: 0, target: 5, value: 0.8 }
-      ]
-    };
     const filterRange = d3.extent(data.links, d => d.value);
     canvas = { ww: 520, hh: 460 };
-    let layout = this.forceDirected(
-      data.nodes,
-      data.links,
-      canvas.ww,
-      canvas.hh
-    );
+    if (this.state.mergeAttribute) {
+      data = this.mergeGraph(data.nodes, data.links);
+    }
+    let layout = this.forceDirected(data.nodes, data.links);
     return (
       <div className="attribute-view">
         <div className="title">Inference View</div>
