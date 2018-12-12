@@ -89,7 +89,7 @@ export default class Attribute extends React.Component {
     for (let i = 0; i < n.length; i++) {
       if (!(n[i].attrName in attrDic)) {
         attrDic[n[i].attrName] = { no: attrN.length, child: [] };
-        attrN.push({ id: n[i].attrName });
+        attrN.push({ id: n[i].attrName, value: n[i].value });
       }
       nodeDic.push({
         id: attrDic[n[i].attrName].no,
@@ -105,12 +105,15 @@ export default class Attribute extends React.Component {
       const tA = nodeDic[l[i].target];
       if (sA.id == tA.id) continue;
       const label = sA.id + ',' + tA.id;
-      const obl = { source: sA.id, target: tA.id };
       if (!(label in linkDic)) {
         linkDic[label] = { no: attrL.length, child: [], value: 0 };
-        attrL.push(obl);
+        attrL.push({ source: sA.id, target: tA.id });
       }
-      linkDic[label].child.push(obl);
+      linkDic[label].child.push({
+        source: sA.no,
+        target: tA.no,
+        value: l[i].value
+      });
       linkDic[label].value =
         linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
     }
