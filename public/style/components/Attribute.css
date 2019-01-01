@@ -1,0 +1,23 @@
+.attribute-view {
+  padding: 10px;
+  border-right: 1px solid rgba(138, 138, 138, 0.5);
+  border-bottom: 1px solid rgba(138, 138, 138, 0.5); }
+  .attribute-view .title {
+    font-size: 24px;
+    text-align: left;
+    padding-bottom: 10px; }
+  .attribute-view .attr-operations {
+    display: flex; }
+    .attribute-view .attr-operations .operation {
+      display: flex;
+      margin-right: 20px;
+      align-items: center; }
+      .attribute-view .attr-operations .operation .label {
+        flex-shrink: 0;
+        margin-right: 10px; }
+      .attribute-view .attr-operations .operation .ant-slider {
+        flex: 1; }
+      .attribute-view .attr-operations .operation:last-child {
+        margin-right: 0; }
+      .attribute-view .attr-operations .operation:first-child {
+        flex: 1; }
