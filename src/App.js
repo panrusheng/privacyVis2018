@@ -1,7 +1,7 @@
 import React from 'react';
 import Pipeline from './components/Pipeline';
 import Attribute from './components/Attribute';
-import DataView from './components/DatumView';
+import TableView from './components/TableView.js';
 import './App.scss';
 import { inject } from 'mobx-react';
 
@@ -49,7 +49,7 @@ class App extends React.Component {
         <div className="row">
           <div className="col">
             <Attribute />
-            <DataView />
+            <TableView />
           </div>
           <div className="col">
             <Pipeline current={this.state.current} />
