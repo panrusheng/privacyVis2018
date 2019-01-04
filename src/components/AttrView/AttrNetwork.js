@@ -224,6 +224,66 @@ export default class AttrNetwork extends Component {
           .style('opacity', dd => dd.value)
           .style('stroke', '#999')
           .style('stroke-width', 2);
+      })
+      .on('contextmenu', d => {
+        d3.event.preventDefault();
+        const x = d3.event.x - 10,
+          y = d3.event.y - 152,
+          height = 20,
+          width = 80,
+          margin = 3, // fraction of width
+          items = ['Remove', 'Edit weight'];
+        d3.select('.context-menu').remove();
+
+        // Draw the menu
+        g.append('g')
+          .attr('class', 'context-menu')
+          .selectAll('tmp')
+          .data(items)
+          .enter()
+          .append('g')
+          .attr('class', 'menu-entry')
+          .style('cursor', 'pointer')
+          .on('mouseover', function() {
+            d3.select(this)
+              .select('rect')
+              .style('fill', '#ccc');
+          })
+          .on('mouseout', function() {
+            d3.select(this)
+              .select('rect')
+              .style('fill', '#eee');
+          });
+
+        d3.selectAll('.menu-entry')
+          .append('rect')
+          .attr('x', x)
+          .attr('y', function(dd, i) {
+            return y + i * height;
+          })
+          .attr('width', width)
+          .attr('height', height)
+          .style('fill', '#eee')
+          .style('stroke', '#fff');
+
+        d3.selectAll('.menu-entry')
+          .append('text')
+          .text(function(dd) {
+            return dd;
+          })
+          .attr('x', x)
+          .attr('y', function(dd, i) {
+            return y + i * height;
+          })
+          .attr('dy', height - 2 * margin)
+          .attr('dx', 2 * margin)
+          .style('fill', '#666')
+          .style('font-size', 13);
+
+        // Other interactions
+        d3.select('body').on('click', function() {
+          d3.select('.context-menu').remove();
+        });
       });
 
     const node = g
