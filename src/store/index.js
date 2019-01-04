@@ -116,6 +116,39 @@ class AppStore {
   }
 
   @action
+  editInference(source, target, value) {
+    let newGBN = {};
+    newGBN.nodes = this.GBN.nodes;
+    if (value == 0) {
+      newGBN.links = [];
+      for (let i = 0; i < this.GBN.links.length; i++) {
+        if (
+          this.GBN.links[i].source == source &&
+          this.GBN.links[i].target == target
+        )
+          continue;
+        newGBN.links.push(this.GBN.links[i]);
+      }
+    } else {
+      let flag = false;
+      newGBN.links = this.GBN.links;
+      for (let i = 0; i < newGBN.links.length; i++) {
+        if (
+          newGBN.links[i].source == source &&
+          newGBN.links[i].target == target
+        ) {
+          newGBN.links[i].value = value;
+          flag = true;
+          break;
+        }
+      }
+      if (!flag)
+        newGBN.links.push({ source: source, target: target, value: value });
+    }
+    this.GBN = newGBN;
+  }
+
+  @action
   fetchAttributes() {
     Promise.resolve({
       attributes: [
