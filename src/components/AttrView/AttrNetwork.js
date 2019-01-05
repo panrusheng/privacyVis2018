@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { toJS } from 'mobx';
-
+import { inject } from 'mobx-react';
+@inject(['store'])
 export default class AttrNetwork extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +18,7 @@ export default class AttrNetwork extends Component {
   renderGraph(gDOM) {
     const that = this;
     let { canvas, data, filter } = this.props;
-    if (data.nodes.length == 0) return;
+    if (data.nodes.length === 0) return;
     let margin = 50;
     let { ww, hh } = canvas;
     let { nodes, links } = data;
@@ -55,6 +56,20 @@ export default class AttrNetwork extends Component {
       .attr('d', 'M0,-4L10,0L0,4L3,0')
       .style('fill', '#999');
 
+    const addlink = g
+      .append('line')
+      .attr('class', 'n2d')
+      .style('opacity', 0)
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 0)
+      .attr('y2', 0)
+      .attr('source-index', -1)
+      .attr('target-index', -1)
+      .attr('marker-end', 'url(#arrow)')
+      .style('stroke', '#999')
+      .style('stroke-width', 4);
+
     const link = g
       .append('g')
       .attr('class', 'n2d')
@@ -89,7 +104,7 @@ export default class AttrNetwork extends Component {
           w = 30;
         let ifFlip = dy1 > 0,
           f = ifFlip ? -1 : 1;
-        if (l == 0) return -1;
+        if (l === 0) return -1;
         let angle =
           ((f * Math.asin((dx1 * dx2 + dy1 * dy2) / l)) / Math.PI) * 180;
         let edgeDetail = g
@@ -224,6 +239,86 @@ export default class AttrNetwork extends Component {
           .style('opacity', dd => dd.value)
           .style('stroke', '#999')
           .style('stroke-width', 2);
+      })
+      .on('contextmenu', d => {
+        if (merge) return;
+        d3.event.preventDefault();
+        const x = d3.event.x - 10,
+          y = d3.event.y - 155,
+          height = 30,
+          width = 90;
+        d3.select('.context-menu').remove();
+        g.append('rect')
+          .attr('class', 'context-menu')
+          .attr('x', x)
+          .attr('y', y - 2)
+          .attr('width', width)
+          .attr('height', height)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#eee')
+          .style('stroke', '#333')
+          .style('stoke-width', 1);
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17)
+          .text('Weight:');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 63)
+          .attr('y', y + 17)
+          .style('stroke-width', 5)
+          .style('stroke-opacity', 0)
+          .text(d.value)
+          .on('click', function() {
+            let p = this.parentNode;
+            let el = d3.select(this);
+            let p_el = d3.select(p);
+            let frm = p_el.append('foreignObject');
+            let inp = frm
+              .attr('x', x + 56)
+              .attr('y', y - 2)
+              .attr('width', 40)
+              .attr('height', 30)
+              .append('xhtml:form')
+              .append('input')
+              .attr('value', function() {
+                // nasty spot to place this call, but here we are sure that the <input> tag is available
+                // and is handily pointed at by 'this':
+                this.focus();
+                return d.value;
+              })
+              .attr('style', 'width: 35px; height: 30px; line-hight: 15px;')
+              // make the form go away when you jump out (form looses focus) or hit ENTER:
+              .on('blur', function() {
+                let txt = inp.node().value;
+                el.text(txt);
+                p_el.select('foreignObject').remove();
+              })
+              .on('keypress', function() {
+                // IE fix
+                if (!d3.event) d3.event = window.event;
+                let e = d3.event;
+                if (e.keyCode === 13) {
+                  if (typeof e.cancelBubble !== 'undefined')
+                    // IE
+                    e.cancelBubble = true;
+                  if (e.stopPropagation) e.stopPropagation();
+                  e.preventDefault();
+
+                  let txt = inp.node().value;
+                  el.text(txt);
+                  p_el.select('foreignObject').remove();
+                  d3.select('.context-menu').remove();
+                  that.props.store.editInference(
+                    d.source.index,
+                    d.target.index,
+                    parseFloat(txt)
+                  );
+                }
+              });
+          });
       });
 
     const node = g
@@ -239,7 +334,121 @@ export default class AttrNetwork extends Component {
       .style('fill', '#fff')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
-      .on('mouseover', d => {});
+      .style('cursor', merge ? 'arrow' : 'crosshair')
+      .call(
+        d3
+          .drag()
+          .on('start', (d, i) => {
+            const startY = d.y;
+            const startX = d.x;
+            addlink
+              .attr('x1', startX)
+              .attr('y1', startY)
+              .attr('source-index', i)
+              .style('stroke', '#999')
+              .style('stroke-width', 4);
+          })
+          .on('drag', function() {
+            const coordinates = d3.mouse(this); //update the line and dot positions with mouse move
+            addlink
+              .style('opacity', 1)
+              .attr('x2', coordinates[0])
+              .attr('y2', coordinates[1]);
+          })
+      )
+      .on('mouseover', (d, i) => {
+        if (addlink.attr('source-index') === '-1') return;
+        const startY = d.y;
+        const startX = d.x;
+        addlink
+          .attr('x2', startX)
+          .attr('target-index', i)
+          .attr('y2', startY);
+        const height = 30,
+          width = 90,
+          x =
+            (parseFloat(addlink.attr('x1')) +
+              parseFloat(addlink.attr('x2')) -
+              width) /
+            2,
+          y =
+            (parseFloat(addlink.attr('y1')) +
+              parseFloat(addlink.attr('y2')) -
+              height) /
+            2;
+        d3.select('.context-menu').remove();
+        g.append('rect')
+          .attr('class', 'context-menu')
+          .attr('x', x)
+          .attr('y', y - 2)
+          .attr('width', width)
+          .attr('height', height)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#eee')
+          .style('stroke', '#333')
+          .style('stoke-width', 1);
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17)
+          .text('Weight:');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 63)
+          .attr('y', y + 17)
+          .style('stroke-width', 5)
+          .style('stroke-opacity', 0)
+          .text(0)
+          .on('click', function() {
+            let p = this.parentNode;
+            let el = d3.select(this);
+            let p_el = d3.select(p);
+            let frm = p_el.append('foreignObject');
+            let inp = frm
+              .attr('x', x + 56)
+              .attr('y', y - 2)
+              .attr('width', 40)
+              .attr('height', 30)
+              .append('xhtml:form')
+              .append('input')
+              .attr('value', function() {
+                // nasty spot to place this call, but here we are sure that the <input> tag is available
+                // and is handily pointed at by 'this':
+                this.focus();
+                return d.value;
+              })
+              .attr('style', 'width: 35px; height: 30px; line-hight: 15px;')
+              // make the form go away when you jump out (form looses focus) or hit ENTER:
+              .on('blur', function() {
+                let txt = inp.node().value;
+                el.text(txt);
+                p_el.select('foreignObject').remove();
+              })
+              .on('keypress', function() {
+                // IE fix
+                if (!d3.event) d3.event = window.event;
+                let e = d3.event;
+                if (e.keyCode === 13) {
+                  if (typeof e.cancelBubble !== 'undefined')
+                    // IE
+                    e.cancelBubble = true;
+                  if (e.stopPropagation) e.stopPropagation();
+                  e.preventDefault();
+
+                  let txt = inp.node().value;
+                  el.text(txt);
+                  p_el.select('foreignObject').remove();
+                  d3.select('.context-menu').remove();
+                  that.props.store.editInference(
+                    parseInt(addlink.attr('source-index')),
+                    parseInt(addlink.attr('target-index')),
+                    parseFloat(txt)
+                  );
+                }
+              });
+          });
+      });
 
     const text = g
       .append('g')
