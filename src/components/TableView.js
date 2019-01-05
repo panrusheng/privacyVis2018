@@ -21,6 +21,33 @@ export default class TableView extends React.Component {
     testData: this.randomData()
   };
 
+  componentDidMount() {
+    this.fitScrollbar();
+  }
+
+  componentDidUpdate() {
+    this.fitScrollbar();
+  }
+
+  fitScrollbar() {
+    if (!this.tableMainBody) return;
+    const { width, height } = this.tableMainBody.getBoundingClientRect();
+    const scrollHeight = this.tableMainBody.scrollHeight;
+    const scrollWidth = this.tableMainBody.scrollWidth;
+
+    if (scrollHeight > height) {
+      this.scrollableSideHeader.style.marginBottom = '8px';
+    } else {
+      this.scrollableSideHeader.style.marginBottom = '';
+    }
+
+    if (scrollWidth > width) {
+      this.tableTopHeader.style.marginRight = '8px';
+    } else {
+      this.tableTopHeader.style.marginRight = '';
+    }
+  }
+
   handleTableMainBodyScroll(event) {
     this.scrollableTopHeader.scrollLeft = event.target.scrollLeft;
     this.scrollableSideHeader.scrollTop = event.target.scrollTop;
@@ -110,7 +137,7 @@ export default class TableView extends React.Component {
 
     return (
       <div className="table">
-        <div className="table-head">
+        <div className="table-head" ref={dom => (this.tableTopHeader = dom)}>
           <div className="table-row">
             <div key="id" className="table-cell table-side-head">
               ID
@@ -149,6 +176,7 @@ export default class TableView extends React.Component {
           <div
             className="table-body-main"
             onScroll={this.handleTableMainBodyScroll.bind(this)}
+            ref={dom => (this.tableMainBody = dom)}
           >
             {data.map(item => (
               <div className="table-row" key={item.id}>
