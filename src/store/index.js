@@ -117,8 +117,9 @@ class AppStore {
 
   @action
   editInference(source, target, value) {
+    console.log('111');
     let newGBN = {};
-    newGBN.nodes = this.GBN.nodes;
+    newGBN.nodes = [...this.GBN.nodes];
     if (value == 0) {
       newGBN.links = [];
       for (let i = 0; i < this.GBN.links.length; i++) {
@@ -131,7 +132,7 @@ class AppStore {
       }
     } else {
       let flag = false;
-      newGBN.links = this.GBN.links;
+      newGBN.links = [...this.GBN.links];
       for (let i = 0; i < newGBN.links.length; i++) {
         if (
           newGBN.links[i].source == source &&

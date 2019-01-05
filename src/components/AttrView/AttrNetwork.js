@@ -247,7 +247,7 @@ export default class AttrNetwork extends Component {
           y = d3.event.y - 155,
           height = 30,
           width = 90;
-        d3.select('.context-menu').remove();
+        d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
           .attr('x', x)
@@ -310,7 +310,7 @@ export default class AttrNetwork extends Component {
                   let txt = inp.node().value;
                   el.text(txt);
                   p_el.select('foreignObject').remove();
-                  d3.select('.context-menu').remove();
+                  d3.selectAll('.context-menu').remove();
                   that.props.store.editInference(
                     d.source.index,
                     d.target.index,
@@ -376,7 +376,7 @@ export default class AttrNetwork extends Component {
               parseFloat(addlink.attr('y2')) -
               height) /
             2;
-        d3.select('.context-menu').remove();
+        d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
           .attr('x', x)
@@ -439,7 +439,7 @@ export default class AttrNetwork extends Component {
                   let txt = inp.node().value;
                   el.text(txt);
                   p_el.select('foreignObject').remove();
-                  d3.select('.context-menu').remove();
+                  d3.selectAll('.context-menu').remove();
                   that.props.store.editInference(
                     parseInt(addlink.attr('source-index')),
                     parseInt(addlink.attr('target-index')),
