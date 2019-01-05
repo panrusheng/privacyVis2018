@@ -278,19 +278,17 @@ export default class AttrNetwork extends Component {
             let frm = p_el.append('foreignObject');
             let inp = frm
               .attr('x', x + 56)
-              .attr('y', y - 2)
-              .attr('width', 40)
+              .attr('y', y - 2.5)
+              .attr('width', 35)
               .attr('height', 30)
               .append('xhtml:form')
               .append('input')
+              .attr('class', 'inputSVG')
               .attr('value', function() {
-                // nasty spot to place this call, but here we are sure that the <input> tag is available
-                // and is handily pointed at by 'this':
                 this.focus();
                 return d.value;
               })
-              .attr('style', 'width: 35px; height: 30px; line-hight: 15px;')
-              // make the form go away when you jump out (form looses focus) or hit ENTER:
+              .attr('style', 'width: 33px; height: 30px;')
               .on('blur', function() {
                 let txt = inp.node().value;
                 el.text(txt);
@@ -309,7 +307,7 @@ export default class AttrNetwork extends Component {
 
                   let txt = inp.node().value;
                   el.text(txt);
-                  p_el.select('foreignObject').remove();
+                  d3.selectAll('.inputSVG').remove();
                   d3.selectAll('.context-menu').remove();
                   that.props.store.editInference(
                     d.source.index,
@@ -349,7 +347,7 @@ export default class AttrNetwork extends Component {
               .style('stroke-width', 4);
           })
           .on('drag', function() {
-            const coordinates = d3.mouse(this); //update the line and dot positions with mouse move
+            const coordinates = d3.mouse(this);
             addlink
               .style('opacity', 1)
               .attr('x2', coordinates[0])
@@ -407,19 +405,17 @@ export default class AttrNetwork extends Component {
             let frm = p_el.append('foreignObject');
             let inp = frm
               .attr('x', x + 56)
-              .attr('y', y - 2)
-              .attr('width', 40)
+              .attr('y', y - 1.5)
+              .attr('width', 35)
               .attr('height', 30)
               .append('xhtml:form')
               .append('input')
+              .attr('class', 'inputSVG')
               .attr('value', function() {
-                // nasty spot to place this call, but here we are sure that the <input> tag is available
-                // and is handily pointed at by 'this':
                 this.focus();
-                return d.value;
+                return 0;
               })
-              .attr('style', 'width: 35px; height: 30px; line-hight: 15px;')
-              // make the form go away when you jump out (form looses focus) or hit ENTER:
+              .attr('style', 'width: 33px; height: 30px;')
               .on('blur', function() {
                 let txt = inp.node().value;
                 el.text(txt);
@@ -435,10 +431,9 @@ export default class AttrNetwork extends Component {
                     e.cancelBubble = true;
                   if (e.stopPropagation) e.stopPropagation();
                   e.preventDefault();
-
                   let txt = inp.node().value;
                   el.text(txt);
-                  p_el.select('foreignObject').remove();
+                  d3.selectAll('.inputSVG').remove();
                   d3.selectAll('.context-menu').remove();
                   that.props.store.editInference(
                     parseInt(addlink.attr('source-index')),
