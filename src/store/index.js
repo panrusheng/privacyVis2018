@@ -117,14 +117,15 @@ class AppStore {
 
   @action
   editInference(source, target, value) {
+    console.log('edit');
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
-    if (value == 0) {
+    if (value === 0) {
       newGBN.links = [];
       for (let i = 0; i < this.GBN.links.length; i++) {
         if (
-          this.GBN.links[i].source == source &&
-          this.GBN.links[i].target == target
+          this.GBN.links[i].source === source &&
+          this.GBN.links[i].target === target
         )
           continue;
         newGBN.links.push(this.GBN.links[i]);
@@ -134,8 +135,8 @@ class AppStore {
       newGBN.links = [...this.GBN.links];
       for (let i = 0; i < newGBN.links.length; i++) {
         if (
-          newGBN.links[i].source == source &&
-          newGBN.links[i].target == target
+          newGBN.links[i].source === source &&
+          newGBN.links[i].target === target
         ) {
           newGBN.links[i].value = value;
           flag = true;
@@ -145,6 +146,7 @@ class AppStore {
       if (!flag)
         newGBN.links.push({ source: source, target: target, value: value });
     }
+    console.log(newGBN);
     this.GBN = newGBN;
   }
 
