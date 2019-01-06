@@ -11,8 +11,8 @@ export default class AttrNetwork extends Component {
     this.renderGraph(this.g, this.props);
   }
 
-  componentDidUpdate(newProps) {
-    this.renderGraph(this.g, newProps);
+  componentDidUpdate() {
+    this.renderGraph(this.g, this.props);
   }
 
   renderGraph(gDOM) {
