@@ -8,6 +8,8 @@ export default class Numerical extends React.Component {
     data: []
   };
 
+  dragging = false;
+
   constructor(props) {
     super(props);
 
@@ -87,7 +89,7 @@ export default class Numerical extends React.Component {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    svg
+    const lineGraph = svg
       .append('path')
       .datum(data)
       .attr('class', 'line')
@@ -110,12 +112,23 @@ export default class Numerical extends React.Component {
       .attr('class', 'area')
       .attr('d', areaNeg);
 
+    const axisElem = svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      .call(d3.axisLeft(yScale))
+      .attr('transform', `translate(${width / 2 + 2}, 0)`);
+    axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
+
+    // add break points to group attributes
+    const chartThis = this;
+
     svg
+      .append('g')
       .selectAll('rect')
       .data(breakPoints)
       .enter()
       .append('rect')
-      .attr('fill', '#6994a5')
+      .attr('fill', '#777C83')
       .attr('rx', 2)
       .attr('ry', 2)
       .attr('x', () => {
@@ -126,27 +139,41 @@ export default class Numerical extends React.Component {
       })
       .attr('height', 4)
       .attr('width', width)
-      .attr('border-radius', 2)
-      .on('mouseover', () => {
-        d3.event.target.setAttribute('height', 8);
-        const y = parseFloat(d3.event.target.getAttribute('y'));
-        d3.event.target.setAttribute('y', y - 2);
-        d3.event.target.setAttribute('rx', 4);
-        d3.event.target.setAttribute('ry', 4);
-      })
-      .on('mouseout', () => {
-        d3.event.target.setAttribute('height', 4);
-        const y = parseFloat(d3.event.target.getAttribute('y'));
-        d3.event.target.setAttribute('y', y + 2);
-        d3.event.target.setAttribute('rx', 2);
-        d3.event.target.setAttribute('ry', 2);
-      })
+      .attr('stroke-width', 2)
+      .attr('class', 'breakpoint')
       .on('click', (d, i) => {
         d3.event.stopPropagation();
         this.props.removeBreakPoint &&
           this.props.removeBreakPoint(this.props.attr.attrName, i);
       })
-      .attr('class', 'break-point');
+      .attr('class', 'break-point')
+      .call(
+        d3
+          .drag()
+          .on('start', function(d, i) {
+            chartThis.dragging = true;
+            d3.select(this).classed('active', true);
+            console.log('start');
+          })
+          .on('end', function(d, i) {
+            chartThis.dragging = false;
+            d3.select(this).classed('active', false);
+            console.log('end');
+          })
+          .on('drag', function(d, i) {
+            const [, y] = d3.mouse(dom);
+            let value = (y - margin.top) / (height - margin.top);
+            if (value < 0) value = 0;
+            if (value > 1) value = 1;
+            console.log(d3.select(this).attr('class'));
+
+            chartThis.props.updateBreakPoint(
+              chartThis.props.attr.attrName,
+              i,
+              value
+            );
+          })
+      );
   }
 
   static getMockData() {

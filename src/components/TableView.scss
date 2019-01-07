@@ -35,6 +35,20 @@
             .table-body-main {
                 overflow: auto;
                 flex: 1;
+
+                .table-row .table-cell {
+                    border-bottom: 1px solid white;
+                    border-right: 1px solid white;
+
+                    &:last-child {
+                        border-right: none;
+                    }
+                }
+
+                .table-row:last-child .table-cell {
+                    border-bottom: none;
+                }
+
                 .table-cell {
                     min-width: 70px;
 

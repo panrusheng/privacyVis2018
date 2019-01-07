@@ -11,9 +11,6 @@ class AppStore {
   dataSets = [];
 
   @observable
-  currentDataset = null;
-
-  @observable
   attributeList = []; // attributes of the current data set
 
   @observable
@@ -78,12 +75,35 @@ class AppStore {
 
   @action
   getDataSetList() {
-    // TODO: fetch all data sets
+    // TODO: fetch all datasets
   }
 
   @action
   getAttrList(dataset) {
-    //TODO: fetch all attrs with descriptions
+    return axios
+      .post(
+        '/load_data',
+        {
+          dataset
+        },
+        {
+          headers: {
+            contentType: 'application/x-www-form-urlencoded'
+          }
+        }
+      )
+      .then(data => {
+        this.currentDataSet = dataset;
+        this.attributeList = data.attrList;
+        return data.attrList;
+      });
+  }
+
+  @action
+  getGBN() {
+    axios.get('/get_gbn').then(data => {
+      console.log(data);
+    });
   }
 
   @action
@@ -97,7 +117,21 @@ class AppStore {
   }
 
   @action
-  addAttributes(attr) {
+  addAttribute(attr) {
+    axios
+      .post(
+        '/get_attribute_distribution',
+        {},
+        {
+          params: {
+            attributes: JSON.stringify([attr])
+          }
+        }
+      )
+      .then(data => {
+        console.log(data);
+      });
+
     this.selectedAttributes.push(attr);
   }
 
@@ -117,7 +151,6 @@ class AppStore {
 
   @action
   editInference(source, target, value) {
-    console.log('edit');
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
     if (value === 0) {
@@ -146,7 +179,6 @@ class AppStore {
       if (!flag)
         newGBN.links.push({ source: source, target: target, value: value });
     }
-    console.log(newGBN);
     this.GBN = newGBN;
   }
 
@@ -235,6 +267,18 @@ class AppStore {
     if (index < 0) return;
     const attr = Object.assign({}, this.selectedAttributes[index]);
     attr.breakPoints.splice(pIndex, 1);
+    this.selectedAttributes.splice(index, 1, attr);
+  }
+
+  @action
+  updateBreakPoint(attrName, pIndex, value) {
+    const index = this.selectedAttributes.findIndex(
+      item => item.attrName === attrName
+    );
+    if (index < 0) return;
+
+    const attr = Object.assign({}, this.selectedAttributes[index]);
+    attr.breakPoints.splice(pIndex, 1, [value]);
     this.selectedAttributes.splice(index, 1, attr);
   }
 

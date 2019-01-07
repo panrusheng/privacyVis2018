@@ -21,6 +21,7 @@ export default class AttrInitialize extends React.Component {
     this.addBreakPoint = this.addBreakPoint.bind(this);
     this.setSize = this.setSize.bind(this);
     this.removeBreakPoint = this.removeBreakPoint.bind(this);
+    this.updateBreakPoint = this.updateBreakPoint.bind(this);
   }
 
   state = {
@@ -131,6 +132,10 @@ export default class AttrInitialize extends React.Component {
     this.props.store.removeBreakPoint(attrName, index);
   }
 
+  updateBreakPoint(attrName, index, value) {
+    this.props.store.updateBreakPoint(attrName, index, value);
+  }
+
   toggleAttrSensitive(attrName) {
     const attr = this.props.store.selectedAttributes.find(
       item => item.attrName === attrName
@@ -168,6 +173,7 @@ export default class AttrInitialize extends React.Component {
           <Numerical
             addBreakPoint={this.addBreakPoint}
             removeBreakPoint={this.removeBreakPoint}
+            updateBreakPoint={this.updateBreakPoint}
             attr={attr}
             {...attrSize}
           />
