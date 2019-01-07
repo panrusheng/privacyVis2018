@@ -32,6 +32,7 @@ export default class Numerical extends React.Component {
 
   draw(dom, attr, width, height, margin) {
     const data = normalize(attr.data.map(item => item.value));
+    const labels = attr.data.map(item => item.label);
     const breakPoints = attr.breakPoints;
     // const breakPoints = [0.1, 0.3, 0.5, 0.9];
     dom.innerHTML = '';
@@ -115,7 +116,14 @@ export default class Numerical extends React.Component {
     const axisElem = svg
       .append('g')
       .attr('class', 'axis-ver')
-      .call(d3.axisLeft(yScale))
+      .call(
+        d3.axisLeft(
+          d3
+            .scaleLinear()
+            .range([0, height])
+            .domain([Math.min(...labels), Math.max(...labels)])
+        )
+      )
       .attr('transform', `translate(${width / 2 + 2}, 0)`);
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
 

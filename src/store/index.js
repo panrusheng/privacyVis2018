@@ -81,17 +81,9 @@ class AppStore {
   @action
   getAttrList(dataset) {
     return axios
-      .post(
-        '/load_data',
-        {
-          dataset
-        },
-        {
-          headers: {
-            contentType: 'application/x-www-form-urlencoded'
-          }
-        }
-      )
+      .post('/load_data', {
+        dataset
+      })
       .then(data => {
         this.currentDataSet = dataset;
         this.attributeList = data.attrList;
@@ -117,22 +109,42 @@ class AppStore {
   }
 
   @action
-  addAttribute(attr) {
+  addAttribute(attrName) {
     axios
       .post(
         '/get_attribute_distribution',
         {},
         {
           params: {
-            attributes: JSON.stringify([attr])
+            attributes: JSON.stringify([attrName])
           }
         }
       )
       .then(data => {
-        console.log(data);
-      });
+        const attributes = data.attributes;
+        if (attributes.length > 0) {
+          const attr = attributes[0];
+          if (attr.type === 'numerical') {
+            attr.breakPoints = [];
+            attr.data.sort((a, b) => a.label - b.label);
+            console.log(attr.data);
+          } else {
+            // categorical
+            attr.groups = [];
+            attr.data.forEach(d => {
+              attr.groups.push({
+                name: d.category,
+                categories: [d.category],
+                value: d.value
+              });
+            });
+          }
 
-    this.selectedAttributes.push(attr);
+          attr.sensitive = false;
+          attr.utility = undefined;
+          this.selectedAttributes.push(attr);
+        }
+      });
   }
 
   @action
@@ -180,47 +192,6 @@ class AppStore {
         newGBN.links.push({ source: source, target: target, value: value });
     }
     this.GBN = newGBN;
-  }
-
-  @action
-  fetchAttributes() {
-    Promise.resolve({
-      attributes: [
-        Numerical.getMockData(),
-        Categorical.getMockData(),
-        Numerical.getMockData(),
-        Categorical.getMockData(),
-        Numerical.getMockData(),
-        Categorical.getMockData()
-      ]
-    })
-      // axios.get('/getAttributes', {
-      //   params: {
-      //     dataSet: this.currentDataSet
-      //   }
-      // })
-      .then(data => {
-        const attributeList = data.attributes;
-        attributeList.forEach(item => {
-          if (item.type === 'categorical') {
-            item.groups = [];
-            item.data.forEach(d => {
-              item.groups.push({
-                name: d.category,
-                categories: [d.category],
-                value: d.value
-              });
-            });
-          } else if (item.type === 'numerical') {
-            item.breakPoints = [];
-          }
-
-          item.sensitive = false;
-          item.utility = undefined;
-        });
-        this.attributeList = attributeList;
-        this.selectedAttributes.push(...attributeList);
-      });
   }
 
   @action

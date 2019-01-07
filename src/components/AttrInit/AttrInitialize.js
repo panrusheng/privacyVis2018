@@ -61,6 +61,8 @@ export default class AttrInitialize extends React.Component {
     let width = Math.ceil(w / count);
     if (width < 320 || !width) {
       width = 320;
+    } else if (width > 380) {
+      width = 380;
     }
 
     width -= 20; //for margin
@@ -101,11 +103,6 @@ export default class AttrInitialize extends React.Component {
   }
 
   openMenu(data, attrName, event) {
-    // showMenu({
-    //   position: {x: event.clientX, y: event.clientY},
-    //   trigger: event.target,
-    //   id: 'merge-panel-menu'
-    // });
     this.trigger.handleContextMenu(event);
 
     const groups = this.props.store.selectedAttributes.find(

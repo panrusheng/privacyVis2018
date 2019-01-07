@@ -5,6 +5,7 @@
   height: 100%; }
   .attr-init .chart {
     min-width: 320px;
+    max-width: 380px;
     flex: 1; }
   .attr-init .attr-info {
     height: 120px;
