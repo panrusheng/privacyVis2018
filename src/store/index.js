@@ -39,37 +39,37 @@ class AppStore {
       { id: 'mptercier', attrName: 1, value: -1 }
     ],
     links: [
-      { source: 0, target: 1, value: 0.2 },
-      { source: 2, target: 6, value: 0.8 },
-      { source: 3, target: 4, value: 0.7 },
-      { source: 1, target: 3, value: 0.4 },
-      { source: 5, target: 6, value: 0.4 },
-      { source: 1, target: 5, value: 0.6 },
-      { source: 2, target: 3, value: 0.8 },
-      { source: 3, target: 0, value: 0.6 },
-      { source: 1, target: 4, value: 0.5 },
-      { source: 5, target: 3, value: 0.3 },
-      { source: 0, target: 5, value: 0.4 },
-      { source: 7, target: 5, value: 0.4 },
-      { source: 2, target: 8, value: 0.8 },
-      { source: 11, target: 5, value: 0.8 },
-      { source: 7, target: 3, value: 0.3 },
-      { source: 9, target: 2, value: 0.7 },
-      { source: 2, target: 10, value: 0.5 },
-      { source: 12, target: 6, value: 0.8 },
-      { source: 14, target: 13, value: 0.2 },
-      { source: 10, target: 8, value: 0.9 },
-      { source: 10, target: 2, value: 0.8 },
-      { source: 11, target: 3, value: 0.3 },
-      { source: 12, target: 8, value: 0.8 },
-      { source: 4, target: 7, value: 0.8 },
-      { source: 13, target: 5, value: 0.4 },
-      { source: 14, target: 3, value: 0.9 },
-      { source: 5, target: 9, value: 0.2 },
-      { source: 9, target: 8, value: 0.5 },
-      { source: 3, target: 10, value: 0.8 },
-      { source: 1, target: 12, value: 0.3 },
-      { source: 11, target: 14, value: 0.8 }
+      { source: 0, target: 1, value: 0.2, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 2, target: 6, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 3, target: 4, value: 0.7, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 1, target: 3, value: 0.4, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 5, target: 6, value: 0.4, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 1, target: 5, value: 0.6, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 2, target: 3, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 3, target: 0, value: 0.6, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 1, target: 4, value: 0.5, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 5, target: 3, value: 0.3, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 0, target: 5, value: 0.4, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 7, target: 5, value: 0.4, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 2, target: 8, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 11, target: 5, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 7, target: 3, value: 0.3, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 9, target: 2, value: 0.7, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 2, target: 10, value: 0.5, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 12, target: 6, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 14, target: 13, value: 0.2, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 10, target: 8, value: 0.9, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 10, target: 2, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 11, target: 3, value: 0.3, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 12, target: 8, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 4, target: 7, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 13, target: 5, value: 0.4, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 14, target: 3, value: 0.9, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 5, target: 9, value: 0.2, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 9, target: 8, value: 0.5, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 3, target: 10, value: 0.8, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 1, target: 12, value: 0.3, cpb: [0.1, 0.3], cpbo: [] },
+      { source: 11, target: 14, value: 0.8, cpb: [0.1, 0.3], cpbo: [] }
     ]
   };
 
@@ -162,10 +162,10 @@ class AppStore {
   }
 
   @action
-  editInference(source, target, value) {
+  editInference(source, target, cpb) {
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
-    if (value === 0) {
+    if (cpb.length === 0) {
       newGBN.links = [];
       for (let i = 0; i < this.GBN.links.length; i++) {
         if (
@@ -183,7 +183,9 @@ class AppStore {
           newGBN.links[i].source === source &&
           newGBN.links[i].target === target
         ) {
-          newGBN.links[i].value = value;
+          newGBN.links[i].cpb = cpb;
+          const pa = cpb[0], pa0 = 1 - pa, pb = cpb[1], pb0 = 1 - pb, pab = pa * cpb[2], pab0 = pa * (1 - cpb[2]), pa0b = pa0 * cpb[3], pa0b0 = pa0 * (1 - cpb[3]);
+          newGBN.links[i].value = pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
           flag = true;
           break;
         }
@@ -265,11 +267,11 @@ class AppStore {
 
   @action
   //request new GBN after re-defining events
-  updateGBN() {}
+  updateGBN() { }
 
   @action
   //modify GBN interactively
-  editGBN() {}
+  editGBN() { }
 }
 
 export default AppStore;
