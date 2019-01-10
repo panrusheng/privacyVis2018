@@ -21,12 +21,24 @@ export default class TableView extends React.Component {
     testData: this.randomData()
   };
 
+  constructor(props) {
+    super(props);
+
+    this.fitScrollbar = this.fitScrollbar.bind(this);
+  }
+
   componentDidMount() {
     this.fitScrollbar();
+
+    window.addEventListener('resize', this.fitScrollbar);
   }
 
   componentDidUpdate() {
     this.fitScrollbar();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.fitScrollbar);
   }
 
   fitScrollbar() {
@@ -35,13 +47,13 @@ export default class TableView extends React.Component {
     const scrollHeight = this.tableMainBody.scrollHeight;
     const scrollWidth = this.tableMainBody.scrollWidth;
 
-    if (scrollHeight > height) {
+    if (scrollWidth > width) {
       this.scrollableSideHeader.style.marginBottom = '8px';
     } else {
       this.scrollableSideHeader.style.marginBottom = '';
     }
 
-    if (scrollWidth > width) {
+    if (scrollHeight > height) {
       this.tableTopHeader.style.marginRight = '8px';
     } else {
       this.tableTopHeader.style.marginRight = '';

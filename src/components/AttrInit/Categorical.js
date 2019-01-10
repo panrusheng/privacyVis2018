@@ -1,6 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import { toJS } from 'mobx';
+import './Categorical.scss';
 
 export default class Categorical extends React.Component {
   draw(dom, attr, width, height, margin) {
@@ -23,7 +24,13 @@ export default class Categorical extends React.Component {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     const rectWidth = height / data.length;
 
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, height])
+      .range([0, height]);
+
     svg
+      .append('g')
       .selectAll('rect')
       .data(data)
       .enter()
@@ -42,6 +49,28 @@ export default class Categorical extends React.Component {
       .on('click', function(d, i) {
         openMenu && openMenu(data[i], attrName, d3.event);
       });
+
+    const axisElem = svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      .call(d3.axisLeft(yScale))
+      .attr('transform', `translate(${width / 2}, 0)`);
+
+    axisElem.selectAll('text').remove();
+    axisElem.selectAll('.tick').remove();
+
+    svg
+      .append('g')
+      .selectAll('text')
+      .data(data)
+      .enter()
+      .append('text')
+      .attr('class', 'label')
+      .attr('fill', '#9B9DA0')
+      .attr('dominant-baseline', 'text-before-edge')
+      .attr('x', (d, i) => width / 2 + 10)
+      .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
+      .text(d => d.name);
   }
 
   static getMockData() {
@@ -50,7 +79,7 @@ export default class Categorical extends React.Component {
     }
 
     let data = [];
-    for (let i = 0; i < 30; ++i) {
+    for (let i = 0; i < 10; ++i) {
       data.push({
         category: randomInt(0, 1000000).toString(36),
         value: randomInt(200, 1000)

@@ -1,5 +1,6 @@
 .numberical-view {
-  .svg {
+  svg {
+    user-select: none;
   }
   .line {
     fill: none;
@@ -25,6 +26,28 @@
 
   .area {
     fill: aliceblue;
+  }
+
+  .axis-ver {
+    line{
+      stroke: #9B9DA0	;
+    }
+    
+    path{
+      stroke: #9B9DA0	;
+    }
+    
+    text{
+      fill: #9B9DA0	;
+    }  
+  }
+
+  .break-point {
+    cursor: pointer;
+
+    &.active, &:hover {
+      stroke: grey;
+    }
   }
 
 }

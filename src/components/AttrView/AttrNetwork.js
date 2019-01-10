@@ -1,7 +1,13 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
 import * as d3 from 'd3';
-import { toJS } from 'mobx';
-import { inject } from 'mobx-react';
+import {
+  toJS
+} from 'mobx';
+import {
+  inject
+} from 'mobx-react';
 @inject(['store'])
 export default class AttrNetwork extends Component {
   constructor(props) {
@@ -17,11 +23,21 @@ export default class AttrNetwork extends Component {
 
   renderGraph(gDOM) {
     const that = this;
-    let { canvas, data, filter } = this.props;
+    let {
+      canvas,
+      data,
+      filter
+    } = this.props;
     if (data.nodes.length === 0) return;
     let margin = 50;
-    let { ww, hh } = canvas;
-    let { nodes, links } = data;
+    let {
+      ww,
+      hh
+    } = canvas;
+    let {
+      nodes,
+      links
+    } = data;
     const merge = 'child' in nodes[0];
     let r = merge ? 10 : 5;
     const ScaleX = d3
@@ -113,12 +129,12 @@ export default class AttrNetwork extends Component {
           .attr(
             'transform',
             'translate(' +
-              ((1 - f) * x1 + (f + 1) * x2) / 2 +
-              ',' +
-              ((1 - f) * y1 + (f + 1) * y2) / 2 +
-              ') rotate(' +
-              angle +
-              ')'
+            ((1 - f) * x1 + (f + 1) * x2) / 2 +
+            ',' +
+            ((1 - f) * y1 + (f + 1) * y2) / 2 +
+            ') rotate(' +
+            angle +
+            ')'
           );
         edgeDetail
           .append('rect')
@@ -149,12 +165,12 @@ export default class AttrNetwork extends Component {
           .attr(
             'transform',
             'translate(' +
-              f * w +
-              ',' +
-              (ifFlip ? r + 6 : l - r - 6) +
-              ') rotate(' +
-              (f + 1) * 90 +
-              ')'
+            f * w +
+            ',' +
+            (ifFlip ? r + 6 : l - r - 6) +
+            ') rotate(' +
+            (f + 1) * 90 +
+            ')'
           )
           .selectAll('.triS')
           .data(sourceList)
@@ -163,15 +179,15 @@ export default class AttrNetwork extends Component {
           .attr(
             'd',
             (dd, i) =>
-              'M' +
-              (i * 2 * w) / sourceList.length +
-              ', 0 L' +
-              ((i + 1 / 2) * 2 * w) / sourceList.length +
-              ',' +
-              triH +
-              'L' +
-              ((i + 1) * 2 * w) / sourceList.length +
-              ',0'
+            'M' +
+            (i * 2 * w) / sourceList.length +
+            ', 0 L' +
+            ((i + 1 / 2) * 2 * w) / sourceList.length +
+            ',' +
+            triH +
+            'L' +
+            ((i + 1) * 2 * w) / sourceList.length +
+            ',0'
           )
           .style(
             'fill',
@@ -185,12 +201,12 @@ export default class AttrNetwork extends Component {
           .attr(
             'transform',
             'translate(' +
-              -f * w +
-              ',' +
-              (ifFlip ? l - r - 6 : r + 6) +
-              ') rotate(' +
-              (f - 1) * 90 +
-              ')'
+            -f * w +
+            ',' +
+            (ifFlip ? l - r - 6 : r + 6) +
+            ') rotate(' +
+            (f - 1) * 90 +
+            ')'
           )
           .selectAll('.triT')
           .data(targetList)
@@ -199,15 +215,15 @@ export default class AttrNetwork extends Component {
           .attr(
             'd',
             (dd, i) =>
-              'M' +
-              (i * 2 * w) / targetList.length +
-              ', 0 L' +
-              ((i + 1 / 2) * 2 * w) / targetList.length +
-              ',' +
-              triH +
-              'L' +
-              ((i + 1) * 2 * w) / targetList.length +
-              ',0'
+            'M' +
+            (i * 2 * w) / targetList.length +
+            ', 0 L' +
+            ((i + 1 / 2) * 2 * w) / targetList.length +
+            ',' +
+            triH +
+            'L' +
+            ((i + 1) * 2 * w) / targetList.length +
+            ',0'
           )
           .style(
             'fill',
@@ -221,7 +237,7 @@ export default class AttrNetwork extends Component {
           .data(d.child)
           .enter()
           .append('path')
-          .attr('d', function(dd) {
+          .attr('d', function (dd) {
             let x1 = ((dd.source + 1 / 2) * 2 * w) / sourceList.length,
               x2 = ((dd.target + 1 / 2) * 2 * w) / targetList.length;
             let y = ifFlip ? r + 6 + triH : l - (r + 6 + triH);
@@ -245,15 +261,16 @@ export default class AttrNetwork extends Component {
         d3.event.preventDefault();
         const x = d3.event.x - 10,
           y = d3.event.y - 155,
-          height = 30,
-          width = 90;
+          height = 30 * 5,
+          width = 115;
+        let newCPB = d.cpb;
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
           .attr('x', x)
-          .attr('y', y - 2)
+          .attr('y', y - 7)
           .attr('width', width)
-          .attr('height', height)
+          .attr('height', height + 5)
           .attr('rx', 5)
           .attr('ry', 5)
           .style('fill', '#eee')
@@ -263,38 +280,102 @@ export default class AttrNetwork extends Component {
           .attr('class', 'context-menu')
           .attr('x', x + 5)
           .attr('y', y + 17)
-          .text('Weight:');
+          .text('P(' + nodes[d.source.index].id.slice(0, 3) + '):');
         g.append('text')
           .attr('class', 'context-menu')
-          .attr('x', x + 63)
-          .attr('y', y + 17)
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5)
+          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '):');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5 * 2)
+          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '|' + nodes[d.source.index].id.slice(0, 3) + '):');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5 * 3)
+          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '|' + nodes[d.source.index].id.slice(0, 3) + '\'):');
+        g.selectAll('split-line')
+          .data([1, 2, 3, 4])
+          .enter()
+          .append('line')
+          .attr('x1', x + 5)
+          .attr('x2', x + width - 5)
+          .attr('y1', d => y - 5 + height / 5 * d)
+          .attr('y2', d => y - 5 + height / 5 * d)
+          .style('stroke', '#999')
+          .style('stroke-dasharray', '2 1');
+        g.append('rect')
+          .attr('class', 'context-menu')
+          .attr('x', x + width / 4)
+          .attr('y', y - 1 + height / 5 * 4)
+          .attr('width', width / 2)
+          .attr('height', height / 5 - 3)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#bbb')
+          .style('stroke', '#fff')
+          .style('stoke-width', 1)
+          .style('cursor', 'pointer')
+          .on('mouseover', function () {
+            d3.select(this).style('fill', '#ccc').style('stroke', '#999');
+          })
+          .on('mouseout', function () {
+            d3.select(this).style('fill', '#bbb').style('stroke', '#fff');
+          })
+          .on('click', () => {
+            d3.selectAll('.inputSVG').remove();
+            d3.selectAll('.context-menu').remove();
+            that.props.store.editInference(
+              d.source.index,
+              d.target.index,
+              newCPB
+            );
+          });
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + width / 2)
+          .attr('y', y + 17 + height / 5 * 4)
+          .style('fill', '#fff')
+          .style('text-anchor', 'middle')
+          .style('cursor', 'pointer')
+          .text('Submit');
+        g
+          .selectAll('input-title-text')
+          .data(d.cpb)
+          .enter()
+          .append('text')
+          .attr('x', x + 81)
+          .attr('y', (dd, ii) => y + 16 + ii * height / 5)
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
-          .text(d.value)
-          .on('click', function() {
+          .attr('class', 'context-menu')
+          .text(dd => dd)
+          .on('click', function (dd, ii) {
             let p = this.parentNode;
             let el = d3.select(this);
             let p_el = d3.select(p);
             let frm = p_el.append('foreignObject');
             let inp = frm
-              .attr('x', x + 56)
-              .attr('y', y - 2.5)
+              .attr('x', x + 80)
+              .attr('y', y - 5 + ii * height / 5)
               .attr('width', 35)
               .attr('height', 30)
               .append('xhtml:form')
               .append('input')
               .attr('class', 'inputSVG')
-              .attr('value', function() {
+              .attr('value', function () {
                 this.focus();
-                return d.value;
+                return dd;
               })
               .attr('style', 'width: 33px; height: 30px;')
-              .on('blur', function() {
+              .on('blur', function () {
                 let txt = inp.node().value;
                 el.text(txt);
                 p_el.select('foreignObject').remove();
               })
-              .on('keypress', function() {
+              .on('keypress', function () {
                 // IE fix
                 if (!d3.event) d3.event = window.event;
                 let e = d3.event;
@@ -307,15 +388,11 @@ export default class AttrNetwork extends Component {
 
                   let txt = inp.node().value;
                   el.text(txt);
-                  d3.selectAll('.inputSVG').remove();
-                  d3.selectAll('.context-menu').remove();
-                  that.props.store.editInference(
-                    d.source.index,
-                    d.target.index,
-                    parseFloat(txt)
-                  );
+                  newCPB[ii] = parseFloat(txt);
+                  p_el.selectAll('.inputSVG').remove();
                 }
               });
+
           });
       });
 
@@ -335,52 +412,54 @@ export default class AttrNetwork extends Component {
       .style('cursor', merge ? 'arrow' : 'crosshair')
       .call(
         d3
-          .drag()
-          .on('start', (d, i) => {
-            const startY = d.y;
-            const startX = d.x;
-            addlink
-              .attr('x1', startX)
-              .attr('y1', startY)
-              .attr('source-index', i)
-              .style('stroke', '#999')
-              .style('stroke-width', 4);
-          })
-          .on('drag', function() {
-            const coordinates = d3.mouse(this);
-            addlink
-              .style('opacity', 1)
-              .attr('x2', coordinates[0])
-              .attr('y2', coordinates[1]);
-          })
+        .drag()
+        .on('start', (d, i) => {
+          const startY = d.y;
+          const startX = d.x;
+          addlink
+            .attr('x1', startX)
+            .attr('y1', startY)
+            .attr('source-index', i)
+            .style('stroke', '#999')
+            .style('stroke-width', 4);
+        })
+        .on('drag', function () {
+          const coordinates = d3.mouse(this);
+          addlink
+            .style('opacity', 1)
+            .attr('x2', coordinates[0])
+            .attr('y2', coordinates[1]);
+        })
       )
       .on('mouseover', (d, i) => {
         if (addlink.attr('source-index') === '-1') return;
         const startY = d.y;
         const startX = d.x;
+        const sourceID = parseInt(addlink.attr('source-index'));
         addlink
           .attr('x2', startX)
           .attr('target-index', i)
           .attr('y2', startY);
-        const height = 30,
-          width = 90,
+        const height = 30 * 5,
+          width = 115,
           x =
-            (parseFloat(addlink.attr('x1')) +
-              parseFloat(addlink.attr('x2')) -
-              width) /
-            2,
+          (parseFloat(addlink.attr('x1')) +
+            parseFloat(addlink.attr('x2')) -
+            width) /
+          2,
           y =
-            (parseFloat(addlink.attr('y1')) +
-              parseFloat(addlink.attr('y2')) -
-              height) /
-            2;
+          (parseFloat(addlink.attr('y1')) +
+            parseFloat(addlink.attr('y2')) -
+            height) /
+          2;
+        let newCPB = [0, 0, 0, 0];
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
           .attr('x', x)
-          .attr('y', y - 2)
+          .attr('y', y - 7)
           .attr('width', width)
-          .attr('height', height)
+          .attr('height', height + 5)
           .attr('rx', 5)
           .attr('ry', 5)
           .style('fill', '#eee')
@@ -390,38 +469,102 @@ export default class AttrNetwork extends Component {
           .attr('class', 'context-menu')
           .attr('x', x + 5)
           .attr('y', y + 17)
-          .text('Weight:');
+          .text('P(' + nodes[sourceID].id.slice(0, 3) + '):');
         g.append('text')
           .attr('class', 'context-menu')
-          .attr('x', x + 63)
-          .attr('y', y + 17)
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5)
+          .text('P(' + nodes[i].id.slice(0, 3) + '):');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5 * 2)
+          .text('P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):');
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', y + 17 + height / 5 * 3)
+          .text('P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):');
+        g.selectAll('split-line')
+          .data([1, 2, 3, 4])
+          .enter()
+          .append('line')
+          .attr('x1', x + 5)
+          .attr('x2', x + width - 5)
+          .attr('y1', d => y - 5 + height / 5 * d)
+          .attr('y2', d => y - 5 + height / 5 * d)
+          .style('stroke', '#999')
+          .style('stroke-dasharray', '2 1');
+        g.append('rect')
+          .attr('class', 'context-menu')
+          .attr('x', x + width / 4)
+          .attr('y', y - 1 + height / 5 * 4)
+          .attr('width', width / 2)
+          .attr('height', height / 5 - 3)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#bbb')
+          .style('stroke', '#fff')
+          .style('stoke-width', 1)
+          .style('cursor', 'pointer')
+          .on('mouseover', function () {
+            d3.select(this).style('fill', '#ccc').style('stroke', '#999');
+          })
+          .on('mouseout', function () {
+            d3.select(this).style('fill', '#bbb').style('stroke', '#fff');
+          })
+          .on('click', () => {
+            d3.selectAll('.inputSVG').remove();
+            d3.selectAll('.context-menu').remove();
+            that.props.store.editInference(
+              sourceID,
+              i,
+              newCPB
+            );
+          });
+        g.append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + width / 2)
+          .attr('y', y + 17 + height / 5 * 4)
+          .style('fill', '#fff')
+          .style('text-anchor', 'middle')
+          .style('cursor', 'pointer')
+          .text('Submit');
+
+        g.selectAll('input-title-text')
+          .data(newCPB)
+          .enter()
+          .append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 81)
+          .attr('y', (dd, ii) => y + 16 + ii * height / 5)
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
-          .text(0)
-          .on('click', function() {
+          .text(dd => dd)
+          .on('click', function (dd, ii) {
             let p = this.parentNode;
             let el = d3.select(this);
             let p_el = d3.select(p);
             let frm = p_el.append('foreignObject');
             let inp = frm
-              .attr('x', x + 56)
-              .attr('y', y - 1.5)
+              .attr('x', x + 80)
+              .attr('y', y - 5 + ii * height / 5)
               .attr('width', 35)
               .attr('height', 30)
               .append('xhtml:form')
               .append('input')
               .attr('class', 'inputSVG')
-              .attr('value', function() {
+              .attr('value', function () {
                 this.focus();
-                return 0;
+                return dd;
               })
               .attr('style', 'width: 33px; height: 30px;')
-              .on('blur', function() {
+              .on('blur', function () {
                 let txt = inp.node().value;
                 el.text(txt);
                 p_el.select('foreignObject').remove();
               })
-              .on('keypress', function() {
+              .on('keypress', function () {
                 // IE fix
                 if (!d3.event) d3.event = window.event;
                 let e = d3.event;
@@ -433,13 +576,8 @@ export default class AttrNetwork extends Component {
                   e.preventDefault();
                   let txt = inp.node().value;
                   el.text(txt);
+                  newCPB[ii] = parseFloat(txt);
                   d3.selectAll('.inputSVG').remove();
-                  d3.selectAll('.context-menu').remove();
-                  that.props.store.editInference(
-                    parseInt(addlink.attr('source-index')),
-                    parseInt(addlink.attr('target-index')),
-                    parseFloat(txt)
-                  );
                 }
               });
           });
@@ -462,13 +600,18 @@ export default class AttrNetwork extends Component {
   }
 
   render() {
-    return (
-      <g
-        ref={g => {
+    return ( <
+      g ref = {
+        g => {
           this.g = g;
-        }}
-        width={this.props.width}
-        height={this.props.height}
+        }
+      }
+      width = {
+        this.props.width
+      }
+      height = {
+        this.props.height
+      }
       />
     );
   }

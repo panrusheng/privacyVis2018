@@ -11,7 +11,12 @@ class App extends React.Component {
     current: 1
   };
   componentDidMount() {
-    this.props.store.fetchAttributes();
+    // this.props.store.fetchAttributes();
+
+    // test
+    this.props.store.getAttrList('user');
+    this.props.store.addAttribute('wei');
+    this.props.store.getGBN();
   }
 
   render() {

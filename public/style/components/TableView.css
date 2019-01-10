@@ -26,6 +26,13 @@
         overflow: auto;
         flex: 1;
         position: relative; }
+        .table-view .table .table-body .table-body-main .table-row .table-cell {
+          border-bottom: 1px solid white;
+          border-right: 1px solid white; }
+          .table-view .table .table-body .table-body-main .table-row .table-cell:last-child {
+            border-right: none; }
+        .table-view .table .table-body .table-body-main .table-row:last-child .table-cell {
+          border-bottom: none; }
         .table-view .table .table-body .table-body-main .table-cell {
           min-width: 70px; }
         .table-view .table .table-body .table-body-main::-webkit-scrollbar {

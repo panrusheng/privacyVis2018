@@ -1,5 +1,7 @@
 .numberical-view {
   /* Style the dots by assigning a fill and stroke */ }
+  .numberical-view svg {
+    user-select: none; }
   .numberical-view .line {
     fill: none;
     stroke: #e0e8ff;
@@ -15,3 +17,13 @@
     stroke: steelblue; }
   .numberical-view .area {
     fill: aliceblue; }
+  .numberical-view .axis-ver line {
+    stroke: #9B9DA0; }
+  .numberical-view .axis-ver path {
+    stroke: #9B9DA0; }
+  .numberical-view .axis-ver text {
+    fill: #9B9DA0; }
+  .numberical-view .break-point {
+    cursor: pointer; }
+    .numberical-view .break-point.active, .numberical-view .break-point:hover {
+      stroke: grey; }
