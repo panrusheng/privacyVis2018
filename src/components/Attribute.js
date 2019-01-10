@@ -137,7 +137,6 @@ export default class Attribute extends React.Component {
   }
 
   render() {
-    console.log('render');
     let data = toJS(this.props.store.GBN); // deep copy
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);

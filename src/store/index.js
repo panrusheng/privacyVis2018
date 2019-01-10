@@ -117,7 +117,6 @@ class AppStore {
 
   @action
   editInference(source, target, value) {
-    console.log('edit');
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
     if (value === 0) {
@@ -146,7 +145,6 @@ class AppStore {
       if (!flag)
         newGBN.links.push({ source: source, target: target, value: value });
     }
-    console.log(newGBN);
     this.GBN = newGBN;
   }
 
