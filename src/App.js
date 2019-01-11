@@ -24,11 +24,11 @@ class App extends React.Component {
     const pipelineSteps = [
       {
         id: 1,
-        name: 'Attribute Initialization'
+        name: 'Inference Initialization'
       },
       {
         id: 2,
-        name: 'Data Process'
+        name: 'Data Processing'
       },
       {
         id: 3,
