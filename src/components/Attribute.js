@@ -114,8 +114,7 @@ export default class Attribute extends React.Component {
         source: sA.no,
         target: tA.no,
         value: l[i].value,
-        cpb: l[i].cpb,
-        cpbo: l[i].cpbo
+        cpt: l[i].cpt,
       });
       linkDic[label].value =
         linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
@@ -139,6 +138,7 @@ export default class Attribute extends React.Component {
   }
 
   render() {
+    this.props.store.getGBN();
     let data = toJS(this.props.store.GBN); // deep copy
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);

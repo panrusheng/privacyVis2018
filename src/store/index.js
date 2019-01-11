@@ -25,301 +25,274 @@ class AppStore {
 
   @observable
   GBN = {
-    nodes: [{
-        id: 'Myriel',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Napoleon',
-        attrName: 3,
-        value: 0.9
-      },
-      {
-        id: 'Mlle',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Mme',
-        attrName: 3,
-        value: 0.9
-      },
-      {
-        id: 'CountessdeLo',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Geborand',
-        attrName: 2,
-        value: 0.5
-      },
-      {
-        id: 'Champtercier',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Chaptercier',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Champtrcier',
-        attrName: 3,
-        value: 0.9
-      },
-      {
-        id: 'Cmptercier',
-        attrName: 2,
-        value: 0.5
-      },
-      {
-        id: 'Chaptercier',
-        attrName: 3,
-        value: 0.9
-      },
-      {
-        id: 'Champtier',
-        attrName: 1,
-        value: -1
-      },
-      {
-        id: 'Champteer',
-        attrName: 2,
-        value: 0.5
-      },
-      {
-        id: 'Champier',
-        attrName: 2,
-        value: 0.5
-      },
-      {
-        id: 'mptercier',
-        attrName: 1,
-        value: -1
-      }
-    ],
-    links: [{
-        source: 0,
-        target: 1,
-        value: 0.2,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 2,
-        target: 6,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 3,
-        target: 4,
-        value: 0.7,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 1,
-        target: 3,
-        value: 0.4,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 5,
-        target: 6,
-        value: 0.4,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 1,
-        target: 5,
-        value: 0.6,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 2,
-        target: 3,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 3,
-        target: 0,
-        value: 0.6,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 1,
-        target: 4,
-        value: 0.5,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 5,
-        target: 3,
-        value: 0.3,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 0,
-        target: 5,
-        value: 0.4,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 7,
-        target: 5,
-        value: 0.4,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 2,
-        target: 8,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 11,
-        target: 5,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 7,
-        target: 3,
-        value: 0.3,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 9,
-        target: 2,
-        value: 0.7,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 2,
-        target: 10,
-        value: 0.5,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 12,
-        target: 6,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 14,
-        target: 13,
-        value: 0.2,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 10,
-        target: 8,
-        value: 0.9,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 10,
-        target: 2,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7], 
-        cpbo: []
-      },
-      {
-        source: 11,
-        target: 3,
-        value: 0.3,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 12,
-        target: 8,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 4,
-        target: 7,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 13,
-        target: 5,
-        value: 0.4,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 14,
-        target: 3,
-        value: 0.9,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 5,
-        target: 9,
-        value: 0.2,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 9,
-        target: 8,
-        value: 0.5,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 3,
-        target: 10,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 1,
-        target: 12,
-        value: 0.3,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      },
-      {
-        source: 11,
-        target: 14,
-        value: 0.8,
-        cpb: [0.1, 0.3, 0.5, 0.7],
-        cpbo: []
-      }
-    ]
+    nodes: [],
+    links: []
   };
+  // GBN = {
+  //   nodes: [{
+  //       id: 'Myriel',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Napoleon',
+  //       attrName: 3,
+  //       value: 0.9
+  //     },
+  //     {
+  //       id: 'Mlle',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Mme',
+  //       attrName: 3,
+  //       value: 0.9
+  //     },
+  //     {
+  //       id: 'CountessdeLo',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Geborand',
+  //       attrName: 2,
+  //       value: 0.5
+  //     },
+  //     {
+  //       id: 'Champtercier',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Chaptercier',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Champtrcier',
+  //       attrName: 3,
+  //       value: 0.9
+  //     },
+  //     {
+  //       id: 'Cmptercier',
+  //       attrName: 2,
+  //       value: 0.5
+  //     },
+  //     {
+  //       id: 'Chaptercier',
+  //       attrName: 3,
+  //       value: 0.9
+  //     },
+  //     {
+  //       id: 'Champtier',
+  //       attrName: 1,
+  //       value: -1
+  //     },
+  //     {
+  //       id: 'Champteer',
+  //       attrName: 2,
+  //       value: 0.5
+  //     },
+  //     {
+  //       id: 'Champier',
+  //       attrName: 2,
+  //       value: 0.5
+  //     },
+  //     {
+  //       id: 'mptercier',
+  //       attrName: 1,
+  //       value: -1
+  //     }
+  //   ],
+  //   links: [{
+  //       source: 0,
+  //       target: 1,
+  //       value: 0.2,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 2,
+  //       target: 6,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 3,
+  //       target: 4,
+  //       value: 0.7,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 1,
+  //       target: 3,
+  //       value: 0.4,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 5,
+  //       target: 6,
+  //       value: 0.4,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 1,
+  //       target: 5,
+  //       value: 0.6,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 2,
+  //       target: 3,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 3,
+  //       target: 0,
+  //       value: 0.6,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 1,
+  //       target: 4,
+  //       value: 0.5,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 5,
+  //       target: 3,
+  //       value: 0.3,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 0,
+  //       target: 5,
+  //       value: 0.4,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 7,
+  //       target: 5,
+  //       value: 0.4,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 2,
+  //       target: 8,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 11,
+  //       target: 5,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 7,
+  //       target: 3,
+  //       value: 0.3,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 9,
+  //       target: 2,
+  //       value: 0.7,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 2,
+  //       target: 10,
+  //       value: 0.5,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 12,
+  //       target: 6,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 14,
+  //       target: 13,
+  //       value: 0.2,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 10,
+  //       target: 8,
+  //       value: 0.9,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 10,
+  //       target: 2,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 11,
+  //       target: 3,
+  //       value: 0.3,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 12,
+  //       target: 8,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 4,
+  //       target: 7,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 13,
+  //       target: 5,
+  //       value: 0.4,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 14,
+  //       target: 3,
+  //       value: 0.9,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 5,
+  //       target: 9,
+  //       value: 0.2,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 9,
+  //       target: 8,
+  //       value: 0.5,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 3,
+  //       target: 10,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 1,
+  //       target: 12,
+  //       value: 0.3,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     },
+  //     {
+  //       source: 11,
+  //       target: 14,
+  //       value: 0.8,
+  //       cpt: [0.1, 0.3, 0.5, 0.7],
+  //     }
+  //   ]
+  // };
 
   @action
   getDataSetList() {
@@ -342,7 +315,8 @@ class AppStore {
   @action
   getGBN() {
     axios.get('/get_gbn').then(data => {
-      console.log(data);
+      this.GBN = data;
+      console.log(this.GBN);
     });
   }
 
@@ -407,10 +381,10 @@ class AppStore {
   }
 
   @action
-  editInference(source, target, cpb) {
+  editInference(source, target, cpt) {
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
-    if (cpb.length === 0) {
+    if (cpt.length === 0) {
       newGBN.links = [];
       for (let i = 0; i < this.GBN.links.length; i++) {
         if (
@@ -423,21 +397,21 @@ class AppStore {
     } else {
       let flag = false;
       newGBN.links = [...this.GBN.links];
-      const pa = cpb[0],
+      const pa = cpt[0],
         pa0 = 1 - pa,
-        pb = cpb[1],
+        pb = cpt[1],
         pb0 = 1 - pb,
-        pab = pa * cpb[2],
-        pab0 = pa * (1 - cpb[2]),
-        pa0b = pa0 * cpb[3],
-        pa0b0 = pa0 * (1 - cpb[3]);
+        pab = pa * cpt[2],
+        pab0 = pa * (1 - cpt[2]),
+        pa0b = pa0 * cpt[3],
+        pa0b0 = pa0 * (1 - cpt[3]);
       const value = pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
       for (let i = 0; i < newGBN.links.length; i++) {
         if (
           newGBN.links[i].source === source &&
           newGBN.links[i].target === target
         ) {
-          newGBN.links[i].cpb = cpb;
+          newGBN.links[i].cpt = cpt;
           newGBN.links[i].value = value;
           flag = true;
           break;
@@ -448,7 +422,7 @@ class AppStore {
           source: source,
           target: target,
           value: value,
-          cpb: cpb
+          cpt: cpt
         });
     }
     this.GBN = newGBN;

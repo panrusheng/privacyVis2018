@@ -263,7 +263,7 @@ export default class AttrNetwork extends Component {
           y = d3.event.y - 155,
           height = 30 * 5,
           width = 115;
-        let newCPB = d.cpb;
+        let newCPT = d.cpt;
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
@@ -330,7 +330,7 @@ export default class AttrNetwork extends Component {
             that.props.store.editInference(
               d.source.index,
               d.target.index,
-              newCPB
+              newCPT
             );
           });
         g.append('text')
@@ -343,7 +343,7 @@ export default class AttrNetwork extends Component {
           .text('Submit');
         g
           .selectAll('input-title-text')
-          .data(d.cpb)
+          .data(d.cpt)
           .enter()
           .append('text')
           .attr('x', x + 81)
@@ -388,7 +388,7 @@ export default class AttrNetwork extends Component {
 
                   let txt = inp.node().value;
                   el.text(txt);
-                  newCPB[ii] = parseFloat(txt);
+                  newCPT[ii] = parseFloat(txt);
                   p_el.selectAll('.inputSVG').remove();
                 }
               });
@@ -452,7 +452,7 @@ export default class AttrNetwork extends Component {
             parseFloat(addlink.attr('y2')) -
             height) /
           2;
-        let newCPB = [0, 0, 0, 0];
+        let newCPT = [0, 0, 0, 0];
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
@@ -519,7 +519,7 @@ export default class AttrNetwork extends Component {
             that.props.store.editInference(
               sourceID,
               i,
-              newCPB
+              newCPT
             );
           });
         g.append('text')
@@ -532,7 +532,7 @@ export default class AttrNetwork extends Component {
           .text('Submit');
 
         g.selectAll('input-title-text')
-          .data(newCPB)
+          .data(newCPT)
           .enter()
           .append('text')
           .attr('class', 'context-menu')
@@ -576,7 +576,7 @@ export default class AttrNetwork extends Component {
                   e.preventDefault();
                   let txt = inp.node().value;
                   el.text(txt);
-                  newCPB[ii] = parseFloat(txt);
+                  newCPT[ii] = parseFloat(txt);
                   d3.selectAll('.inputSVG').remove();
                 }
               });
