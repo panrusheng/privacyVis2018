@@ -161,19 +161,16 @@ export default class Numerical extends React.Component {
           .on('start', function(d, i) {
             chartThis.dragging = true;
             d3.select(this).classed('active', true);
-            console.log('start');
           })
           .on('end', function(d, i) {
             chartThis.dragging = false;
             d3.select(this).classed('active', false);
-            console.log('end');
           })
           .on('drag', function(d, i) {
             const [, y] = d3.mouse(dom);
             let value = (y - margin.top) / (height - margin.top);
             if (value < 0) value = 0;
             if (value > 1) value = 1;
-            console.log(d3.select(this).attr('class'));
 
             chartThis.props.updateBreakPoint(
               chartThis.props.attr.attrName,
@@ -182,32 +179,6 @@ export default class Numerical extends React.Component {
             );
           })
       );
-  }
-
-  static getMockData() {
-    function randomInt(lower, upper) {
-      return Math.round(Math.random() * (upper - lower) + lower);
-    }
-
-    let data = [];
-    for (let i = 0; i < 30; ++i) {
-      let d = new Date(
-        randomInt(1900, 2018),
-        randomInt(1, 12),
-        randomInt(1, 27)
-      );
-
-      data.push({
-        label: d.toDateString(),
-        value: randomInt(0, 1000)
-      });
-    }
-
-    return {
-      attrName: randomInt(0, 1000).toString(36),
-      type: 'numerical',
-      data
-    };
   }
 
   handleChartClick(e) {
@@ -255,10 +226,8 @@ export default class Numerical extends React.Component {
 }
 
 Numerical.defaultProps = {
-  data: Numerical.getMockData(),
   width: 300,
   height: 900,
   margin: { top: 10, right: 10, bottom: 10, left: 10 },
   breakPoints: [],
-  addBreakPoints: console.log
 };

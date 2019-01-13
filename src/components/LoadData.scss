@@ -1,0 +1,13 @@
+.load-data {
+
+    .datasets {
+        display: flex;
+    }
+
+    .attr-list-item {
+        display: flex;
+        & > div {
+            margin-right: 10px;
+        }
+    }
+}

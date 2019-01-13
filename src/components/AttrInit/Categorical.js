@@ -73,26 +73,6 @@ export default class Categorical extends React.Component {
       .text(d => d.name);
   }
 
-  static getMockData() {
-    function randomInt(lower, upper) {
-      return Math.round(Math.random() * (upper - lower) + lower);
-    }
-
-    let data = [];
-    for (let i = 0; i < 10; ++i) {
-      data.push({
-        category: randomInt(0, 1000000).toString(36),
-        value: randomInt(200, 1000)
-      });
-    }
-
-    return {
-      attrName: randomInt(0, 10000).toString(36),
-      type: 'categorical',
-      data
-    };
-  }
-
   componentDidMount() {
     const { attr, width, height, margin } = this.props;
     if (!attr || !this.chartDom) return;

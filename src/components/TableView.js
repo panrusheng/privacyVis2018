@@ -4,6 +4,7 @@ import AscIcon from '../assets/image/asc.svg';
 import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
+import { toJS } from 'mobx';
 
 const DESC = -1;
 const ASC = 1;
@@ -18,7 +19,6 @@ export default class TableView extends React.Component {
     orderCol: undefined,
     order: DESC,
     omitValue: false,
-    testData: this.randomData()
   };
 
   constructor(props) {
@@ -79,50 +79,41 @@ export default class TableView extends React.Component {
     }
   }
 
-  randomData() {
-    // 10 row
-    const data = [];
-    const columns = [];
-
-    for (let i = 0; i < 30; ++i) {
-      let item = {};
-      item.id = randomInt(0, 999);
-      item.values = [];
-
-      // 7 cols;
-      for (let j = 0; j < 7; ++j) {
-        item.values.push({
-          value: randomInt(0, 999),
-          utility: Math.random(),
-          sensitivity: Math.random()
-        });
-      }
-      data.push(item);
-    }
-
-    for (let i = 0; i < 7; ++i) {
-      columns.push(randomInt(0, 99999).toString(36));
-    }
-
-    return {
-      data,
-      columns
-    };
-  }
-
   formalizeData() {
-    // TODO:
+    const records = toJS(this.props.store.records);
+    const columns = [];
+    const data = [];
 
-    const data = this.state.testData;
+    if (records.length >= 0) {
+      for (let attrName in records[0]) columns.push(attrName);
+      for (let rec of records) {
+        let item = {};
+        item.id = rec.id;
+        item.values = [];
+
+        for (let attr in rec) {
+          if (attr === 'id') continue;
+          let val = {};
+          val.value = rec[attr];
+          item.values.push(val);
+        }
+        
+        data.push(item);
+      }
+    }
+    
     const { orderCol, order } = this.state;
 
     if (orderCol !== undefined) {
-      data.data.sort((a, b) => {
+      data.sort((a, b) => {
         return (a.values[orderCol].value - b.values[orderCol].value) * order;
       });
     }
 
-    return data;
+    return {
+      data,
+      columns,
+    }
   }
 
   renderEmpty() {
@@ -132,18 +123,6 @@ export default class TableView extends React.Component {
   renderTable() {
     const { data, columns } = this.formalizeData();
     const { omitValue, orderCol, order } = this.state;
-    /**
-     * data: [{
-     *     id,
-     *     values: [
-     *          {
-     *              value,
-     *              utility,
-     *              sensitivity
-     *          }
-     *      ],
-     * }]
-     */
 
     if (!data || data.length === 0) return this.renderEmpty();
 
@@ -220,7 +199,7 @@ export default class TableView extends React.Component {
       <div className="table-view">
         <div>
           <div className="view-title">Table View</div>
-          <div>
+          <div className="operation">
             <label>Omit Value</label>
             <Switch
               checked={this.state.omitValue}

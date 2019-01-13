@@ -59,15 +59,15 @@ export default class AttrInitialize extends React.Component {
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
     let width = Math.ceil(w / count);
-    if (width < 320 || !width) {
+    if (width < 280 || !width) {
+      width = 280;
+    } else if (width > 320) {
       width = 320;
-    } else if (width > 380) {
-      width = 380;
     }
 
     width -= 20; //for margin
 
-    const height = Math.ceil(h - 180);
+    const height = Math.ceil(h - 220);
 
     if (
       height === this.state.attrSize.height &&

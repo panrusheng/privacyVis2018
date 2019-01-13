@@ -3,8 +3,26 @@
     height: 100%;
     padding: 10px;
     overflow: hidden;
+
+    .view-title {
+        font-size: 24px;
+        text-align: left;
+        padding-bottom: 10px;
+    }
+
+    .operation {
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 8px;
+        margin-bottom: 10px;
+
+        label {
+            margin-right: 5px;
+        }
+    }
+
     .table {
-        height: calc(100% - 100px);
+        height: calc(100% - 150px);
         .table-side-head {
             max-width: 70px;
             min-width: 70px;

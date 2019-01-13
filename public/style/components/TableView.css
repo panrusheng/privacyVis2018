@@ -3,8 +3,19 @@
   height: 100%;
   padding: 10px;
   overflow: hidden; }
+  .table-view .view-title {
+    font-size: 24px;
+    text-align: left;
+    padding-bottom: 10px; }
+  .table-view .operation {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 8px;
+    margin-bottom: 10px; }
+    .table-view .operation label {
+      margin-right: 5px; }
   .table-view .table {
-    height: calc(100% - 100px); }
+    height: calc(100% - 150px); }
     .table-view .table .table-side-head {
       max-width: 70px;
       min-width: 70px; }

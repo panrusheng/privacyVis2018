@@ -12,27 +12,25 @@
 
   > .row {
     height: 100%;
-  }
 
-  .col {
-    display: flex;
-    flex-direction: column;
-    & > div {
+    .col {
+      display: flex;
+      flex-direction: column;
       flex: 1;
+      flex-shrink: 0;
+      & > div {
+        flex: 1;
+      }
+
+      max-height: 1020px;
+      overflow: hidden;
+
+      &:first-child {
+        border-right: 1px solid #ececec;
+      }
     }
 
-    max-height: 1020px;
-    overflow: hidden;
   }
-  .col:first-child {
-    width: 540px;
-    flex-shrink: 0;
-  }
-
-  .col:last-child {
-    flex: 2;
-  }
-
   .pipeline-btn-group {
     display: flex;
     .pipeline-button {

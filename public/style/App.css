@@ -8,18 +8,17 @@
     display: flex; }
   .app > .row {
     height: 100%; }
-  .app .col {
-    display: flex;
-    flex-direction: column;
-    max-height: 1020px;
-    overflow: hidden; }
-    .app .col > div {
-      flex: 1; }
-  .app .col:first-child {
-    width: 540px;
-    flex-shrink: 0; }
-  .app .col:last-child {
-    flex: 2; }
+    .app > .row .col {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      flex-shrink: 0;
+      max-height: 1020px;
+      overflow: hidden; }
+      .app > .row .col > div {
+        flex: 1; }
+      .app > .row .col:first-child {
+        border-right: 1px solid #ececec; }
   .app .pipeline-btn-group {
     display: flex; }
     .app .pipeline-btn-group .pipeline-button {

@@ -1,7 +1,7 @@
 import {
   observable,
   action,
-  toJS
+  toJS,
 } from 'mobx';
 import Numerical from '../components/AttrInit/Numerical.js';
 import Categorical from '../components/AttrInit/Categorical.js';
@@ -9,10 +9,10 @@ import axios from '../utils/axios.js';
 
 class AppStore {
   @observable
-  currentDataSet = undefined;
+  currentDataset = undefined;
 
   @observable
-  dataSets = [];
+  datasets = [];
 
   @observable
   attributeList = []; // attributes of the current data set
@@ -22,6 +22,9 @@ class AppStore {
 
   @observable
   systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
+
+  @observable
+  records = [];
 
   @observable
   GBN = {
@@ -306,17 +309,31 @@ class AppStore {
         dataset
       })
       .then(data => {
-        this.currentDataSet = dataset;
-        this.attributeList = data.attrList;
-        return data.attrList;
+        this.currentDataset = dataset;
+        
+        const attributeList = [];
+
+        for (let name in data.attrList) {
+          attributeList.push({
+            attrName: name,
+            ...data.attrList[name]
+          });
+        }
+
+        this.attributeList = attributeList;
+
+        return attributeList;
       });
   }
 
   @action
   getGBN() {
     axios.get('/get_gbn').then(data => {
+      // const eventNos = new Set(data.nodes.map(item => item.eventNo));
+      // data.links = data.links.filter(item => eventNos.has(item.source) && eventNos.has(item.target));
+      data.links.forEach(item => item.value = parseFloat(item.value));
+
       this.GBN = data;
-      console.log(this.GBN);
     });
   }
 
@@ -344,12 +361,29 @@ class AppStore {
         const attributes = data.attributes;
         if (attributes.length > 0) {
           const attr = attributes[0];
+          attr.attrName = attr.attributeName;
           if (attr.type === 'numerical') {
             attr.breakPoints = [];
+            // TEST: 
+            if (!attr.data) {
+              attr.data = [
+                {
+                  label: 0.3,
+                  value: 34,
+                },
+                {
+                  label: 0.4,
+                  value: 2,
+                },
+                {
+                  label: 0.9,
+                  value: 10,
+                }
+              ]
+            }
+
             attr.data.sort((a, b) => a.label - b.label);
-            console.log(attr.data);
           } else {
-            // categorical
             attr.groups = [];
             attr.data.forEach(d => {
               attr.groups.push({
@@ -504,6 +538,32 @@ class AppStore {
   @action
   //modify GBN interactively
   editGBN() {}
+
+  @action
+  setSystemStage(stage) {
+    this.systemStage = stage;
+  }
+
+  getAllRecords() {
+    const { currentDataset } = this;
+
+    axios.get('/', {
+      params: {
+        dataset: currentDataset,
+      }
+    }).then(data => {
+      const records = [];
+
+      data.forEach(item => {
+        delete item.page;
+        delete item.row;
+
+        records.push(item);
+      });
+
+      this.records = records;
+    })
+  }
 }
 
 export default AppStore;
