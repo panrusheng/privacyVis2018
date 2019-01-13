@@ -57,6 +57,18 @@ export default class AttrNetwork extends Component {
       .attr('width', ww)
       .attr('height', hh);
     g.selectAll('.n2d').remove();
+    d3.selectAll('.edgeDetail').remove();
+    g.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('class', 'n2d')
+      .attr('width', ww)
+      .attr('height', hh)
+      .style('opacity', 0)
+      .on('click', () => {
+        d3.selectAll('.edgeDetail').remove();
+        d3.selectAll('.context-menu').remove();
+      });
     let defs = g.append('defs').attr('class', 'n2d');
 
     defs
@@ -142,7 +154,8 @@ export default class AttrNetwork extends Component {
           .attr('y', r + 3)
           .attr('width', 2 * w)
           .attr('height', l - 2 * r - 6)
-          .style('fill', '#fff');
+          .style('fill', '#fff')
+          .style('opacity', 0.9);
         edgeDetail
           .append('rect')
           .attr('x', -w)
@@ -259,7 +272,7 @@ export default class AttrNetwork extends Component {
       .on('contextmenu', d => {
         if (merge) return;
         d3.event.preventDefault();
-        const x = d3.event.x - 10,
+        const x = d3.event.x - 10-870,
           y = d3.event.y - 155,
           height = 30 * 5,
           width = 115;
@@ -300,6 +313,7 @@ export default class AttrNetwork extends Component {
           .data([1, 2, 3, 4])
           .enter()
           .append('line')
+          .attr('class', 'context-menu')
           .attr('x1', x + 5)
           .attr('x2', x + width - 5)
           .attr('y1', d => y - 5 + height / 5 * d)
@@ -351,7 +365,7 @@ export default class AttrNetwork extends Component {
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
           .attr('class', 'context-menu')
-          .text(dd => dd)
+          .text(dd => dd.toFixed(2))
           .on('click', function (dd, ii) {
             let p = this.parentNode;
             let el = d3.select(this);
@@ -367,7 +381,7 @@ export default class AttrNetwork extends Component {
               .attr('class', 'inputSVG')
               .attr('value', function () {
                 this.focus();
-                return dd;
+                return dd.toFixed(2);
               })
               .attr('style', 'width: 33px; height: 30px;')
               .on('blur', function () {
@@ -489,6 +503,7 @@ export default class AttrNetwork extends Component {
           .data([1, 2, 3, 4])
           .enter()
           .append('line')
+          .attr('class', 'context-menu')
           .attr('x1', x + 5)
           .attr('x2', x + width - 5)
           .attr('y1', d => y - 5 + height / 5 * d)
@@ -540,7 +555,7 @@ export default class AttrNetwork extends Component {
           .attr('y', (dd, ii) => y + 16 + ii * height / 5)
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
-          .text(dd => dd)
+          .text(dd => dd.toFixed(2))
           .on('click', function (dd, ii) {
             let p = this.parentNode;
             let el = d3.select(this);
@@ -556,7 +571,7 @@ export default class AttrNetwork extends Component {
               .attr('class', 'inputSVG')
               .attr('value', function () {
                 this.focus();
-                return dd;
+                return dd.toFixed(2);
               })
               .attr('style', 'width: 33px; height: 30px;')
               .on('blur', function () {

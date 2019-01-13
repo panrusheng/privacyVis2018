@@ -142,7 +142,7 @@ export default class Attribute extends React.Component {
     let data = toJS(this.props.store.GBN); // deep copy
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);
-    canvas = { ww: 520, hh: 460 };
+    canvas = { ww: 900, hh: 900 };
     if (this.state.mergeAttribute) {
       data = this.mergeGraph(data.nodes, data.links);
     }

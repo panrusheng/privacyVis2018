@@ -21,7 +21,8 @@
         flex-shrink: 0;
         margin-right: 10px; }
       .attribute-view .attr-operations .operation .ant-slider {
-        flex: 1; }
+        flex: 1;
+        margin-right: 250px; }
       .attribute-view .attr-operations .operation:last-child {
         margin-right: 0; }
       .attribute-view .attr-operations .operation:first-child {
