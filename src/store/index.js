@@ -556,7 +556,7 @@ class AppStore {
 
       data.forEach(item => {
         delete item.page;
-        delete item.row;
+        delete item.rows;
 
         records.push(item);
       });

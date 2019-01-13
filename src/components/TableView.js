@@ -85,7 +85,7 @@ export default class TableView extends React.Component {
     const data = [];
 
     if (records.length >= 0) {
-      for (let attrName in records[0]) columns.push(attrName);
+      for (let attrName in records[0]) if (attrName !== 'id') columns.push(attrName);
       for (let rec of records) {
         let item = {};
         item.id = rec.id;
@@ -97,7 +97,6 @@ export default class TableView extends React.Component {
           val.value = rec[attr];
           item.values.push(val);
         }
-        
         data.push(item);
       }
     }
@@ -106,7 +105,11 @@ export default class TableView extends React.Component {
 
     if (orderCol !== undefined) {
       data.sort((a, b) => {
-        return (a.values[orderCol].value - b.values[orderCol].value) * order;
+        const valA = a.values[orderCol].value;
+        const valB = b.values[orderCol].value;
+        if (valA > valB) return order * 1;
+        else if (valA < valB) return order * -1;
+        return 0;
       });
     }
 
