@@ -1,6 +1,7 @@
 import React from 'react';
 import Attribute from './components/Attribute';
 import TableView from './components/TableView.js';
+import RecView from './components/RecView';
 import './App.scss';
 import { inject, observer } from 'mobx-react';
 import AttrInitialize from './components/AttrInit/AttrInitialize.js';
@@ -50,7 +51,7 @@ class App extends React.Component {
           </div>
           <div className="col">
             { systemStage === 0 && <Attribute />}
-            {/* <TableView /> */}
+            { systemStage === 1 && <RecView />}
           </div>
         </div>
       </div>

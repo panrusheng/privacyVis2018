@@ -31,271 +31,12 @@ class AppStore {
     nodes: [],
     links: []
   };
-  // GBN = {
-  //   nodes: [{
-  //       id: 'Myriel',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Napoleon',
-  //       attrName: 3,
-  //       value: 0.9
-  //     },
-  //     {
-  //       id: 'Mlle',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Mme',
-  //       attrName: 3,
-  //       value: 0.9
-  //     },
-  //     {
-  //       id: 'CountessdeLo',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Geborand',
-  //       attrName: 2,
-  //       value: 0.5
-  //     },
-  //     {
-  //       id: 'Champtercier',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Chaptercier',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Champtrcier',
-  //       attrName: 3,
-  //       value: 0.9
-  //     },
-  //     {
-  //       id: 'Cmptercier',
-  //       attrName: 2,
-  //       value: 0.5
-  //     },
-  //     {
-  //       id: 'Chaptercier',
-  //       attrName: 3,
-  //       value: 0.9
-  //     },
-  //     {
-  //       id: 'Champtier',
-  //       attrName: 1,
-  //       value: -1
-  //     },
-  //     {
-  //       id: 'Champteer',
-  //       attrName: 2,
-  //       value: 0.5
-  //     },
-  //     {
-  //       id: 'Champier',
-  //       attrName: 2,
-  //       value: 0.5
-  //     },
-  //     {
-  //       id: 'mptercier',
-  //       attrName: 1,
-  //       value: -1
-  //     }
-  //   ],
-  //   links: [{
-  //       source: 0,
-  //       target: 1,
-  //       value: 0.2,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 2,
-  //       target: 6,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 3,
-  //       target: 4,
-  //       value: 0.7,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 1,
-  //       target: 3,
-  //       value: 0.4,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 5,
-  //       target: 6,
-  //       value: 0.4,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 1,
-  //       target: 5,
-  //       value: 0.6,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 2,
-  //       target: 3,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 3,
-  //       target: 0,
-  //       value: 0.6,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 1,
-  //       target: 4,
-  //       value: 0.5,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 5,
-  //       target: 3,
-  //       value: 0.3,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 0,
-  //       target: 5,
-  //       value: 0.4,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 7,
-  //       target: 5,
-  //       value: 0.4,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 2,
-  //       target: 8,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 11,
-  //       target: 5,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 7,
-  //       target: 3,
-  //       value: 0.3,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 9,
-  //       target: 2,
-  //       value: 0.7,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 2,
-  //       target: 10,
-  //       value: 0.5,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 12,
-  //       target: 6,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 14,
-  //       target: 13,
-  //       value: 0.2,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 10,
-  //       target: 8,
-  //       value: 0.9,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 10,
-  //       target: 2,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 11,
-  //       target: 3,
-  //       value: 0.3,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 12,
-  //       target: 8,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 4,
-  //       target: 7,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 13,
-  //       target: 5,
-  //       value: 0.4,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 14,
-  //       target: 3,
-  //       value: 0.9,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 5,
-  //       target: 9,
-  //       value: 0.2,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 9,
-  //       target: 8,
-  //       value: 0.5,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 3,
-  //       target: 10,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 1,
-  //       target: 12,
-  //       value: 0.3,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     },
-  //     {
-  //       source: 11,
-  //       target: 14,
-  //       value: 0.8,
-  //       cpt: [0.1, 0.3, 0.5, 0.7],
-  //     }
-  //   ]
-  // };
+  @observable
+  recList = [[{nodes:[], links:[]}, {nodes:[], links:[]}, {nodes:[], links:[]}],[{nodes:[], links:[]}, {nodes:[], links:[]}, {nodes:[], links:[]}]];
+  @observable
+  recSelctedList = [[1, 0, 0]];
+  @observable
+  recGroup = [];
 
   @action
   getDataSetList() {
@@ -563,6 +304,25 @@ class AppStore {
 
       this.records = records;
     })
+  }
+
+  @action
+  getRecList() {
+    const {GBN} = this;
+    axios.get('/', {
+      params: {
+        currentGBN: GBN,
+      }
+    }).then(data => {
+      this.recList = data.rec;
+      this.recSelctedList = datarec.map(d=>[1, 0, 0]);
+      this.recGroup = data.group;
+    })
+  }
+
+  @action
+  editRecList() {
+
   }
 }
 
