@@ -69,10 +69,10 @@ export default class Attribute extends React.Component {
 
     for (
       var i = 0,
-        iter = Math.ceil(
-          Math.log(simulation.alphaMin()) /
-            Math.log(1 - simulation.alphaDecay())
-        );
+      iter = Math.ceil(
+        Math.log(simulation.alphaMin()) /
+        Math.log(1 - simulation.alphaDecay())
+      );
       i < iter;
       ++i
     ) {

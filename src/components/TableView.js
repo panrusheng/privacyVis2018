@@ -100,7 +100,7 @@ export default class TableView extends React.Component {
         data.push(item);
       }
     }
-    
+
     const { orderCol, order } = this.state;
 
     if (orderCol !== undefined) {
@@ -139,7 +139,7 @@ export default class TableView extends React.Component {
             <div
               className="table-head-scrollable"
               ref={dom => (this.scrollableTopHeader = dom)}
-              style={{ display: 'flex'}}
+              style={{ display: 'flex' }}
             >
               {columns.map((name, index) => (
                 <div

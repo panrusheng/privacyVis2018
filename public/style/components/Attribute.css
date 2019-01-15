@@ -1,7 +1,5 @@
 .attribute-view {
-  padding: 10px;
-  border-right: 1px solid rgba(138, 138, 138, 0.5);
-  border-bottom: 1px solid rgba(138, 138, 138, 0.5); }
+  padding: 10px; }
   .attribute-view .title {
     font-size: 24px;
     text-align: left;

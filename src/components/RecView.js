@@ -39,8 +39,8 @@ export default class TableView extends React.Component {
       .style('stroke', '#ccc')
       .style('stroke-width', 6);
     g1.append('text')
-      .attr('transform', 'rotate(90) translate(350, -35)')
-      .style('text-align', 'center')
+      .attr('transform', 'rotate(90) translate(400, -35)')
+      .style('text-anchor', 'middle')
       .style('fill', '#999')
       .text('Occurrence');
     let g2 = d3.select('#rec-arrow-col').append('g');
@@ -67,7 +67,7 @@ export default class TableView extends React.Component {
       .style('stroke-width', 6);
     g2.append('text')
       .attr('transform', 'translate(550, 40)')
-      .style('text-align', 'center')
+      .style('text-anchor', 'middle')
       .style('fill', '#999')
       .text('Utility loss');
   }
@@ -78,16 +78,54 @@ export default class TableView extends React.Component {
   componentWillUnmount() {
   }
 
-  extractInfer(recList) {
+  forceDirected(n, l) {
+    const links = l;
+    const nodes = n;
+    var simulation = d3
+      .forceSimulation(nodes)
+      .force('charge', d3.forceManyBody().strength(-50))
+      .force(
+        'link',
+        d3
+          .forceLink(links)
+          .distance(10)
+          .strength(1)
+          .iterations(1)
+      )
+      .force('x', d3.forceX())
+      .force('y', d3.forceY())
+      .stop();
+
+    for (
+      var i = 0,
+      iter = Math.ceil(
+        Math.log(simulation.alphaMin()) /
+        Math.log(1 - simulation.alphaDecay())
+      );
+      i < iter;
+      ++i
+    ) {
+      simulation.tick();
+    }
+
+    return { nodes: nodes, links: links };
+  }
+
+  setPosition(groupList) {
     let data = [];
+    for (let i = 0; i < groupList.length; i++) {
+      let e = this.forceDirected(groupList[i].nodes, groupList[i].links);
+      e.num = groupList[i].num;
+      data.push(e);
+    }
     return data;
   }
 
   render() {
     const { recList, recSelectedList } = this.props.store;
     const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
-    const recData = this.extractInfer(recList);
-    const ww = 180, hh = 100;
+    const recData = this.setPosition(recList.group);
+    const ww = 220, hh = 200;
 
     return (
       <div className="rec-view">
@@ -106,13 +144,12 @@ export default class TableView extends React.Component {
                     {recData.map((d, i) => (
                       <tr key={"rec-tr" + i}>
                         <td>
-                          <svg width={ww} height={hh}>
-                          </svg>
+                          <SubInfer data={d} del={[]} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i}/>
                         </td>
-                        {d.map((dd, ii) => (
+                        {recList.rec[i].map((dd, ii) => (
                           <td>
                             <svg key={"rec-graph" + i + "-" + ii} width={ww} height={hh}>
-                              <SubInfer data={dd} />
+                              <SubInfer data={d} del={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii}/>
                             </svg>
                           </td>
                         ))}

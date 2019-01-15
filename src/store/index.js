@@ -21,7 +21,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = 1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   records = [];
@@ -32,7 +32,7 @@ class AppStore {
     links: []
   };
   @observable
-  recList = [[{nodes:[], links:[]}, {nodes:[], links:[]}, {nodes:[], links:[]}],[{nodes:[], links:[]}, {nodes:[], links:[]}, {nodes:[], links:[]}]];
+  recList = { group: [], rec: [] };
   @observable
   recSelctedList = [[1, 0, 0]];
   @observable
@@ -51,7 +51,7 @@ class AppStore {
       })
       .then(data => {
         this.currentDataset = dataset;
-        
+
         const attributeList = [];
 
         for (let name in data.attrList) {
@@ -274,11 +274,11 @@ class AppStore {
 
   @action
   //request new GBN after re-defining events
-  updateGBN() {}
+  updateGBN() { }
 
   @action
   //modify GBN interactively
-  editGBN() {}
+  editGBN() { }
 
   @action
   setSystemStage(stage) {
@@ -308,14 +308,14 @@ class AppStore {
 
   @action
   getRecList() {
-    const {GBN} = this;
+    const { GBN } = this;
     axios.get('/', {
       params: {
         currentGBN: GBN,
       }
     }).then(data => {
       this.recList = data.rec;
-      this.recSelctedList = data.rec.map(d=>[1, 0, 0]);
+      this.recSelctedList = data.rec.map(d => [1, 0, 0]);
       this.recGroup = data.group;
     })
   }

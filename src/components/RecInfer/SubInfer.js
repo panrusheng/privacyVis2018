@@ -24,18 +24,19 @@ export default class RecView extends Component {
   renderGraph(gDOM) {
     const that = this;
     let {
-      canvas,
-      data
+      del,
+      rec,
+      ww,
+      hh,
+      data,
+      name
     } = this.props;
     if (data.nodes.length === 0) return;
-    let margin = 50;
-    let {
-      ww,
-      hh
-    } = canvas;
+    let margin = 10;
     let {
       nodes,
-      links
+      links,
+      num
     } = data;
     let r = 4;
     const ScaleX = d3
@@ -46,20 +47,25 @@ export default class RecView extends Component {
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + margin, hh - margin]);
+    let delList = [];
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
+      if (ifaInb(nodes[i], del)) {
+        nodes[i].del = true;
+        delList.push(nodes[i])
+      }
+      else nodes[i].del = false;
     }
     const g = d3
       .select(gDOM)
       .attr('width', ww)
       .attr('height', hh);
-    
-    let defs = g.append('defs').attr('class', 'n2d');
 
-    defs
-      .append('marker')
-      .attr('id', 'arrow')
+    let defs = g.append('defs').attr('class', name);
+
+    defs.append('marker')
+      .attr('id', 'arrow' + name)
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 13)
       .attr('refY', 0)
@@ -70,9 +76,8 @@ export default class RecView extends Component {
       .attr('d', 'M0,-4L10,0L0,4L3,0')
       .style('fill', '#999');
 
-    const link = g
-      .append('g')
-      .attr('class', 'n2d')
+    g.append('g')
+      .attr('class', name)
       .selectAll('line')
       .data(links)
       .enter()
@@ -82,41 +87,87 @@ export default class RecView extends Component {
       .attr('y1', d => nodes[d.source.index].y)
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
-      .attr('marker-end', 'url(#arrow)')
+      .attr('marker-end', 'url(#arrow' + name + ')')
       .style('stroke', '#999')
       .style('stroke-width', 2)
       .style('cursor', 'pointer');
 
-    const node = g
-      .append('g')
-      .attr('class', 'n2d')
+    g.append('g')
+      .attr('class', name)
       .selectAll('circle')
       .data(nodes)
       .enter()
       .append('circle')
       .attr('r', r)
-      .style('stroke', d => (d.value < 0 ? '#efaf4f' : '#4fafef'))
-      .style('stroke-width', 3)
+      .style('stroke', d => {
+        if (d.del) return "#ccc";
+        return d.value < 0 ? '#efaf4f' : '#4fafef'
+      })
+      .style('stroke-width', d => d.del ? 2 : 3)
+      .style('stroke-dasharray', d => d.del ? "2 1" : "1 0")
       .style('fill', '#fff')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y);
 
+    g.append('g')
+      .attr('class', name)
+      .selectAll('text')
+      .data(delList)
+      .enter()
+      .append('text')
+      .attr('x', d => d.x - 3)
+      .attr('y', d => d.y + 5)
+      .text('?')
+      .style('fill', '#ccc');
+
+    g.append('text')
+      .attr('x', 5)
+      .attr('y', hh - 5)
+      .text('Amount:' + num)
+      .style('fill', '#a0a0a0');
+      
+    g.append('rect')
+      .attr('x', 2)
+      .attr('y', 2)
+      .attr('width', ww - 4)
+      .attr('height', hh - 4)
+      .style('stroke', rec > 0 ? '#333' : 'none')
+      .style('stroke-width', 3)
+      .style('fill', '#000')
+      .style('fill-opacity', 0)
+      .on('click', () => {
+        //change selection
+      });
+
+    if (rec > 0) {
+      g.append('text')
+        .attr('x', ww - 5)
+        .attr('y', 5)
+        .text('Picked for ' + rec)
+        .style('fill', '#333');
+    }
+    const ifaInb = (a, b) => {
+      for (let i = 0; i < b.length; i++) {
+        if (a === b[i]) return true;
+      }
+      return false;
+    }
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.width
       }
-      height = {
+      height={
         this.props.height
       }
-      />
+    />
     );
   }
 }
