@@ -1,6 +1,7 @@
 .rec-view {
     max-height: 100%;
     height: 100%;
+    width: 100%;
     padding: 10px;
     overflow: hidden;
 
@@ -15,10 +16,26 @@
         justify-content: flex-end;
         margin-right: 8px;
         margin-bottom: 10px;
+        flex-direction: column;
 
         label {
             margin-right: 5px;
         }
+    }
+    .rec-title {
+        display: flex;
+    }
+    .rec-main {
+        display: flex;
+        flex-direction: row;
+        height: 800px;
+    }
+    .rec-scorll {
+        position: relative;
+        max-height: 800px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 880px;
     }
     .rec-th{
         font-size: 20px;

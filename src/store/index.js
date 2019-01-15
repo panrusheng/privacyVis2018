@@ -315,7 +315,7 @@ class AppStore {
       }
     }).then(data => {
       this.recList = data.rec;
-      this.recSelctedList = datarec.map(d=>[1, 0, 0]);
+      this.recSelctedList = data.rec.map(d=>[1, 0, 0]);
       this.recGroup = data.group;
     })
   }
