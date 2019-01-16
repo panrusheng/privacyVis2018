@@ -7,7 +7,7 @@ import { toJS } from 'mobx';
 
 @inject(['store'])
 @observer
-export default class TableView extends React.Component {
+export default class RecView extends React.Component {
   state = {
 
   };
@@ -81,7 +81,7 @@ export default class TableView extends React.Component {
   forceDirected(n, l) {
     const links = l;
     const nodes = n;
-    var simulation = d3
+    let simulation = d3
       .forceSimulation(nodes)
       .force('charge', d3.forceManyBody().strength(-50))
       .force(
@@ -97,7 +97,7 @@ export default class TableView extends React.Component {
       .stop();
 
     for (
-      var i = 0,
+      let i = 0,
       iter = Math.ceil(
         Math.log(simulation.alphaMin()) /
         Math.log(1 - simulation.alphaDecay())
@@ -122,10 +122,10 @@ export default class TableView extends React.Component {
   }
 
   render() {
-    const { recList, recSelectedList } = this.props.store;
+    const { recList, recSelectedList } = toJS(this.props.store);
     const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
     const recData = this.setPosition(recList.group);
-    const ww = 220, hh = 200;
+    const ww = 218, hh = 198;
 
     return (
       <div className="rec-view">
@@ -142,14 +142,16 @@ export default class TableView extends React.Component {
                 <table className="rec-table">
                   <tbody>
                     {recData.map((d, i) => (
-                      <tr key={"rec-tr" + i}>
-                        <td>
-                          <SubInfer data={d} del={[]} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i}/>
+                      <tr className="rec-tr" key={"rec-tr" + i}>
+                        <td className="rec-td">
+                          <svg width={ww} height={hh}>
+                            <SubInfer data={d} del={[]} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i} />
+                          </svg>
                         </td>
                         {recList.rec[i].map((dd, ii) => (
-                          <td>
+                          <td className="rec-td">
                             <svg key={"rec-graph" + i + "-" + ii} width={ww} height={hh}>
-                              <SubInfer data={d} del={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii}/>
+                              <SubInfer data={d} del={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii} />
                             </svg>
                           </td>
                         ))}

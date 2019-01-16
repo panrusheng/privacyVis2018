@@ -32,7 +32,7 @@ export default class RecView extends Component {
       name
     } = this.props;
     if (data.nodes.length === 0) return;
-    let margin = 10;
+    let margin = 20;
     let {
       nodes,
       links,
@@ -48,6 +48,13 @@ export default class RecView extends Component {
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + margin, hh - margin]);
     let delList = [];
+
+    function ifaInb(a, b) {
+      for (let i = 0; i < b.length; i++) {
+        if (a === b[i]) return true;
+      }
+      return false;
+    }
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
@@ -61,6 +68,8 @@ export default class RecView extends Component {
       .select(gDOM)
       .attr('width', ww)
       .attr('height', hh);
+
+    g.selectAll("." + name).remove();
 
     let defs = g.append('defs').attr('class', name);
 
@@ -121,12 +130,14 @@ export default class RecView extends Component {
       .style('fill', '#ccc');
 
     g.append('text')
+      .attr('class', name)
       .attr('x', 5)
-      .attr('y', hh - 5)
+      .attr('y', hh - 7)
       .text('Amount:' + num)
       .style('fill', '#a0a0a0');
-      
+
     g.append('rect')
+      .attr('class', name)
       .attr('x', 2)
       .attr('y', 2)
       .attr('width', ww - 4)
@@ -141,16 +152,12 @@ export default class RecView extends Component {
 
     if (rec > 0) {
       g.append('text')
+        .attr('class', name)
         .attr('x', ww - 5)
-        .attr('y', 5)
+        .attr('y', 18)
+        .style('text-anchor', 'end')
         .text('Picked for ' + rec)
         .style('fill', '#333');
-    }
-    const ifaInb = (a, b) => {
-      for (let i = 0; i < b.length; i++) {
-        if (a === b[i]) return true;
-      }
-      return false;
     }
   }
 
@@ -162,10 +169,10 @@ export default class RecView extends Component {
         }
       }
       width={
-        this.props.width
+        this.props.ww
       }
       height={
-        this.props.height
+        this.props.hh
       }
     />
     );

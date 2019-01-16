@@ -21,7 +21,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = 1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   records = [];
@@ -32,11 +32,41 @@ class AppStore {
     links: []
   };
   @observable
-  recList = { group: [], rec: [] };
+  recList = {
+    group: [{
+      nodes: [
+        { id: "123", value: -1 }, { id: "223", value: 0.5 }, { id: "323", value: 0.3 }, { id: "423", value: 0.6 }, { id: "523", value: 0.4 }, { id: "623", value: 0.8 }, { id: "723", value: 0.2 }, { id: "823", value: 0.7 },
+      ], links: [
+        { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
+      ], num: 10
+    }, {
+      nodes: [
+        { id: "123", value: -1 }, { id: "223", value: 0.5 }, { id: "323", value: 0.3 }, { id: "423", value: 0.6 }, { id: "523", value: 0.4 }, { id: "623", value: 0.8 }, { id: "723", value: 0.2 }, { id: "823", value: 0.7 },
+      ], links: [
+        { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
+      ], num: 10
+    }, {
+      nodes: [
+        { id: "123", value: -1 }, { id: "223", value: 0.5 }, { id: "323", value: 0.3 }, { id: "423", value: 0.6 }, { id: "523", value: 0.4 }, { id: "623", value: 0.8 }, { id: "723", value: 0.2 }, { id: "823", value: 0.7 },
+      ], links: [
+        { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
+      ], num: 10
+    }, {
+      nodes: [
+        { id: "123", value: -1 }, { id: "223", value: 0.5 }, { id: "323", value: 0.3 }, { id: "423", value: 0.6 }, { id: "523", value: 0.4 }, { id: "623", value: 0.8 }, { id: "723", value: 0.2 }, { id: "823", value: 0.7 },
+      ], links: [
+        { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
+      ], num: 10
+    }, {
+      nodes: [
+        { id: "123", value: -1 }, { id: "223", value: 0.5 }, { id: "323", value: 0.3 }, { id: "423", value: 0.6 }, { id: "523", value: 0.4 }, { id: "623", value: 0.8 }, { id: "723", value: 0.2 }, { id: "823", value: 0.7 },
+      ], links: [
+        { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
+      ], num: 10
+    }], rec: [[[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]]]
+  };
   @observable
-  recSelctedList = [[1, 0, 0]];
-  @observable
-  recGroup = [];
+  recSelectedList = [[1, 0, 0], [0.5, 0.5, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]];
 
   @action
   getDataSetList() {
@@ -314,9 +344,8 @@ class AppStore {
         currentGBN: GBN,
       }
     }).then(data => {
-      this.recList = data.rec;
+      this.recList = data;
       this.recSelctedList = data.rec.map(d => [1, 0, 0]);
-      this.recGroup = data.group;
     })
   }
 

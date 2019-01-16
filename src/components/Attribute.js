@@ -52,7 +52,7 @@ export default class Attribute extends React.Component {
     // let nodes = n.map(function (i) { return { id: i.eventName, group: i.attrName }; });
     const links = l;
     const nodes = n;
-    var simulation = d3
+    let simulation = d3
       .forceSimulation(nodes)
       .force('charge', d3.forceManyBody().strength(-50))
       .force(
@@ -68,7 +68,7 @@ export default class Attribute extends React.Component {
       .stop();
 
     for (
-      var i = 0,
+      let i = 0,
       iter = Math.ceil(
         Math.log(simulation.alphaMin()) /
         Math.log(1 - simulation.alphaDecay())
@@ -125,16 +125,6 @@ export default class Attribute extends React.Component {
       attrL[i].child = linkDic[label].child;
     }
     return { nodes: attrN, links: attrL };
-  }
-
-  copy(o) {
-    var output, v, key;
-    output = Array.isArray(o) ? [] : {};
-    for (key in o) {
-      v = o[key];
-      output[key] = typeof v === 'object' ? this.copy(v) : v;
-    }
-    return output;
   }
 
   render() {

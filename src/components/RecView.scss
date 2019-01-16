@@ -49,13 +49,14 @@
         padding-top:5px;
         font-size: 18px;
     }
-    .rec-table {
-        
-        tr td{
-            height: 100px;
-            width: 200px;
-            border-bottom: 1px solid dashed #999;
-            border-right: 1px solid dashed #999;
-        }
+    .rec-tr{
+        height: 198px;
+        padding: 0;
+    }
+    .rec-td{
+        width: 218px;
+        border-right: 1px solid #ececec;
+        border-bottom: 1px solid #ececec;
+        padding: 0;  
     }
 }
