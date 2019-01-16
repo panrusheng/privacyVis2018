@@ -145,13 +145,13 @@ export default class RecView extends React.Component {
                       <tr className="rec-tr" key={"rec-tr" + i}>
                         <td className="rec-td">
                           <svg width={ww} height={hh}>
-                            <SubInfer data={d} del={[]} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i} />
+                            <SubInfer data={d} sch={{dL:[]}} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i} />
                           </svg>
                         </td>
                         {recList.rec[i].map((dd, ii) => (
-                          <td className="rec-td">
-                            <svg key={"rec-graph" + i + "-" + ii} width={ww} height={hh}>
-                              <SubInfer data={d} del={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii} />
+                          <td className="rec-td" key={"rec-graph" + i + "-" + ii}>
+                            <svg width={ww} height={hh}>
+                              <SubInfer data={d} sch={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii} />
                             </svg>
                           </td>
                         ))}

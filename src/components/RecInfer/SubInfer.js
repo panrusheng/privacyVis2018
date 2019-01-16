@@ -23,8 +23,8 @@ export default class RecView extends Component {
 
   renderGraph(gDOM) {
     const that = this;
-    let {
-      del,
+    const {
+      sch,
       rec,
       ww,
       hh,
@@ -32,13 +32,14 @@ export default class RecView extends Component {
       name
     } = this.props;
     if (data.nodes.length === 0) return;
-    let margin = 20;
-    let {
+    const margin = 20;
+    const {
       nodes,
       links,
       num
     } = data;
-    let r = 4;
+    const del = sch.dL;
+    const r = 4;
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
@@ -49,21 +50,17 @@ export default class RecView extends Component {
       .range([0 + margin, hh - margin]);
     let delList = [];
 
-    function ifaInb(a, b) {
-      for (let i = 0; i < b.length; i++) {
-        if (a === b[i]) return true;
-      }
-      return false;
-    }
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
-      if (ifaInb(nodes[i], del)) {
-        nodes[i].del = true;
-        delList.push(nodes[i])
-      }
-      else nodes[i].del = false;
+      nodes[i].del = false;
     }
+
+    for (let i = 0; i < del.length; i++) {
+      nodes[del[i]].del = true;
+      delList.push(nodes[del[i]]);
+    }
+
     const g = d3
       .select(gDOM)
       .attr('width', ww)
@@ -78,8 +75,8 @@ export default class RecView extends Component {
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 13)
       .attr('refY', 0)
-      .attr('markerWidth', 4)
-      .attr('markerHeight', 4)
+      .attr('markerWidth', 5)
+      .attr('markerHeight', 5)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-4L10,0L0,4L3,0')
@@ -107,13 +104,13 @@ export default class RecView extends Component {
       .data(nodes)
       .enter()
       .append('circle')
-      .attr('r', r)
+      .attr('r', d => d.del ? 8 : 4)
       .style('stroke', d => {
         if (d.del) return "#ccc";
         return d.value < 0 ? '#efaf4f' : '#4fafef'
       })
       .style('stroke-width', d => d.del ? 2 : 3)
-      .style('stroke-dasharray', d => d.del ? "2 1" : "1 0")
+      .style('stroke-dasharray', d => d.del ? "4 2" : "1 0")
       .style('fill', '#fff')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y);
@@ -124,17 +121,19 @@ export default class RecView extends Component {
       .data(delList)
       .enter()
       .append('text')
-      .attr('x', d => d.x - 3)
+      .attr('x', d => d.x - 4)
       .attr('y', d => d.y + 5)
       .text('?')
-      .style('fill', '#ccc');
-
-    g.append('text')
-      .attr('class', name)
-      .attr('x', 5)
-      .attr('y', hh - 7)
-      .text('Amount:' + num)
-      .style('fill', '#a0a0a0');
+      .style('fill', '#ccc')
+      .style('font-family', 'Arial')
+      .style('font-weight', 600);
+    if (del.length === 0)
+      g.append('text')
+        .attr('class', name)
+        .attr('x', 5)
+        .attr('y', hh - 7)
+        .text('Amount:' + num)
+        .style('fill', '#333');
 
     g.append('rect')
       .attr('class', name)
@@ -156,7 +155,7 @@ export default class RecView extends Component {
         .attr('x', ww - 5)
         .attr('y', 18)
         .style('text-anchor', 'end')
-        .text('Picked for ' + rec)
+        .text('Picked for ' + rec * 100 + '\%')
         .style('fill', '#333');
     }
   }

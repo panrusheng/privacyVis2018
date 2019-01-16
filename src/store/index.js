@@ -63,7 +63,7 @@ class AppStore {
       ], links: [
         { source: 1, target: 0, value: 0.5 }, { source: 2, target: 0, value: 0.5 }, { source: 3, target: 1, value: 0.5 }, { source: 3, target: 2, value: 0.5 }, { source: 4, target: 2, value: 0.5 }, { source: 5, target: 0, value: 0.5 }, { source: 0, target: 6, value: 0.5 }, { source: 0, target: 7, value: 0.5 }, { source: 5, target: 3, value: 0.5 },
       ], num: 10
-    }], rec: [[[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]], [[2, 3], [4], [5, 2]]]
+    }], rec: [[{ dL: [2, 3], uL: 3 }, { dL: [4], uL: 5 }, { dL: [5, 2], uL: 7 }], [{ dL: [2, 3], uL: 3 }, { dL: [4], uL: 5 }, { dL: [5, 2], uL: 7 }], [{ dL: [2, 3], uL: 3 }, { dL: [4], uL: 5 }, { dL: [5, 2], uL: 7 }], [{ dL: [2, 3], uL: 3 }, { dL: [4], uL: 5 }, { dL: [5, 2], uL: 7 }], [{ dL: [2, 3], uL: 3 }, { dL: [4], uL: 5 }, { dL: [5, 2], uL: 7 }]]
   };
   @observable
   recSelectedList = [[1, 0, 0], [0.5, 0.5, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]];
