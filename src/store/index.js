@@ -156,6 +156,24 @@ class AppStore {
             attr.data.sort((a, b) => a.label - b.label);
           } else {
             attr.groups = [];
+
+            // TEST
+            if (!attr.data) {
+              attr.data = [{
+                category: 'Western', 
+                value: 21,
+              }, {
+                category: 'S.Eastern',
+                value: 12
+              }, {
+                category: 'N.Eastern',
+                value: 34
+              }, {
+                category: 'Belfast',
+                value: 4
+              }]
+            }
+
             attr.data.forEach(d => {
               attr.groups.push({
                 name: d.category,
@@ -263,9 +281,10 @@ class AppStore {
     const index = this.selectedAttributes.findIndex(
       item => item.attrName === attrName
     );
+
     if (index < 0) return;
     const attr = toJS(this.selectedAttributes[index]);
-    attr.breakPoints = [...attr.breakPoints, point];
+    attr.breakPoints = [...new Set([...attr.breakPoints, point])];
     this.selectedAttributes.splice(index, 1, attr);
   }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
 import './Numerical.scss';
-import normalize from '../../utils/normalize';
 
 export default class Numerical extends React.Component {
   static defaultProps = {
@@ -31,15 +30,14 @@ export default class Numerical extends React.Component {
   }
 
   draw(dom, attr, width, height, margin) {
-    const data = normalize(attr.data.map(item => item.value));
+    const data = attr.data.map(item => item.value);
     const labels = attr.data.map(item => item.label);
-    const breakPoints = attr.breakPoints;
-    // const breakPoints = [0.1, 0.3, 0.5, 0.9];
+    const breakPoints = attr.breakPoints; // break points range from 0 to 1
     dom.innerHTML = '';
 
     const xScale = d3
       .scaleLinear()
-      .domain([-1, 1])
+      .domain([-Math.max(...data), Math.max(...data)])
       .range([width, 0]);
 
     const yScale = d3
@@ -132,22 +130,16 @@ export default class Numerical extends React.Component {
 
     svg
       .append('g')
-      .selectAll('rect')
+      .selectAll('line')
       .data(breakPoints)
       .enter()
-      .append('rect')
-      .attr('fill', '#777C83')
-      .attr('rx', 2)
-      .attr('ry', 2)
-      .attr('x', () => {
-        return 0;
-      })
-      .attr('y', d => {
-        return d * ((height - 2) / height) * yScale(data.length - 1);
-      })
-      .attr('height', 4)
-      .attr('width', width)
-      .attr('stroke-width', 2)
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', width)
+      .attr('y1', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 2)
+      .attr('y2', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 2)
+      .style('stroke', '#999')
+      .style('stroke-dasharray', '2 1')
       .attr('class', 'breakpoint')
       .on('click', (d, i) => {
         d3.event.stopPropagation();
@@ -179,6 +171,21 @@ export default class Numerical extends React.Component {
             );
           })
       );
+    
+    const [labelMin, labelMax] = d3.extent(labels);
+    
+    svg
+      .append('g')
+      .selectAll('text')
+      .data(breakPoints)
+      .enter()
+      .append('text')
+      .attr('x', () => 0)
+      .attr('y', d => {
+        return d * ((height - 2) / height) * yScale(data.length - 1);
+      })
+      .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
+      .attr('fill', '#999');
   }
 
   handleChartClick(e) {
@@ -206,6 +213,8 @@ export default class Numerical extends React.Component {
         point = -1;
       }
     }
+
+    point = point.toFixed(2);
 
     if (point > 0 && point < 1) {
       this.props.addBreakPoint &&

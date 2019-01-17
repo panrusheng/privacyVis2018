@@ -1,3 +1,10 @@
+.attr-init-view {
+  padding: 10px; }
+  .attr-init-view .view-title {
+    font-size: 24px;
+    text-align: left;
+    padding-bottom: 10px; }
+
 .attr-init {
   display: flex;
   overflow-x: auto;

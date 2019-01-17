@@ -20,6 +20,7 @@ class App extends React.Component {
 
     // test
     this.props.store.addAttribute('wei');
+    this.props.store.addAttribute('res');
     this.props.store.getGBN();
     this.props.store.getAllRecords();
   }

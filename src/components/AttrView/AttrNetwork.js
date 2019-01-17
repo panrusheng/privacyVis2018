@@ -357,7 +357,7 @@ export default class AttrNetwork extends Component {
           .text('Submit');
         g
           .selectAll('input-title-text')
-          .data(d.cpt)
+          .data(d.cpt.map(n => parseFloat(n)))
           .enter()
           .append('text')
           .attr('x', x + 81)

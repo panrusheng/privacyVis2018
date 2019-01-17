@@ -190,7 +190,9 @@ export default class AttrInitialize extends React.Component {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
     return (
-      <div
+      <div className="attr-init-view">
+        <div className="view-title">Event Initialize</div>
+        <div
         className="attr-init"
         ref={dom => {
           if (dom) this.wrapper = dom;
@@ -254,6 +256,7 @@ export default class AttrInitialize extends React.Component {
         >
           <div />
         </ContextMenuTrigger>
+      </div>
       </div>
     );
   }
