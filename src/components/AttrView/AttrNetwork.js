@@ -39,7 +39,7 @@ export default class AttrNetwork extends Component {
       links
     } = data;
     const merge = 'child' in nodes[0];
-    let r = merge ? 10 : 5;
+    let r = merge ? 10 : 8;
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))

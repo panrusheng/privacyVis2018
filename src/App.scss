@@ -26,7 +26,7 @@
       overflow: hidden;
 
       &:first-child {
-        border-right: 1px solid #ececec;
+        border-right: 2px dotted rgba($color: #808080, $alpha: .5);
       }
     }
 
@@ -41,8 +41,8 @@
       align-items: center;
       justify-content: center; 
       padding-left: 28px;
-      background-color: white;
-      border-bottom: 1px solid rgba($color: #828282, $alpha: .5);
+      background-color: #ececec;
+      border-bottom: 2px solid rgba($color: #808080, $alpha: .5);
       font-size: 24px;
       cursor: pointer;
 
@@ -51,25 +51,25 @@
       }
 
       &.active {
-        background-color: #808080;
-        color: white;
+        background-color: #9a9a9a;
+        color: #ffffff;
         &::after {
-          background-color: #808080;
+          background-color: #9a9a9a;
         }
       }
 
       &.active:hover {
-        background-color: #808080;
-        color: white;
+        background-color: #9a9a9a;
+        color: #ffffff;
         &::after {
-          background-color: #808080;
+          background-color: #9a9a9a;
         }
       }
 
       &:hover {
-        background-color: #ececec;
+        background-color: #cccccc;
         &::after {
-          background-color: #ececec;
+          background-color: #cccccc;
         }
       }
 
@@ -78,14 +78,14 @@
         content: " ";
         // box-shadow: 0px -1px 1px #8a8a8a;
         display: block;
-        height: 41px;
-        width: 41px;
+        height: 42px;
+        width: 42px;
         position: absolute;
         transform: rotateZ(45deg);
         right: -21px;
-        border-right: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
-        border-top: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
-        background-color: white;
+        border-right: 2px solid rgba($color: #808080, $alpha: 0.5);
+        border-top: 2px solid rgba($color: #808080, $alpha: 0.5);
+        background-color: #ececec;
       }
 
       &:last-child {

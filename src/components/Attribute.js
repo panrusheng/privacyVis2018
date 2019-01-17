@@ -12,25 +12,7 @@ export default class Attribute extends React.Component {
   state = {
     mergeAttribute: false,
     filterValue: 0
-    // attributes: {
-    //   attr: [{ name: '??' }],
-    //   description: { name: { '??': '???' }, unit: { '??': '???' } }
-    // }
   };
-
-  // changeCho(name) {
-  //   if (d3.select('#lodused' + name).attr('class') == 'lodDisable') {
-  //     d3.select('#lodused' + name)
-  //       .attr('class', 'lodActive')
-  //       .attr('src', './image/check.svg');
-  //     this.props.store.addAttributes(name);
-  //   } else {
-  //     d3.select('#lodused' + name)
-  //       .attr('class', 'lodDisable')
-  //       .attr('src', './image/notcheck.svg');
-  //     this.props.store.removeAttributes(name);
-  //   }
-  // }
 
   handleTabChange(dataset, domID) {
     this.props.store.getAttrList(dataset).then(attributes => {
@@ -48,8 +30,6 @@ export default class Attribute extends React.Component {
       .attr('class', 'lodDisable');
   }
   forceDirected(n, l) {
-    // let links = l.map(function (i) { return { source: i.start, target: i.end, value: i.weight }; });
-    // let nodes = n.map(function (i) { return { id: i.eventName, group: i.attrName }; });
     const links = l;
     const nodes = n;
     let simulation = d3
@@ -139,7 +119,7 @@ export default class Attribute extends React.Component {
     let layout = this.forceDirected(data.nodes, data.links);
     return (
       <div className="attribute-view">
-        <div className="title">Inference View</div>
+        <div className="title">Inference Simulation View</div>
         <div className="attr-operations">
           <div className="operation">
             <span className="label">Correlation filter:</span>
@@ -150,9 +130,10 @@ export default class Attribute extends React.Component {
               onChange={value => this.setState({ filterValue: value })}
               value={this.state.filterValue}
             />
+            <span style = {{marginRight: 250}}>1</span>
           </div>
           <div className="operation r5">
-            <span className="label">Merge attribute:</span>
+            <span className="label">Merge by attributes:</span>
             <Switch
               checked={this.state.mergeAttribute}
               onChange={value => this.setState({ mergeAttribute: value })}

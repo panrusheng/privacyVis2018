@@ -18,7 +18,7 @@
       .app > .row .col > div {
         flex: 1; }
       .app > .row .col:first-child {
-        border-right: 1px solid #ececec; }
+        border-right: 2px dotted rgba(128, 128, 128, 0.5); }
   .app .pipeline-btn-group {
     display: flex; }
     .app .pipeline-btn-group .pipeline-button {
@@ -29,38 +29,38 @@
       align-items: center;
       justify-content: center;
       padding-left: 28px;
-      background-color: white;
-      border-bottom: 1px solid rgba(130, 130, 130, 0.5);
+      background-color: #ececec;
+      border-bottom: 2px solid rgba(128, 128, 128, 0.5);
       font-size: 24px;
       cursor: pointer; }
       .app .pipeline-btn-group .pipeline-button .content {
         z-index: 5; }
       .app .pipeline-btn-group .pipeline-button.active {
-        background-color: #808080;
-        color: white; }
+        background-color: #9a9a9a;
+        color: #ffffff; }
         .app .pipeline-btn-group .pipeline-button.active::after {
-          background-color: #808080; }
+          background-color: #9a9a9a; }
       .app .pipeline-btn-group .pipeline-button.active:hover {
-        background-color: #808080;
-        color: white; }
+        background-color: #9a9a9a;
+        color: #ffffff; }
         .app .pipeline-btn-group .pipeline-button.active:hover::after {
-          background-color: #808080; }
+          background-color: #9a9a9a; }
       .app .pipeline-btn-group .pipeline-button:hover {
-        background-color: #ececec; }
+        background-color: #cccccc; }
         .app .pipeline-btn-group .pipeline-button:hover::after {
-          background-color: #ececec; }
+          background-color: #cccccc; }
       .app .pipeline-btn-group .pipeline-button::after {
         z-index: 4;
         content: " ";
         display: block;
-        height: 41px;
-        width: 41px;
+        height: 42px;
+        width: 42px;
         position: absolute;
         transform: rotateZ(45deg);
         right: -21px;
-        border-right: 1px solid rgba(138, 138, 138, 0.5);
-        border-top: 1px solid rgba(138, 138, 138, 0.5);
-        background-color: white; }
+        border-right: 2px solid rgba(128, 128, 128, 0.5);
+        border-top: 2px solid rgba(128, 128, 128, 0.5);
+        background-color: #ececec; }
       .app .pipeline-btn-group .pipeline-button:last-child::after {
         content: none; }
       .app .pipeline-btn-group .pipeline-button:first-child {

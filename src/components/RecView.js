@@ -160,7 +160,7 @@ export default class RecView extends React.Component {
                   </tbody>
                 </table>
               </div>
-              <div className="rec-row-arrow" style={{ width: 60, height: 800 }}>
+              <div className="rec-row-arrow" style={{ width: 60, height: 800, marginRight: -7}}>
                 <svg width="100%" height="100%" id="rec-arrow-row" />
               </div>
             </div>
