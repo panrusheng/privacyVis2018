@@ -150,14 +150,6 @@ export default class Numerical extends React.Component {
       .call(
         d3
           .drag()
-          .on('start', function(d, i) {
-            chartThis.dragging = true;
-            d3.select(this).classed('active', true);
-          })
-          .on('end', function(d, i) {
-            chartThis.dragging = false;
-            d3.select(this).classed('active', false);
-          })
           .on('drag', function(d, i) {
             const [, y] = d3.mouse(dom);
             let value = (y - margin.top) / (height - margin.top);
@@ -186,6 +178,42 @@ export default class Numerical extends React.Component {
       })
       .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
       .attr('fill', '#999');
+    
+      svg
+        .append('g')
+        .selectAll('circle')
+        .data(breakPoints)
+        .enter()
+        .append('circle')
+        .attr('r', () => 4)
+        .attr('cx', () => width + 4)
+        .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1) + 3)
+        .attr('stroke', '#999')
+        .attr('fill', 'transparent')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer')
+        .on('click', (d, i) => {
+          d3.event.stopPropagation();
+          this.props.removeBreakPoint &&
+            this.props.removeBreakPoint(this.props.attr.attrName, i);
+        })
+        .call(
+          d3
+            .drag()
+            .on('drag', function(d, i) {
+              const [, y] = d3.mouse(dom);
+              let value = (y - margin.top) / (height - margin.top);
+              if (value < 0) value = 0;
+              if (value > 1) value = 1;
+  
+              chartThis.props.updateBreakPoint(
+                chartThis.props.attr.attrName,
+                i,
+                value
+              );
+            })
+        );
+
   }
 
   handleChartClick(e) {

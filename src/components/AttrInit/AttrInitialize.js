@@ -67,7 +67,7 @@ export default class AttrInitialize extends React.Component {
 
     width -= 20; //for margin
 
-    const height = Math.ceil(h - 220);
+    const height = Math.ceil(h - 260);
 
     if (
       height === this.state.attrSize.height &&
