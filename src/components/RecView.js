@@ -42,7 +42,7 @@ export default class RecView extends React.Component {
       .attr('transform', 'rotate(90) translate(400, -35)')
       .style('text-anchor', 'middle')
       .style('fill', '#999')
-      .text('Occurrence');
+      .text('Number of occurrence');
     let g2 = d3.select('#rec-arrow-col').append('g');
     let defs2 = g2.append('defs').attr('class', 'rec-arrow');
     defs2.append('marker')
@@ -130,7 +130,7 @@ export default class RecView extends React.Component {
     return (
       <div className="rec-view">
         <div>
-          <div className="view-title">Recommendation View</div>
+          <div className="view-title">Solution Recommendation View</div>
           <div className="operation">
             <div className="rec-title">
               {title.map((d, i) => (

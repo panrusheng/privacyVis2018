@@ -201,7 +201,7 @@ export default class TableView extends React.Component {
     return (
       <div className="table-view">
         <div>
-          <div className="view-title">Table View</div>
+          <div className="view-title">Data Table View</div>
 
         </div>
         {this.renderTable()}          

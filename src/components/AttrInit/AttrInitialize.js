@@ -191,7 +191,7 @@ export default class AttrInitialize extends React.Component {
     const { x, y, current, groups } = this.state;
     return (
       <div className="attr-init-view">
-        <div className="view-title">Event Initialize</div>
+        <div className="view-title">Event Initialization View</div>
         <div
         className="attr-init"
         ref={dom => {
