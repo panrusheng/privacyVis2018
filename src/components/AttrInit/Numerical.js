@@ -172,12 +172,13 @@ export default class Numerical extends React.Component {
       .data(breakPoints)
       .enter()
       .append('text')
-      .attr('x', () => 0)
+      .attr('x', () => width - 2)
       .attr('y', d => {
         return d * ((height - 2) / height) * yScale(data.length - 1);
       })
       .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
-      .attr('fill', '#999');
+      .style('text-anchor', 'end')
+      .style('fill', '#999');
     
       svg
         .append('g')
