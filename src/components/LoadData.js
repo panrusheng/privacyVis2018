@@ -4,6 +4,7 @@ import CheckedIcon from '../assets/image/checked.svg';
 import NotCheckedIcon from '../assets/image/notchecked.svg';
 import axis from '../utils/axios'
 import { Modal } from 'antd';
+import axios from '../utils/axios';
 import './LoadData.scss';
 
 
@@ -16,8 +17,33 @@ export default class LoadData extends React.Component {
         checkedIndex: [],
     }
 
+    constructor(props) {
+        super(props);
+
+        this.uploadDataset = this.uploadDataset.bind(this);
+
+        this.inputElem = document.createElement('input');
+        this.inputElem.setAttribute('type', 'file');
+        this.inputElem.onchange = () => {
+            const file = this.inputElem.files[0];
+            const formData = new FormData();
+            formData.set('dataset', file);
+            axis.post('/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+            }).then(() => {
+                // TODO
+            })
+        };
+    }
+
     componentDidMount() {
         this.getAllDataSet();
+    }
+
+    uploadDataset() {
+        this.inputElem.click();
     }
 
     toggleCheck(index) {
@@ -62,6 +88,7 @@ export default class LoadData extends React.Component {
                 wrapClassName="attr-select-panel"
             >
                 <div className="load-data">
+                    <div><div style={{ cursor: 'pointer' }} onClick={this.uploadDataset.bind(this)}>Upload</div></div>
                     <div className="datasets">
                         { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
                     </div>
