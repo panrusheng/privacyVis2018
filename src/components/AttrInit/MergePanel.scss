@@ -50,6 +50,11 @@
     justify-content: center;
     color: white;
     cursor: pointer;
+    margin-right: 10px;
+
+    &:last-child {
+      margin-right: 0;
+    }
 
     &.disabled {
       background-color: #ececec;

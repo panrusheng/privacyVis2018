@@ -22,6 +22,7 @@ export default class AttrInitialize extends React.Component {
     this.setSize = this.setSize.bind(this);
     this.removeBreakPoint = this.removeBreakPoint.bind(this);
     this.updateBreakPoint = this.updateBreakPoint.bind(this);
+    this.demergeGroup = this.demergeGroup.bind(this);
   }
 
   state = {
@@ -81,6 +82,12 @@ export default class AttrInitialize extends React.Component {
         width
       }
     });
+  }
+
+  demergeGroup(groupName) {
+    this.props.store.demergeGroup(groupName, this.state.attrName);
+
+    hideMenu({ id: 'merge-panel-menu' });
   }
 
   handleResize() {
@@ -244,6 +251,7 @@ export default class AttrInitialize extends React.Component {
           <MergePanel
             ref={dom => (this.panel = dom)}
             confirmMerge={this.confirmMerge}
+            demergeGroup={this.demergeGroup}
             hideMenu={this.hideMenu}
             position={{ x, y }}
             current={current}

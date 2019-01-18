@@ -177,7 +177,7 @@ class AppStore {
             attr.data.forEach(d => {
               attr.groups.push({
                 name: d.category,
-                categories: [d.category],
+                categories: [d],
                 value: d.value
               });
             });
@@ -252,27 +252,56 @@ class AppStore {
   }
 
   @action
-  mergeGroups(name, selected, attrName) {
-    const index = this.selectedAttributes.findIndex(
-      item => item.attrName === attrName
-    );
+  mergeGroups(groupName, selectedGroups, attrName) {
+    const index = this.selectedAttributes.findIndex(item => item.attrName === attrName);
     if (index < 0) return;
+
     const attr = toJS(this.selectedAttributes[index]);
-    const originGroups = attr.groups;
-    const newGroups = originGroups.filter(
-      item => selected.findIndex(s => s.name === item.name) < 0
-    );
-    const categories = [];
-    selected.forEach(item => {
-      categories.push(...item.categories);
+    const currentGroups = attr.groups;
+    const newGroups = currentGroups.filter(item => selectedGroups.findIndex(s => s.name === item.name) < 0);
+    
+    const gCategories = [];
+    let gVal = 0;
+
+    for (let i = 0; i < selectedGroups.length; ++i) {
+      const cats = selectedGroups[i].categories;
+      gCategories.push(...cats);
+      
+      gVal += cats.reduce((pv, cv) => pv + cv.value, 0);
+    }
+
+    newGroups.push({
+      name: groupName,
+      categories: gCategories,
+      value: gVal,
     });
-    const group = {
-      name,
-      value: selected.reduce((prevValue, item) => prevValue + item.value, 0),
-      categories
-    };
-    newGroups.push(group);
+
+    console.log(newGroups);
+
     attr.groups = newGroups;
+    this.selectedAttributes[index] = attr;
+  }
+
+  @action
+  demergeGroup(groupName, attrName) {
+    const index = this.selectedAttributes.findIndex(item => item.attrName === attrName);
+    if (index < 0) return;
+
+    const attr = toJS(this.selectedAttributes[index]);
+    const currentGroups = attr.groups;
+    const groupDemerge = currentGroups.find(item => item.name === groupName);
+    const newGroups = [...currentGroups.filter(item => item.name !== groupName)];
+
+    groupDemerge.categories.forEach(cate => {
+      newGroups.push({
+        name: cate.category,
+        value: cate.value,
+        categories: [cate],
+      });
+    })
+    attr.groups = newGroups;
+
+    console.log(newGroups);
     this.selectedAttributes[index] = attr;
   }
 

@@ -52,6 +52,10 @@ export default class MergePanel extends React.Component {
     }
   }
 
+  demergeGroup() {
+    this.props.demergeGroup(this.props.current.name);
+  }
+
   handleConfirm() {
     const { groupName, selectedGroups } = this.state;
     const disabled = !groupName || selectedGroups.length === 0;
@@ -73,7 +77,6 @@ export default class MergePanel extends React.Component {
     return (
       <div className="merge-panel">
         <div className="title">Merge Groups</div>
-        <div className="list-title">Current: {current.name}</div>
         <div className="group-list">
           <div className="list-title">Groups:</div>
           <div className="groups">
@@ -129,6 +132,11 @@ export default class MergePanel extends React.Component {
           >
             Confirm
           </div>
+          { current.categories && current.categories.length > 1 && (
+            <div className="button" onClick={() => this.demergeGroup()}>
+              Demerge
+            </div>
+          )}
           <div className="button" onClick={this.handleClose}>
             Cancel
           </div>

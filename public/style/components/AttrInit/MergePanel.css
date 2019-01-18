@@ -39,7 +39,10 @@
     align-items: center;
     justify-content: center;
     color: white;
-    cursor: pointer; }
+    cursor: pointer;
+    margin-right: 10px; }
+    .merge-panel .button:last-child {
+      margin-right: 0; }
     .merge-panel .button.disabled {
       background-color: #ececec;
       color: white; }
