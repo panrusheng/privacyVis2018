@@ -22,164 +22,110 @@
     }
 
     .table {
-        height: calc(100% - 150px);
-        .table-side-head {
-            max-width: 70px;
-            min-width: 70px;
-            border-right: 1px solid #ececec;
-        }
+        height: calc(100% - 100px);
+        user-select: none;
 
-        .table-head {
-            .table-head-scrollable {
-                display: flex;
-                flex: 1;
-                overflow: hidden;
-                .table-cell {
-                    min-width: 70px;
-                }
-            }
-        }
-        .table-body {
+        .wrapper {
             display: flex;
-            height: calc(100% - 38px);
-            overflow: hidden;
-            .table-cell {
-                height: 30px;
-            }
-
-            .table-head-scrollable {
-                overflow: hidden;
-            }
-
-            .table-body-main {
-                overflow: auto;
-                flex: 1;
-
-                .table-row .table-cell {
-                    border-bottom: 1px solid #ececec;
-                    border-right: 1px solid #ececec;
-
-                    &:last-child {
-                        border-right: none;
-                    }
-                }
-
-                .table-row:last-child .table-cell {
-                    border-bottom: none;
-                }
-
-                .table-cell {
-                    min-width: 70px;
-
-                }
-                position: relative;
-
-                &::-webkit-scrollbar {
-                    width: 8px;
-                    border-radius: 4px;
-                    position: absolute;
-                    right: -8px;
-                }
-
-                &::-webkit-scrollbar:horizontal {
-                    height: 8px;
-                }
-                 
-                &::-webkit-scrollbar-track {
-                    border: 1px solid #ececec;
-                    border-radius: 4px;
-                }
-                 
-                &::-webkit-scrollbar-thumb {
-                  background-color: darkgrey;
-                  outline: 1px solid slategrey;
-                  border-radius: 4px;
-                }
-            }
         }
-        .table-cell {
-            flex: 1;
-            flex-shrink: 0;
-            padding: 5px;
-            text-align: center;
-            font-weight: 450;
-            position: relative;
-            .bg {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
 
-                .bg-item {
-                    height: 100%;
-                    position: absolute;
-                    opacity: 0.2;
-                    &.utility {
-                        left: 0;
-                        background-color: #1778b9;
-                    }
-
-                    &.sensitivity {
-                        right: 0;
-                        background-color: brown;
-                    }
-                }
-            }
-        }
-        .table-row {
+        .table-header.top {
             display: flex;
-            .table-cell {
-                flex: 1;
-                flex-shrink: 0;
-                padding: 5px;
-                text-align: center;
-                font-weight: 450;
-                position: relative;
-                .bg {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-
-                    .bg-item {
-                        height: 100%;
-                        position: absolute;
-                        opacity: 0.2;
-                        &.utility {
-                            left: 0;
-                            background-color: #1778b9;
-                        }
-
-                        &.sensitivity {
-                            right: 0;
-                            background-color: brown;
-                        }
-                    }
-                }
-            }
-        }
-
-        .table-head {
+            overflow-x: auto;
+            margin-right: 8px;
             background-color: #a0a0a0;
             color: white;
             font-size: 18px;
-            .table-cell {
-                font-weight: 500;
-                position: relative;
-                display: flex;
-                justify-content: center;
-                height: 38px;
-                img, div {
-                    cursor: pointer;
-                }
-                img {
-                    display: block;
-                    width: 18px;
-                    max-height: 30px;
-                }
+
+            &::-webkit-scrollbar {
+                height: 0px;
+                width: 0px;  /* remove scrollbar space */
+                background: transparent;  /* optional: just make scrollbar invisible */
             }
+            img {
+                width: 18px;
+                max-height: 30px;
+            }
+
+            .table-cell {
+                cursor: pointer;
+            }
+        }
+
+        .table-header.left {
+            overflow-y: auto;
+            margin-bottom: 8px;
+            &::-webkit-scrollbar {
+                height: 0px;
+                width: 0px;  /* remove scrollbar space */
+                background: transparent;  /* optional: just make scrollbar invisible */
+            }
+        }
+
+        .table-header.top-left {
+            min-width: 60px;
+            display: flex;
+            overflow-x: auto;
+            background-color: #a0a0a0;
+            color: white;
+            font-size: 18px;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .table-body {
+            flex: 1;
+            overflow: auto;
+            .table-cell {
+                box-shadow: 1px 1px 1px rgba($color: #999999, $alpha: 0.2);
+            }
+
+            &::-webkit-scrollbar {
+                width: 8px;
+                border-radius: 4px;
+                position: absolute;
+                right: -8px;
+            }
+
+            &::-webkit-scrollbar:horizontal {
+                height: 8px;
+            }
+             
+            &::-webkit-scrollbar-track {
+                border: 1px solid #ececec;
+                border-radius: 4px;
+            }
+             
+            &::-webkit-scrollbar-thumb {
+              background-color: darkgrey;
+              outline: 1px solid slategrey;
+              border-radius: 4px;
+            }
+        }
+
+        .table-row {
+            display: flex;
+        }
+
+        .table-cell {
+            position: relative;
+            flex: 1 0 0;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .bg {
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+                z-index: -1;
+            }
+            min-width: 60px;
+            min-height: 30px;
         }
     }
 }

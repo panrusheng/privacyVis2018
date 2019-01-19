@@ -28,7 +28,7 @@ export default class LoadData extends React.Component {
             const file = this.inputElem.files[0];
             const formData = new FormData();
             formData.set('dataset', file);
-            axis.post('/upload', formData, {
+            axios.post('/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                   }

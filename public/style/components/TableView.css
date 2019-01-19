@@ -15,113 +15,82 @@
     .table-view .operation label {
       margin-right: 5px; }
   .table-view .table {
-    height: calc(100% - 150px); }
-    .table-view .table .table-side-head {
-      max-width: 70px;
-      min-width: 70px;
-      border-right: 1px solid #ececec; }
-    .table-view .table .table-head .table-head-scrollable {
-      display: flex;
-      flex: 1;
-      overflow: hidden; }
-      .table-view .table .table-head .table-head-scrollable .table-cell {
-        min-width: 70px; }
-    .table-view .table .table-body {
-      display: flex;
-      height: calc(100% - 38px);
-      overflow: hidden; }
-      .table-view .table .table-body .table-cell {
-        height: 30px; }
-      .table-view .table .table-body .table-head-scrollable {
-        overflow: hidden; }
-      .table-view .table .table-body .table-body-main {
-        overflow: auto;
-        flex: 1;
-        position: relative; }
-        .table-view .table .table-body .table-body-main .table-row .table-cell {
-          border-bottom: 1px solid #ececec;
-          border-right: 1px solid #ececec; }
-          .table-view .table .table-body .table-body-main .table-row .table-cell:last-child {
-            border-right: none; }
-        .table-view .table .table-body .table-body-main .table-row:last-child .table-cell {
-          border-bottom: none; }
-        .table-view .table .table-body .table-body-main .table-cell {
-          min-width: 70px; }
-        .table-view .table .table-body .table-body-main::-webkit-scrollbar {
-          width: 8px;
-          border-radius: 4px;
-          position: absolute;
-          right: -8px; }
-        .table-view .table .table-body .table-body-main::-webkit-scrollbar:horizontal {
-          height: 8px; }
-        .table-view .table .table-body .table-body-main::-webkit-scrollbar-track {
-          border: 1px solid #ececec;
-          border-radius: 4px; }
-        .table-view .table .table-body .table-body-main::-webkit-scrollbar-thumb {
-          background-color: darkgrey;
-          outline: 1px solid slategrey;
-          border-radius: 4px; }
-    .table-view .table .table-cell {
-      flex: 1;
-      flex-shrink: 0;
-      padding: 5px;
-      text-align: center;
-      font-weight: 450;
-      position: relative; }
-      .table-view .table .table-cell .bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0; }
-        .table-view .table .table-cell .bg .bg-item {
-          height: 100%;
-          position: absolute;
-          opacity: 0.2; }
-          .table-view .table .table-cell .bg .bg-item.utility {
-            left: 0;
-            background-color: #1778b9; }
-          .table-view .table .table-cell .bg .bg-item.sensitivity {
-            right: 0;
-            background-color: brown; }
-    .table-view .table .table-row {
+    height: calc(100% - 100px);
+    user-select: none; }
+    .table-view .table .wrapper {
       display: flex; }
-      .table-view .table .table-row .table-cell {
-        flex: 1;
-        flex-shrink: 0;
-        padding: 5px;
-        text-align: center;
-        font-weight: 450;
-        position: relative; }
-        .table-view .table .table-row .table-cell .bg {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0; }
-          .table-view .table .table-row .table-cell .bg .bg-item {
-            height: 100%;
-            position: absolute;
-            opacity: 0.2; }
-            .table-view .table .table-row .table-cell .bg .bg-item.utility {
-              left: 0;
-              background-color: #1778b9; }
-            .table-view .table .table-row .table-cell .bg .bg-item.sensitivity {
-              right: 0;
-              background-color: brown; }
-    .table-view .table .table-head {
+    .table-view .table .table-header.top {
+      display: flex;
+      overflow-x: auto;
+      margin-right: 8px;
       background-color: #a0a0a0;
       color: white;
       font-size: 18px; }
-      .table-view .table .table-head .table-cell {
-        font-weight: 500;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        height: 38px; }
-        .table-view .table .table-head .table-cell img, .table-view .table .table-head .table-cell div {
-          cursor: pointer; }
-        .table-view .table .table-head .table-cell img {
-          display: block;
-          width: 18px;
-          max-height: 30px; }
+      .table-view .table .table-header.top::-webkit-scrollbar {
+        height: 0px;
+        width: 0px;
+        /* remove scrollbar space */
+        background: transparent;
+        /* optional: just make scrollbar invisible */ }
+      .table-view .table .table-header.top img {
+        width: 18px;
+        max-height: 30px; }
+      .table-view .table .table-header.top .table-cell {
+        cursor: pointer; }
+    .table-view .table .table-header.left {
+      overflow-y: auto;
+      margin-bottom: 8px; }
+      .table-view .table .table-header.left::-webkit-scrollbar {
+        height: 0px;
+        width: 0px;
+        /* remove scrollbar space */
+        background: transparent;
+        /* optional: just make scrollbar invisible */ }
+    .table-view .table .table-header.top-left {
+      min-width: 60px;
+      display: flex;
+      overflow-x: auto;
+      background-color: #a0a0a0;
+      color: white;
+      font-size: 18px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer; }
+    .table-view .table .table-body {
+      flex: 1;
+      overflow: auto; }
+      .table-view .table .table-body .table-cell {
+        box-shadow: 1px 1px 1px rgba(153, 153, 153, 0.2); }
+      .table-view .table .table-body::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 4px;
+        position: absolute;
+        right: -8px; }
+      .table-view .table .table-body::-webkit-scrollbar:horizontal {
+        height: 8px; }
+      .table-view .table .table-body::-webkit-scrollbar-track {
+        border: 1px solid #ececec;
+        border-radius: 4px; }
+      .table-view .table .table-body::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+        border-radius: 4px; }
+    .table-view .table .table-row {
+      display: flex; }
+    .table-view .table .table-cell {
+      position: relative;
+      flex: 1 0 0;
+      text-align: center;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 60px;
+      min-height: 30px; }
+      .table-view .table .table-cell .bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: -1; }

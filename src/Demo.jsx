@@ -13,10 +13,6 @@ export default class extends React.Component {
     this.props.store.getAttrList('user');
   }
   render() {
-    const { attributeList, datasets } = this.props.store;
-
-    console.log(attributeList);
-
-    return <LoadData />
+    return <TableView />
   }
 }
