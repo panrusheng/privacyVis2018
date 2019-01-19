@@ -250,7 +250,7 @@ export default class TableView extends React.Component {
   }
 
   renderRow(row, columns, isGroup = false) {
-    return (<div className="table-row" key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? () => this.toggleGroup(row.id) : undefined}>
+    return (<div className={`table-row ${isGroup ? 'group' : ''}`} key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? () => this.toggleGroup(row.id) : undefined}>
       { columns.map(col => {
         const { values } = row;
         if (!isGroup) {
@@ -294,9 +294,9 @@ export default class TableView extends React.Component {
             if (mode === 1) return this.renderRow(row, columns);
             const groupedRows = [];
             groupedRows.push(this.renderRow(row, columns, true));
-            const isFolded = unfoldedGroups.findIndex(gid => gid === row.id);
+            const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
             
-            if (!isFolded && row.extended && row.extended.length > 0) {
+            if (unfolded) {
               row.extended.forEach((eRow) => {
                 groupedRows.push(this.renderRow(eRow, columns));
               });
