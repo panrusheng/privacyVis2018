@@ -39,7 +39,8 @@
         cursor: pointer; }
     .table-view .table .table-header.left {
       overflow-y: auto;
-      margin-bottom: 8px; }
+      margin-bottom: 8px;
+      position: relative; }
       .table-view .table .table-header.left::-webkit-scrollbar {
         height: 0px;
         width: 0px;
@@ -58,7 +59,8 @@
       cursor: pointer; }
     .table-view .table .table-body {
       flex: 1;
-      overflow: auto; }
+      overflow: auto;
+      position: relative; }
       .table-view .table .table-body .table-cell {
         box-shadow: 1px 1px 1px rgba(153, 153, 153, 0.2); }
       .table-view .table .table-body::-webkit-scrollbar {
@@ -94,3 +96,11 @@
         left: 0;
         bottom: 0;
         z-index: -1; }
+      .table-view .table .table-cell.select-row {
+        cursor: crosshair; }
+    .table-view .table .selection-mask {
+      position: absolute;
+      width: 100%;
+      background: #000;
+      opacity: 0.1;
+      pointer-events: none; }

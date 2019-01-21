@@ -27,7 +27,6 @@ const ASC = 1;
    return 0;
  }
 
-
 @inject(['store'])
 @observer
 export default class TableView extends React.Component {
@@ -35,21 +34,118 @@ export default class TableView extends React.Component {
     orderCol: undefined,
     order: DESC,
     omitValue: false,
-    mode: 1, // 1: all records, 2: grouped rec,
-    unfoldedGroups: [],
+    mode: 2, // 1: all records, 2: grouped rec,
+    unfoldedGroups: [1],
+    rowSelection: [], // selected rows id
   };
 
+  rowSelecting = false;
+  selectionStaying = false;
+  lastY = 0;
+  
   constructor(props) {
     super(props);
 
     this.switchMode = this.switchMode.bind(this);
     this.syncScroll = this.syncScroll.bind(this);
+
+    // row selection
+    this.handleRowSelMouseDown = this.handleRowSelMouseDown.bind(this);
+    this.handleRowSelMouseUp = this.handleRowSelMouseUp.bind(this);
+    this.handleRowSelMouseOver = this.handleRowSelMouseOver.bind(this);
+    this.removeSelection = this.removeSelection.bind(this);
   }
 
   componentDidMount() {
+    window.addEventListener('mouseup', this.handleRowSelMouseUp);
   }
 
   componentWillUnmount() {
+  }
+
+  handleRowSelMouseDown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.rowSelecting = true;
+    const height = e.target.offsetHeight;
+    const offsetTop = e.target.offsetTop;
+    const curY = (e.clientY - e.target.getBoundingClientRect().top) + offsetTop;
+    const rangeY = {
+      start: offsetTop,
+      end: offsetTop + height,
+    };
+
+    const rowSelection = [...this.state.rowSelection];
+    const overlapIndex = this.checkOverlap(curY);
+    
+    if (overlapIndex >= 0) {
+      rowSelection.splice(overlapIndex, 1);
+    }
+
+    rowSelection.push(rangeY);
+  
+    this.lastY = curY;
+
+    this.setState({ rowSelection });
+  }
+
+  handleRowSelMouseOver(e) {
+    if (!this.rowSelecting || !e.target.classList.contains('table-cell')) return;
+    e.stopPropagation();
+    e.preventDefault();
+
+    const rowSelection = [...this.state.rowSelection];
+
+    const rangeY = rowSelection[rowSelection.length - 1];
+    if (!rangeY) return;
+
+    const height = e.target.offsetHeight;
+    const offsetTop = e.target.offsetTop;
+    const curY = (e.clientY - e.target.getBoundingClientRect().top) + offsetTop;
+    const utd = curY >= this.lastY; // up to down
+
+    this.lastY = curY;
+
+    if (utd && curY > rangeY.end) {
+      rangeY.end = offsetTop + height;
+    } else if (utd && curY < rangeY.end) {
+      rangeY.start = offsetTop;
+    } else if (!utd && curY <= rangeY.start) {
+      rangeY.start = offsetTop;
+    } else {
+      rangeY.end = offsetTop + height;
+    }
+
+    const overlapIndex = this.checkOverlap(curY);
+    if (overlapIndex >= 0 && overlapIndex !== rowSelection.length - 1) rowSelection.splice(overlapIndex, 1);
+    
+    if (rangeY.start > rangeY.end) {
+      const tmp = rangeY.start;
+      rangeY.start = rangeY.end;
+      rangeY.end = tmp;
+    }
+    
+    this.setState({ rowSelection });
+  }
+
+  handleRowSelMouseUp(e) {
+    if (!this.rowSelecting) return;
+    this.rowSelecting = false;
+  }
+
+  removeSelection() {
+    this.rowSelecting = false;
+    this.setState({ rowSelection: [] });
+  }
+
+  checkOverlap(pos) {
+    const { rowSelection } = this.state;
+    
+    for (let i = 0; i < rowSelection.length; ++i) {
+      if (pos >= rowSelection[i].start && pos <= rowSelection[i].end) return i;
+    }
+
+    return -1;
   }
 
   syncScroll(event, type) {
@@ -74,6 +170,8 @@ export default class TableView extends React.Component {
       orderCol: undefined,
       mode: this.state.mode === 1 ? 2 : 1,
     });
+    
+    this.removeSelection();
   }
 
   toggleGroup(groupId) {
@@ -87,6 +185,8 @@ export default class TableView extends React.Component {
     }
 
     this.setState({ unfoldedGroups });
+
+    this.removeSelection();
   }
 
   setOrder(orderCol) {
@@ -182,7 +282,7 @@ export default class TableView extends React.Component {
     if (rows.length === 0) return this.renderEmpty();
 
     return (
-      <div className="table">
+      <div className="table" onMouseOver={this.handleRowSelMouseOver}>
         <div className="wrapper">
           { this.renderTableHeaderTopLeft()}
           { this.renderTableHeaderTop(columns)}
@@ -214,7 +314,7 @@ export default class TableView extends React.Component {
   }
 
   renderTableHeaderLeft(rows) {
-    const { mode, unfoldedGroups } = this.state;
+    const { mode, unfoldedGroups, rowSelection } = this.state;
 
     return (
       <div
@@ -230,10 +330,19 @@ export default class TableView extends React.Component {
             return [
               (<div className="table-cell" key={id} onClick={() => this.toggleGroup(id)}>{id}</div>),
               ...extended.map(erow => (
-                <div key={`er-${erow.id}`} className="table-cell">{erow.id}</div>
+                <div
+                  key={`er-${erow.id}`}
+                  className="table-cell select-row"
+                  onMouseDown={this.handleRowSelMouseDown}
+                >{erow.id}</div>
               ))
             ]
           })
+        }
+        {
+          rowSelection.map(({ start, end }, index) => (
+            <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+          ))
         }
       </div>
     )
@@ -282,7 +391,7 @@ export default class TableView extends React.Component {
   }
 
   renderTableBody(rows, columns) {
-    const { mode, unfoldedGroups } = this.state;
+    const { mode, unfoldedGroups, rowSelection } = this.state;
     return (
       <div
         className="table-body"
@@ -304,6 +413,11 @@ export default class TableView extends React.Component {
 
             return groupedRows;
           })
+        }
+        {
+          rowSelection.map(({ start, end }, index) => (
+            <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+          ))
         }
       </div>
     )

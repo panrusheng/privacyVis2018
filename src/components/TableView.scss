@@ -55,6 +55,7 @@
         .table-header.left {
             overflow-y: auto;
             margin-bottom: 8px;
+            position: relative;
             &::-webkit-scrollbar {
                 height: 0px;
                 width: 0px;  /* remove scrollbar space */
@@ -77,6 +78,7 @@
         .table-body {
             flex: 1;
             overflow: auto;
+            position: relative;
             .table-cell {
                 box-shadow: 1px 1px 1px rgba($color: #999999, $alpha: 0.2);
             }
@@ -126,6 +128,18 @@
             }
             min-width: 60px;
             min-height: 30px;
+
+            &.select-row {
+                cursor: crosshair;
+            }
+        }
+
+        .selection-mask {
+            position: absolute;
+            width: 100%;
+            background: #000;
+            opacity: 0.1;
+            pointer-events: none;
         }
     }
 }
