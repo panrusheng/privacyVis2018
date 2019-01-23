@@ -192,19 +192,19 @@ export default class AttrNetwork extends Component {
           .attr(
             'd',
             (dd, i) =>
-            'M' +
-            (i * 2 * w) / sourceList.length +
-            ', 0 L' +
-            ((i + 1 / 2) * 2 * w) / sourceList.length +
-            ',' +
-            triH +
-            'L' +
-            ((i + 1) * 2 * w) / sourceList.length +
-            ',0'
+              'M' +
+              (i * 2 * w) / sourceList.length +
+              ', 0 L' +
+              ((i + 1 / 2) * 2 * w) / sourceList.length +
+              ',' +
+              triH +
+              'L' +
+              ((i + 1) * 2 * w) / sourceList.length +
+              ',0'
           )
           .style(
             'fill',
-            nodes[d.source.index].value < 0 ? '#efaf4f' : '#4fafef'
+            nodes[d.source.index].value < 0 ? '#BC1A1A' : '#12ab12'
           )
           .append('title')
           .text(dd => dd);
@@ -228,15 +228,15 @@ export default class AttrNetwork extends Component {
           .attr(
             'd',
             (dd, i) =>
-            'M' +
-            (i * 2 * w) / targetList.length +
-            ', 0 L' +
-            ((i + 1 / 2) * 2 * w) / targetList.length +
-            ',' +
-            triH +
-            'L' +
-            ((i + 1) * 2 * w) / targetList.length +
-            ',0'
+              'M' +
+              (i * 2 * w) / targetList.length +
+              ', 0 L' +
+              ((i + 1 / 2) * 2 * w) / targetList.length +
+              ',' +
+              triH +
+              'L' +
+              ((i + 1) * 2 * w) / targetList.length +
+              ',0'
           )
           .style(
             'fill',
@@ -272,7 +272,7 @@ export default class AttrNetwork extends Component {
       .on('contextmenu', d => {
         if (merge) return;
         d3.event.preventDefault();
-        const x = d3.event.x - 10-870,
+        const x = d3.event.x - 10 - 950,
           y = d3.event.y - 155,
           height = 30 * 5,
           width = 115;
@@ -286,8 +286,8 @@ export default class AttrNetwork extends Component {
           .attr('height', height + 5)
           .attr('rx', 5)
           .attr('ry', 5)
-          .style('fill', '#eee')
-          .style('stroke', '#333')
+          .style('fill', '#e7eff8')
+          .style('stroke', '#1866BB')
           .style('stoke-width', 1);
         g.append('text')
           .attr('class', 'context-menu')
@@ -318,7 +318,7 @@ export default class AttrNetwork extends Component {
           .attr('x2', x + width - 5)
           .attr('y1', d => y - 5 + height / 5 * d)
           .attr('y2', d => y - 5 + height / 5 * d)
-          .style('stroke', '#999')
+          .style('stroke', '#74a3d6')
           .style('stroke-dasharray', '2 1');
         g.append('rect')
           .attr('class', 'context-menu')
@@ -328,15 +328,15 @@ export default class AttrNetwork extends Component {
           .attr('height', height / 5 - 3)
           .attr('rx', 5)
           .attr('ry', 5)
-          .style('fill', '#bbb')
+          .style('fill', '#a2c1e3')
           .style('stroke', '#fff')
           .style('stoke-width', 1)
           .style('cursor', 'pointer')
           .on('mouseover', function () {
-            d3.select(this).style('fill', '#ccc').style('stroke', '#999');
+            d3.select(this).style('fill', '#b9d1ea').style('stroke', '#74a3d6');
           })
           .on('mouseout', function () {
-            d3.select(this).style('fill', '#bbb').style('stroke', '#fff');
+            d3.select(this).style('fill', '#a2c1e3').style('stroke', '#fff');
           })
           .on('click', () => {
             d3.selectAll('.inputSVG').remove();
@@ -418,7 +418,7 @@ export default class AttrNetwork extends Component {
       .enter()
       .append('circle')
       .attr('r', r)
-      .style('stroke', d => (d.value < 0 ? '#efaf4f' : '#4fafef'))
+      .style('stroke', d => (d.value < 0 ? '#BC1A1A' : '#12ab12'))
       .style('stroke-width', 3)
       .style('fill', '#fff')
       .attr('cx', d => d.x)
@@ -426,27 +426,30 @@ export default class AttrNetwork extends Component {
       .style('cursor', merge ? 'arrow' : 'crosshair')
       .call(
         d3
-        .drag()
-        .on('start', (d, i) => {
-          const startY = d.y;
-          const startX = d.x;
-          addlink
-            .attr('x1', startX)
-            .attr('y1', startY)
-            .attr('source-index', i)
-            .style('stroke', '#999')
-            .style('stroke-width', 4);
-        })
-        .on('drag', function () {
-          const coordinates = d3.mouse(this);
-          addlink
-            .style('opacity', 1)
-            .attr('x2', coordinates[0])
-            .attr('y2', coordinates[1]);
-        })
+          .drag()
+          .on('start', (d, i) => {
+            const startY = d.y;
+            const startX = d.x;
+            addlink
+              .attr('x1', startX)
+              .attr('y1', startY)
+              .attr('x2', startX)
+              .attr('y2', startY)
+              .attr('source-index', i)
+              .attr('target-index', -1)
+              .style('stroke', '#74a3d6')
+              .style('stroke-width', 4);
+          })
+          .on('drag', function () {
+            const coordinates = d3.mouse(this);
+            addlink
+              .style('opacity', 1)
+              .attr('x2', coordinates[0])
+              .attr('y2', coordinates[1]);
+          })
       )
       .on('mouseover', (d, i) => {
-        if (addlink.attr('source-index') === '-1') return;
+        if ((addlink.attr('source-index') === '-1') || (addlink.attr('target-index') !== '-1')) return;
         const startY = d.y;
         const startX = d.x;
         const sourceID = parseInt(addlink.attr('source-index'));
@@ -457,15 +460,15 @@ export default class AttrNetwork extends Component {
         const height = 30 * 5,
           width = 115,
           x =
-          (parseFloat(addlink.attr('x1')) +
-            parseFloat(addlink.attr('x2')) -
-            width) /
-          2,
+            (parseFloat(addlink.attr('x1')) +
+              parseFloat(addlink.attr('x2')) -
+              width) /
+            2,
           y =
-          (parseFloat(addlink.attr('y1')) +
-            parseFloat(addlink.attr('y2')) -
-            height) /
-          2;
+            (parseFloat(addlink.attr('y1')) +
+              parseFloat(addlink.attr('y2')) -
+              height) /
+            2;
         let newCPT = [0, 0, 0, 0];
         d3.selectAll('.context-menu').remove();
         g.append('rect')
@@ -476,8 +479,8 @@ export default class AttrNetwork extends Component {
           .attr('height', height + 5)
           .attr('rx', 5)
           .attr('ry', 5)
-          .style('fill', '#eee')
-          .style('stroke', '#333')
+          .style('fill', '#e7eff8')
+          .style('stroke', '#1866bb')
           .style('stoke-width', 1);
         g.append('text')
           .attr('class', 'context-menu')
@@ -508,7 +511,7 @@ export default class AttrNetwork extends Component {
           .attr('x2', x + width - 5)
           .attr('y1', d => y - 5 + height / 5 * d)
           .attr('y2', d => y - 5 + height / 5 * d)
-          .style('stroke', '#999')
+          .style('stroke', '#74a3d6')
           .style('stroke-dasharray', '2 1');
         g.append('rect')
           .attr('class', 'context-menu')
@@ -518,15 +521,15 @@ export default class AttrNetwork extends Component {
           .attr('height', height / 5 - 3)
           .attr('rx', 5)
           .attr('ry', 5)
-          .style('fill', '#bbb')
+          .style('fill', '#a2c1e3')
           .style('stroke', '#fff')
           .style('stoke-width', 1)
           .style('cursor', 'pointer')
           .on('mouseover', function () {
-            d3.select(this).style('fill', '#ccc').style('stroke', '#999');
+            d3.select(this).style('fill', '#b9d1ea').style('stroke', '#74a3d6');
           })
           .on('mouseout', function () {
-            d3.select(this).style('fill', '#bbb').style('stroke', '#fff');
+            d3.select(this).style('fill', '#a2c1e3').style('stroke', '#fff');
           })
           .on('click', () => {
             d3.selectAll('.inputSVG').remove();
@@ -615,19 +618,19 @@ export default class AttrNetwork extends Component {
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.width
       }
-      height = {
+      height={
         this.props.height
       }
-      />
+    />
     );
   }
 }

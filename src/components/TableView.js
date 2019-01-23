@@ -365,11 +365,11 @@ export default class TableView extends React.Component {
         if (!isGroup) {
           const { privacy, utility, value } = values[col] || {};
           return (
-            <div key={col} className="table-cell" style={{ color: utility > 0.5 ? 'white' : '#999' }}>
+            <div key={col} className="table-cell" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               { value }
               { privacy === undefined ?
                 (
-                  <div className="bg" style={{ background: `rgba(41, 73, 127, ${utility})` }} />
+                  <div className="bg" style={{ background: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})` }} />
                 ) :
                 (
                   <div className="bg">

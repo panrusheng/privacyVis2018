@@ -10,6 +10,10 @@
         padding-bottom: 10px;
     }
 
+    .ant-switch-checked {
+        background: #296dda;
+    }
+
     .operation {
         display: flex;
         justify-content: flex-end;
@@ -33,7 +37,7 @@
             display: flex;
             overflow-x: auto;
             margin-right: 8px;
-            background-color: #a0a0a0;
+            background-color: #bbb;
             color: white;
             font-size: 18px;
 
@@ -67,7 +71,7 @@
             min-width: 60px;
             display: flex;
             overflow-x: auto;
-            background-color: #a0a0a0;
+            background-color: #bbb;
             color: white;
             font-size: 18px;
             justify-content: center;

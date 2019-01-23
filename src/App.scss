@@ -26,7 +26,7 @@
       overflow: hidden;
 
       &:first-child {
-        border-right: 2px dotted rgba($color: #808080, $alpha: .5);
+        border-right: 2px dotted rgba($color: #043d99, $alpha: .5);
       }
     }
 
@@ -41,8 +41,9 @@
       align-items: center;
       justify-content: center; 
       padding-left: 28px;
-      background-color: #ececec;
-      border-bottom: 2px solid rgba($color: #808080, $alpha: .5);
+      background-color: #bbb;
+      color: white;
+      // border-bottom: 2px solid rgba($color: #296dda, $alpha: .5);
       font-size: 24px;
       cursor: pointer;
 
@@ -51,25 +52,25 @@
       }
 
       &.active {
-        background-color: #9a9a9a;
+        background-color: #1866bb;
         color: #ffffff;
         &::after {
-          background-color: #9a9a9a;
+          background-color: #1866bb;
         }
       }
 
       &.active:hover {
-        background-color: #9a9a9a;
+        background-color: #1866bb;
         color: #ffffff;
         &::after {
-          background-color: #9a9a9a;
+          background-color: #1866bb;
         }
       }
 
       &:hover {
-        background-color: #cccccc;
+        background-color: #ccc;
         &::after {
-          background-color: #cccccc;
+          background-color: #ccc;
         }
       }
 
@@ -83,9 +84,9 @@
         position: absolute;
         transform: rotateZ(45deg);
         right: -21px;
-        border-right: 2px solid rgba($color: #808080, $alpha: 0.5);
-        border-top: 2px solid rgba($color: #808080, $alpha: 0.5);
-        background-color: #ececec;
+        // border-right: 2px solid rgba($color: #ccc, $alpha: 0.5);
+        // border-top: 2px solid rgba($color: #ccc, $alpha: 0.5);
+        background-color: #bbb;
       }
 
       &:last-child {

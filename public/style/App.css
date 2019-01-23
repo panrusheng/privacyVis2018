@@ -18,7 +18,7 @@
       .app > .row .col > div {
         flex: 1; }
       .app > .row .col:first-child {
-        border-right: 2px dotted rgba(128, 128, 128, 0.5); }
+        border-right: 2px dotted rgba(4, 61, 153, 0.5); }
   .app .pipeline-btn-group {
     display: flex; }
     .app .pipeline-btn-group .pipeline-button {
@@ -29,26 +29,26 @@
       align-items: center;
       justify-content: center;
       padding-left: 28px;
-      background-color: #ececec;
-      border-bottom: 2px solid rgba(128, 128, 128, 0.5);
+      background-color: #bbb;
+      color: white;
       font-size: 24px;
       cursor: pointer; }
       .app .pipeline-btn-group .pipeline-button .content {
         z-index: 5; }
       .app .pipeline-btn-group .pipeline-button.active {
-        background-color: #9a9a9a;
+        background-color: #1866bb;
         color: #ffffff; }
         .app .pipeline-btn-group .pipeline-button.active::after {
-          background-color: #9a9a9a; }
+          background-color: #1866bb; }
       .app .pipeline-btn-group .pipeline-button.active:hover {
-        background-color: #9a9a9a;
+        background-color: #1866bb;
         color: #ffffff; }
         .app .pipeline-btn-group .pipeline-button.active:hover::after {
-          background-color: #9a9a9a; }
+          background-color: #1866bb; }
       .app .pipeline-btn-group .pipeline-button:hover {
-        background-color: #cccccc; }
+        background-color: #ccc; }
         .app .pipeline-btn-group .pipeline-button:hover::after {
-          background-color: #cccccc; }
+          background-color: #ccc; }
       .app .pipeline-btn-group .pipeline-button::after {
         z-index: 4;
         content: " ";
@@ -58,9 +58,7 @@
         position: absolute;
         transform: rotateZ(45deg);
         right: -21px;
-        border-right: 2px solid rgba(128, 128, 128, 0.5);
-        border-top: 2px solid rgba(128, 128, 128, 0.5);
-        background-color: #ececec; }
+        background-color: #bbb; }
       .app .pipeline-btn-group .pipeline-button:last-child::after {
         content: none; }
       .app .pipeline-btn-group .pipeline-button:first-child {
