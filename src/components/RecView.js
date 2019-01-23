@@ -32,7 +32,7 @@ export default class RecView extends React.Component {
     g1.append('line')
       .attr('class', 'rec-arrow')
       .attr('x1', 25)
-      .attr('y1', 800)
+      .attr('y1', 880)
       .attr('x2', 25)
       .attr('y2', 7)
       .attr('marker-end', 'url(#arrow-r)')
@@ -160,7 +160,7 @@ export default class RecView extends React.Component {
                   </tbody>
                 </table>
               </div>
-              <div className="rec-row-arrow" style={{ width: 60, height: 800, marginRight: -7}}>
+              <div className="rec-row-arrow" style={{ width: 60, height: 880, marginRight: -7}}>
                 <svg width="100%" height="100%" id="rec-arrow-row" />
               </div>
             </div>

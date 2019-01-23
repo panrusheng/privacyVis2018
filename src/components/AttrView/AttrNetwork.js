@@ -204,7 +204,7 @@ export default class AttrNetwork extends Component {
           )
           .style(
             'fill',
-            nodes[d.source.index].value < 0 ? '#BC1A1A' : '#12ab12'
+            nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88'
           )
           .append('title')
           .text(dd => dd);
@@ -240,7 +240,7 @@ export default class AttrNetwork extends Component {
           )
           .style(
             'fill',
-            nodes[d.target.index].value < 0 ? '#efaf4f' : '#4fafef'
+            nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88'
           )
           .append('title')
           .text(dd => dd);
@@ -418,9 +418,9 @@ export default class AttrNetwork extends Component {
       .enter()
       .append('circle')
       .attr('r', r)
-      .style('stroke', d => (d.value < 0 ? '#BC1A1A' : '#12ab12'))
+      .style('fill', d => (d.value < 0 ? '#BC1A1A' : '#7bbc88'))
       .style('stroke-width', 3)
-      .style('fill', '#fff')
+      .style('stroke', 'none')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .style('cursor', merge ? 'arrow' : 'crosshair')

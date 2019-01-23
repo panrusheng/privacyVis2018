@@ -105,13 +105,13 @@ export default class RecView extends Component {
       .enter()
       .append('circle')
       .attr('r', d => d.del ? 8 : 6)
-      .style('stroke', d => {
-        if (d.del) return "#none";
-        return d.value < 0 ? '#FE2901' : '#05E131'
+      .style('fill', d => {
+        if (d.del) return "#ccc";
+        return d.value < 0 ? '#FE2901' : '#7bbc88'
       })
       .style('stroke-width', 3 )//d => d.del ? 2 : 3)
       // .style('stroke-dasharray', d => d.del ? "2 2" : "1 0")
-      .style('fill', d => d.del ? '#ccc' : '#fff')
+      .style('stoke', d => d.del ? '#ccc' : '#none')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y);
 
@@ -130,8 +130,8 @@ export default class RecView extends Component {
     if (del.length === 0)
       g.append('text')
         .attr('class', name)
-        .attr('x', 5)
-        .attr('y', 17)
+        .attr('x', 13)
+        .attr('y', 25)
         .text('Amount:' + num)
         .style('fill', '#333');
     if (rec > 0) {
@@ -140,10 +140,13 @@ export default class RecView extends Component {
         .attr('d', 'M2,2 L 50,2 L 2,50 Z')
         .style('fill', '#1866bb')
         .style('opacity', 0.9);
+
       g.append('text')
         .attr('class', name)
-        .attr('x', 5)
-        .attr('y', 17)
+        .attr('transform', 'rotate(-45)')
+        .attr('x', 0)
+        .attr('y', 30)
+        .style('text-anchor', 'middle')
         .text(rec)
         .style('fill', '#fff');
     }
@@ -151,8 +154,8 @@ export default class RecView extends Component {
     if (del.length > 0) {
       g.append('text')
         .attr('class', name)
-        .attr('x', ww - 5)
-        .attr('y', hh - 7)
+        .attr('x', ww - 13)
+        .attr('y', hh - 15)
         .style('text-anchor', 'end')
         .text('Utility loss: ' + sch.uL);
     }
