@@ -13,21 +13,23 @@
     display: flex;
     justify-content: flex-end;
     margin-right: 8px;
+    margin-top: 10px;
     margin-bottom: 10px; }
     .table-view .operation label {
       margin-right: 5px; }
   .table-view .table {
-    height: calc(100% - 100px);
+    height: calc(100% - 80px);
     user-select: none; }
     .table-view .table .wrapper {
       display: flex; }
     .table-view .table .table-header.top {
       display: flex;
-      overflow-x: auto;
+      overflow-x: hidden;
       margin-right: 8px;
       background-color: #bbb;
       color: white;
-      font-size: 18px; }
+      font-size: 18px;
+      height: 40px; }
       .table-view .table .table-header.top::-webkit-scrollbar {
         height: 0px;
         width: 0px;
@@ -36,11 +38,11 @@
         /* optional: just make scrollbar invisible */ }
       .table-view .table .table-header.top img {
         width: 18px;
-        max-height: 30px; }
+        max-height: 40px; }
       .table-view .table .table-header.top .table-cell {
         cursor: pointer; }
     .table-view .table .table-header.left {
-      overflow-y: auto;
+      overflow-y: hidden;
       margin-bottom: 8px;
       position: relative; }
       .table-view .table .table-header.left::-webkit-scrollbar {
@@ -58,6 +60,7 @@
       font-size: 18px;
       justify-content: center;
       align-items: center;
+      border-right: solid #fff 1px;
       cursor: pointer; }
     .table-view .table .table-body {
       flex: 1;

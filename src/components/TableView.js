@@ -353,7 +353,7 @@ export default class TableView extends React.Component {
 
     return (
       <div className="table-header top-left" onClick={this.switchMode}>
-        { mode === 1 ? 'Id' : 'group' }
+        { mode === 1 ? 'ID' : 'Group' }
       </div>
     )
   }

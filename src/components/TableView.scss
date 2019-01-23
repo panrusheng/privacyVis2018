@@ -18,6 +18,7 @@
         display: flex;
         justify-content: flex-end;
         margin-right: 8px;
+        margin-top: 10px;
         margin-bottom: 10px;
 
         label {
@@ -26,7 +27,7 @@
     }
 
     .table {
-        height: calc(100% - 100px);
+        height: calc(100% - 80px);
         user-select: none;
 
         .wrapper {
@@ -35,11 +36,12 @@
 
         .table-header.top {
             display: flex;
-            overflow-x: auto;
+            overflow-x: hidden;
             margin-right: 8px;
             background-color: #bbb;
             color: white;
             font-size: 18px;
+            height: 40px;
 
             &::-webkit-scrollbar {
                 height: 0px;
@@ -48,7 +50,7 @@
             }
             img {
                 width: 18px;
-                max-height: 30px;
+                max-height: 40px;
             }
 
             .table-cell {
@@ -57,7 +59,7 @@
         }
 
         .table-header.left {
-            overflow-y: auto;
+            overflow-y: hidden;
             margin-bottom: 8px;
             position: relative;
             &::-webkit-scrollbar {
@@ -76,6 +78,7 @@
             font-size: 18px;
             justify-content: center;
             align-items: center;
+            border-right: solid #fff 1px;
             cursor: pointer;
         }
 
