@@ -5,6 +5,7 @@ import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
 import { toJS } from 'mobx';
+import OmitVal from './TableView/OmitVal.js';
 
 const DESC = -1;
 const ASC = 1;
@@ -18,7 +19,7 @@ const ASC = 1;
  *              // case record mode, extended will be null
  *    { id: 24, col1: 232, ...}
  *  ]
- * }]f
+ * }]
  */
 
  const cmp = function (a, b) {
@@ -41,6 +42,7 @@ export default class TableView extends React.Component {
 
   rowSelecting = false;
   selectionStaying = false;
+  selectionGroup = null;
   lastY = 0;
   
   constructor(props) {
@@ -58,21 +60,30 @@ export default class TableView extends React.Component {
 
   componentDidMount() {
     window.addEventListener('mouseup', this.handleRowSelMouseUp);
+
+    this.adjustTableSize();
+  }
+
+  componentDidUpdate() {
+    this.adjustTableSize();
   }
 
   componentWillUnmount() {
   }
 
-  handleRowSelMouseDown(e) {
+  handleRowSelMouseDown(e, group) {
     e.preventDefault();
     e.stopPropagation();
     this.rowSelecting = true;
+    this.selectionGroup = group;
+
     const height = e.target.offsetHeight;
     const offsetTop = e.target.offsetTop;
     const curY = (e.clientY - e.target.getBoundingClientRect().top) + offsetTop;
     const rangeY = {
       start: offsetTop,
       end: offsetTop + height,
+      group,
     };
 
     const rowSelection = [...this.state.rowSelection];
@@ -131,6 +142,7 @@ export default class TableView extends React.Component {
   handleRowSelMouseUp(e) {
     if (!this.rowSelecting) return;
     this.rowSelecting = false;
+    this.selectionGroup = null;
   }
 
   removeSelection() {
@@ -148,6 +160,23 @@ export default class TableView extends React.Component {
     return -1;
   }
 
+  adjustTableSize() {
+    if (!this.tableBody) return;
+    const { clientHeight, scrollHeight, clientWidth, scrollWidth } = this.tableBody;
+    
+    if (clientWidth === scrollWidth) {
+      this.leftHeader.style.marginBottom = 0;
+    } else {
+      this.leftHeader.style.marginBottom = '8px';
+    }
+
+    if (clientHeight === scrollHeight) {
+      this.topHeader.style.marginRight = 0;
+    } else {
+      this.topHeader.style.marginRight = '8px';
+    }
+  }
+
   syncScroll(event, type) {
     const { scrollTop, scrollLeft } = event.target;
     
@@ -163,6 +192,13 @@ export default class TableView extends React.Component {
         this.topHeader.scrollLeft = scrollLeft;
         break;
     }
+  }
+
+  syncScrollWrapper(event, groupId) {
+    const target = event.target;
+    const syncTargets = document.querySelectorAll(`.scroll-wrapper[data="${groupId}"]`);
+    
+    syncTargets.forEach(elem => elem.scrollTop = target.scrollTop);
   }
 
   switchMode() {
@@ -325,24 +361,25 @@ export default class TableView extends React.Component {
           rows.map(({ id, extended }) => {
             if (mode === 1) return (<div className="table-cell" key={id}>{id}</div>);
             const unfold = unfoldedGroups.findIndex(gid => gid === id) >= 0;
-            if (!unfold || !extended) return (<div className="table-cell" onClick={() => this.toggleGroup(id)} key={id}>{id}</div>);
+            if (!unfold || !extended) return (<div className="table-cell em" onClick={() => this.toggleGroup(id)} key={id}>{id}</div>);
             
             return [
-              (<div className="table-cell" key={id} onClick={() => this.toggleGroup(id)}>{id}</div>),
-              ...extended.map(erow => (
+              <div className="table-cell em" key={id} onClick={() => this.toggleGroup(id)}>{id}</div>,
+              <div className="scroll-wrapper" data={id} onScroll={e => this.syncScrollWrapper(e, id)}>
+                {extended.map(erow => (
                 <div
                   key={`er-${erow.id}`}
                   className="table-cell select-row"
-                  onMouseDown={this.handleRowSelMouseDown}
-                >{erow.id}</div>
-              ))
+                  onMouseDown={e => this.handleRowSelMouseDown(e, id)}
+                >
+                  {erow.id}
+                </div>))}
+                { rowSelection.filter(item => item.group === id).map(({ start, end }, index) => (
+                  <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+                )) }
+              </div>
             ]
           })
-        }
-        {
-          rowSelection.map(({ start, end }, index) => (
-            <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
-          ))
         }
       </div>
     )
@@ -382,7 +419,7 @@ export default class TableView extends React.Component {
           )
         }
         return (
-          <div className="table-cell" key={col}>
+          <div className="table-cell em" key={col}>
             { values[col] }
           </div>
         );      
@@ -405,22 +442,30 @@ export default class TableView extends React.Component {
             groupedRows.push(this.renderRow(row, columns, true));
             const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
             
+
             if (unfolded) {
+              const eRows = [];
               row.extended.forEach((eRow) => {
-                groupedRows.push(this.renderRow(eRow, columns));
+                eRows.push(this.renderRow(eRow, columns));
               });
+
+              groupedRows.push(<div className="scroll-wrapper extent-rows" data={row.id} onScroll={e => this.syncScrollWrapper(e, row.id)}>
+                {eRows}
+                { rowSelection.filter(item => item.group === row.id).map(({ start, end }, index) => (
+                  <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+                )) }  
+              </div>)
             }
 
             return groupedRows;
           })
         }
-        {
-          rowSelection.map(({ start, end }, index) => (
-            <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
-          ))
-        }
       </div>
     )
+  }
+
+  renderOmitValView() {
+    return <OmitVal />
   }
 
   render() {
@@ -430,7 +475,7 @@ export default class TableView extends React.Component {
           <div className="view-title">Data Table View</div>
 
         </div>
-        {this.renderTable()}          
+        { this.state.omitValue ? this.renderOmitValView() : this.renderTable() }          
         <div className="operation">
           <label>Omit Value</label>
           <Switch

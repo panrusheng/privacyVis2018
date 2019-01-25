@@ -51,6 +51,16 @@
         /* remove scrollbar space */
         background: transparent;
         /* optional: just make scrollbar invisible */ }
+      .table-view .table .table-header.left .scroll-wrapper {
+        overflow-y: auto;
+        width: fit-content;
+        max-height: 150px; }
+        .table-view .table .table-header.left .scroll-wrapper::-webkit-scrollbar {
+          height: 0px;
+          width: 0px;
+          /* remove scrollbar space */
+          background: transparent;
+          /* optional: just make scrollbar invisible */ }
     .table-view .table .table-header.top-left {
       min-width: 60px;
       display: flex;
@@ -82,8 +92,21 @@
         background-color: darkgrey;
         outline: 1px solid slategrey;
         border-radius: 4px; }
+      .table-view .table .table-body .scroll-wrapper.extent-rows {
+        overflow-y: auto;
+        width: fit-content;
+        max-height: 150px; }
+        .table-view .table .table-body .scroll-wrapper.extent-rows::-webkit-scrollbar {
+          height: 0px;
+          width: 0px;
+          /* remove scrollbar space */
+          background: transparent;
+          /* optional: just make scrollbar invisible */ }
     .table-view .table .table-row {
-      display: flex; }
+      display: flex;
+      width: fit-content; }
+      .table-view .table .table-row.group {
+        box-shadow: 0 2 2px #999; }
     .table-view .table .table-cell {
       position: relative;
       flex: 1 0 0;
@@ -103,9 +126,13 @@
         z-index: -1; }
       .table-view .table .table-cell.select-row {
         cursor: crosshair; }
+      .table-view .table .table-cell.em {
+        font-weight: 500; }
     .table-view .table .selection-mask {
       position: absolute;
       width: 100%;
       background: #000;
       opacity: 0.1;
       pointer-events: none; }
+  .table-view .scroll-wrapper {
+    position: relative; }
