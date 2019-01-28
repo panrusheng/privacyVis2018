@@ -42,7 +42,8 @@
       .table-view .table .table-header.top .table-cell {
         cursor: pointer;
         height: 40px;
-        line-height: 40px; }
+        line-height: 40px;
+        min-width: 60px; }
     .table-view .table .table-header.left {
       overflow-y: hidden;
       margin-bottom: 8px;
@@ -66,6 +67,8 @@
       .table-view .table .table-header.left .selection-mask {
         border: 1px solid #999;
         border-right: none; }
+      .table-view .table .table-header.left .table-cell.group {
+        cursor: pointer; }
     .table-view .table .table-header.top-left {
       min-width: 60px;
       display: flex;
@@ -75,7 +78,6 @@
       font-size: 18px;
       justify-content: center;
       align-items: center;
-      border-right: solid #fff 1px;
       cursor: pointer; }
     .table-view .table .table-body {
       flex: 1;
@@ -114,7 +116,8 @@
       display: flex;
       width: fit-content; }
       .table-view .table .table-row.group {
-        box-shadow: 0 2 2px #999; }
+        box-shadow: 0 2 2px #999;
+        cursor: pointer; }
     .table-view .table .table-cell {
       position: relative;
       flex: 1 0 0;

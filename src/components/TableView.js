@@ -201,6 +201,8 @@ export default class TableView extends React.Component {
   }
 
   syncScrollWrapper(event, groupId) {
+    event.stopPropagation();
+
     const target = event.target;
     const syncTargets = document.querySelectorAll(`.scroll-wrapper[data="${groupId}"]`);
     
@@ -363,10 +365,10 @@ export default class TableView extends React.Component {
           rows.map(({ id, extended }) => {
             if (mode === 1) return (<div className="table-cell" key={id}>{id}</div>);
             const unfold = unfoldedGroups.findIndex(gid => gid === id) >= 0;
-            if (!unfold || !extended) return (<div className="table-cell em" onClick={() => this.toggleGroup(id)} key={id}>{id}</div>);
+            if (!unfold || !extended) return (<div className="table-cell em group" onClick={() => this.toggleGroup(id)} key={id}>G{id}</div>);
             
             return [
-              <div className="table-cell em" key={id} onClick={() => this.toggleGroup(id)}>{id}</div>,
+              <div className="table-cell em group" key={id} onClick={() => this.toggleGroup(id)}>G{id}</div>,
               <div className="scroll-wrapper" data={id} onScroll={e => this.syncScrollWrapper(e, id)}>
                 {extended.map(erow => (
                 <div

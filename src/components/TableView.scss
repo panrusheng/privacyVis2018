@@ -57,6 +57,7 @@
                 cursor: pointer;
                 height: 40px;
                 line-height: 40px;
+                min-width: 60px;
             }
         }
 
@@ -85,6 +86,10 @@
                 border: 1px solid #999;
                 border-right: none;
             }
+
+            .table-cell.group {
+                cursor: pointer;
+            }
         }
 
         .table-header.top-left {
@@ -96,7 +101,6 @@
             font-size: 18px;
             justify-content: center;
             align-items: center;
-            border-right: solid #fff 1px;
             cursor: pointer;
         }
 
@@ -153,6 +157,7 @@
 
             &.group {
                 box-shadow: 0 2 2px #999;
+                cursor: pointer;
             }
         }
 
