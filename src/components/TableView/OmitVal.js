@@ -57,12 +57,12 @@ export default class OmitVal extends React.Component {
                                     {
                                         row[attr].privacy === undefined ? (
                                             <div className="bg">
-                                                <div className="utility" style={{ width: '100%', opacity: row[attr].utility }} />
+                                                <div className="utility" style={{ width: '100%', opacity: row[attr].utility/1.3 + 0.1 }} />
                                             </div>
                                         ) : (
                                             <div className="bg">
-                                                <div className="privacy" style={{ width: `${row[attr].privacy}%`, opacity: row[attr].privacy }} />
-                                                <div className="utility" style={{ width: `${row[attr].utility}%`, opacity: row[attr].utility }} />
+                                                <div className="privacy" style={{ width: `${row[attr].privacy}%`, opacity: row[attr].privacy/1.3 + 0.1 }} />
+                                                <div className="utility" style={{ width: `${row[attr].utility}%`, opacity: row[attr].utility/1.3 + 0.1 }} />
                                             </div>
                                         )
                                     }

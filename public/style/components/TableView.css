@@ -55,7 +55,7 @@
         background: transparent;
         /* optional: just make scrollbar invisible */ }
       .table-view .table .table-header.left .scroll-wrapper {
-        overflow-y: auto;
+        overflow: hidden;
         width: fit-content;
         max-height: 168px; }
         .table-view .table .table-header.left .scroll-wrapper::-webkit-scrollbar {
