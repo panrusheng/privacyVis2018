@@ -55,6 +55,8 @@
 
             .table-cell {
                 cursor: pointer;
+                height: 40px;
+                line-height: 40px;
             }
         }
 
@@ -71,12 +73,17 @@
             .scroll-wrapper {
                 overflow-y: auto;
                 width: fit-content;
-                max-height: 150px;
+                max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
                     width: 0px;  /* remove scrollbar space */
                     background: transparent;  /* optional: just make scrollbar invisible */
                 }
+            }
+
+            .selection-mask {
+                border: 1px solid #999;
+                border-right: none;
             }
         }
 
@@ -98,7 +105,7 @@
             overflow: auto;
             position: relative;
             .table-cell {
-                box-shadow: 1px 1px 1px rgba($color: #999999, $alpha: 0.2);
+                box-shadow: 1px 1px 0px rgba($color: #999999, $alpha: 0.2);
             }
 
             &::-webkit-scrollbar {
@@ -126,12 +133,17 @@
             .scroll-wrapper.extent-rows {
                 overflow-y: auto;
                 width: fit-content;
-                max-height: 150px;
+                max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
                     width: 0px;  /* remove scrollbar space */
                     background: transparent;  /* optional: just make scrollbar invisible */
                 }
+            }
+
+            .selection-mask {
+                border: 1px solid #999;
+                border-left: none;
             }
         }
 
@@ -148,10 +160,12 @@
             position: relative;
             flex: 1 0 0;
             text-align: center;
+            line-height: 30px;
+            
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
             .bg {
                 position: absolute;
                 top: 0;
@@ -160,8 +174,8 @@
                 bottom: 0;
                 z-index: -1;
             }
-            min-width: 60px;
-            min-height: 30px;
+            width: 60px;
+            height: 30px;
 
             &.select-row {
                 cursor: crosshair;
@@ -174,9 +188,8 @@
         .selection-mask {
             position: absolute;
             width: 100%;
-            background: #000;
-            opacity: 0.1;
-            pointer-events: none;
+            background: rgba(0, 0, 0, 0.1);
+            // pointer-events: none;
         }
     }
 

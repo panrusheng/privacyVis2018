@@ -36,7 +36,7 @@ class App extends React.Component {
               <div
                 onClick={() => this.props.store.setSystemStage(index)}
                 className={
-                  'pipeline-button' + (systemStage === index ? ' active' : '')
+                  'pipeline-button' + (systemStage === index ? ' active' : '' + (systemStage > index ? ' processed': ''))
                 }
                 key={name}
               >

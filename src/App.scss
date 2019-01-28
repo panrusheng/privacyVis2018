@@ -67,6 +67,22 @@
         }
       }
 
+      &.processed {
+        background-color: #3987db;
+
+        &::after {
+          background-color: #3987db;
+        }
+
+        &:hover {
+          background-color: #539ff0;
+
+          &::after {
+            background-color: #539ff0;
+          }
+        }
+      }
+
       &:hover {
         background-color: #ccc;
         &::after {

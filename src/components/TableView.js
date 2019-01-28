@@ -22,11 +22,13 @@ const ASC = 1;
  * }]
  */
 
- const cmp = function (a, b) {
-   if (a > b) return 1;
-   if (a < b) return -1;
-   return 0;
- }
+const cmp = function (a, b) {
+  if (a > b) return 1;
+  if (a < b) return -1;
+  return 0;
+}
+
+let incrId = 1;
 
 @inject(['store'])
 @observer
@@ -84,6 +86,7 @@ export default class TableView extends React.Component {
       start: offsetTop,
       end: offsetTop + height,
       group,
+      id: incrId++,
     };
 
     const rowSelection = [...this.state.rowSelection];
@@ -145,16 +148,19 @@ export default class TableView extends React.Component {
     this.selectionGroup = null;
   }
 
-  removeSelection() {
-    this.rowSelecting = false;
-    this.setState({ rowSelection: [] });
+  removeSelection(e, id) {
+    e.preventDefault();
+
+    const rowSelection = this.state.rowSelection.filter(item => item.id !== id);
+    this.setState({ rowSelection });
   }
 
   checkOverlap(pos) {
     const { rowSelection } = this.state;
+    const { selectionGroup } = this;
     
     for (let i = 0; i < rowSelection.length; ++i) {
-      if (pos >= rowSelection[i].start && pos <= rowSelection[i].end) return i;
+      if (pos >= rowSelection[i].start && pos <= rowSelection[i].end && rowSelection[i].group === selectionGroup) return i;
     }
 
     return -1;
@@ -206,8 +212,6 @@ export default class TableView extends React.Component {
       orderCol: undefined,
       mode: this.state.mode === 1 ? 2 : 1,
     });
-    
-    this.removeSelection();
   }
 
   toggleGroup(groupId) {
@@ -221,8 +225,6 @@ export default class TableView extends React.Component {
     }
 
     this.setState({ unfoldedGroups });
-
-    this.removeSelection();
   }
 
   setOrder(orderCol) {
@@ -374,8 +376,8 @@ export default class TableView extends React.Component {
                 >
                   {erow.id}
                 </div>))}
-                { rowSelection.filter(item => item.group === id).map(({ start, end }, index) => (
-                  <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+                { rowSelection.filter(item => item.group === id).map(({ start, end, id }, index) => (
+                  <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end - start }} />
                 )) }
               </div>
             ]
@@ -451,8 +453,8 @@ export default class TableView extends React.Component {
 
               groupedRows.push(<div className="scroll-wrapper extent-rows" data={row.id} onScroll={e => this.syncScrollWrapper(e, row.id)}>
                 {eRows}
-                { rowSelection.filter(item => item.group === row.id).map(({ start, end }, index) => (
-                  <div key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+                { rowSelection.filter(item => item.group === row.id).map(({ start, end, id }, index) => (
+                  <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end - start }} />
                 )) }  
               </div>)
             }

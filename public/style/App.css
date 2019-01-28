@@ -45,6 +45,14 @@
         color: #ffffff; }
         .app .pipeline-btn-group .pipeline-button.active:hover::after {
           background-color: #1866bb; }
+      .app .pipeline-btn-group .pipeline-button.processed {
+        background-color: #3987db; }
+        .app .pipeline-btn-group .pipeline-button.processed::after {
+          background-color: #3987db; }
+        .app .pipeline-btn-group .pipeline-button.processed:hover {
+          background-color: #539ff0; }
+          .app .pipeline-btn-group .pipeline-button.processed:hover::after {
+            background-color: #539ff0; }
       .app .pipeline-btn-group .pipeline-button:hover {
         background-color: #ccc; }
         .app .pipeline-btn-group .pipeline-button:hover::after {
