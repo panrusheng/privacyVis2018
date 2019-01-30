@@ -103,6 +103,10 @@ class AppStore {
   @observable
   recSelectedList = [[1, 0, 0], [0.5, 0.5, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]];
 
+  @observable
+  piechart = {original: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}], 
+  processed: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}]};
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets

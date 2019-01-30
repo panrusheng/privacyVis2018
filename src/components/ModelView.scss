@@ -1,0 +1,57 @@
+.mod-view {
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    overflow: hidden;
+
+    .view-title {
+        font-size: 24px;
+        text-align: left;
+        padding-bottom: 10px;
+    }
+
+    .operation {
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 8px;
+        margin-bottom: 10px;
+        flex-direction: column;
+        .mod-panel {
+            display: flex;
+            flex-direction: wrap;
+            height: 170px;
+            .model-submit {
+                margin-left: 50px;
+            }
+        }
+        .mod-chart {
+            display: flex;
+            height: 550px;
+        }
+        .mod-report {
+            display: flex;
+            height:200px;
+            width:900px;
+            // border: solid 1px #ccc;
+            background-color: #efefef;
+            margin: 20px;
+            flex-direction: column;
+            .report-title {
+                width: 100%;
+                text-align: center;
+                font-size: 20px;
+                margin: 10px;
+            }
+            .report-h {
+                color: #1866bb;
+                white-space:nowrap;
+            }
+            .report-list {
+                white-space:nowrap;
+                width: 100%;
+            }
+        }
+        
+    }
+}
