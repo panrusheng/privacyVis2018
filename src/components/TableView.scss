@@ -72,7 +72,7 @@
             }
 
             .scroll-wrapper {
-                overflow-y: auto;
+                overflow: hidden;
                 width: fit-content;
                 max-height: 168px;
                 &::-webkit-scrollbar {
