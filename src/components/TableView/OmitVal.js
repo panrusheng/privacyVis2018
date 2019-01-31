@@ -49,28 +49,33 @@ export default class OmitVal extends React.Component {
         const { columns, rows } = this.formatData();
         return (
             <div className="omit-value">
-                { rows.map(row => {
-                    return (
-                        <div className="row">
-                            { columns.map(attr => (
-                                <div className="cell">
-                                    {
-                                        row[attr].privacy === undefined ? (
-                                            <div className="bg">
-                                                <div className="utility" style={{ width: '100%', opacity: row[attr].utility }} />
-                                            </div>
-                                        ) : (
-                                            <div className="bg">
-                                                <div className="privacy" style={{ width: `${row[attr].privacy}%`, opacity: row[attr].privacy }} />
-                                                <div className="utility" style={{ width: `${row[attr].utility}%`, opacity: row[attr].utility }} />
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            )) }
-                        </div>
-                    )
-                }) }
+                <div className="header">
+                    { columns.map(col => <div className="header-item"><span>{col}</span></div>) }
+                </div>
+                <div className="body">                        
+                    { rows.map(row => {
+                        return (
+                            <div className="row">
+                                { columns.map(attr => (
+                                    <div className="cell">
+                                        {
+                                            row[attr].privacy === undefined ? (
+                                                <div className="bg">
+                                                    <div className="utility" style={{ width: '100%', opacity: row[attr].utility }} />
+                                                </div>
+                                            ) : (
+                                                <div className="bg">
+                                                    <div className="privacy" style={{ width: `${row[attr].privacy}%`, opacity: row[attr].privacy }} />
+                                                    <div className="utility" style={{ width: `${row[attr].utility}%`, opacity: row[attr].utility }} />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                )) }
+                            </div>
+                        )
+                    }) }
+                </div>
             </div>
         )
     }

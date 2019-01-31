@@ -13,6 +13,7 @@ export default class extends React.Component {
     this.props.store.getAttrList('user');
   }
   render() {
+    return <LoadData />
     return <TableView />
   }
 }
