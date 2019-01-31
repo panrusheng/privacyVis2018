@@ -238,6 +238,8 @@ export default class AttrInitialize extends React.Component {
                   )}
                 </div>
               </div>
+              <div className='tooltip' style={{display: 'none', position: 'absolute'}}>
+              </div>
             </div>
             {this.renderAttr(attr)}
           </div>

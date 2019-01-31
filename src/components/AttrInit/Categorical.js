@@ -28,7 +28,7 @@ export default class Categorical extends React.Component {
       .scaleLinear()
       .domain([0, height])
       .range([0, height]);
-
+    
     svg
       .append('g')
       .selectAll('rect')
@@ -48,6 +48,17 @@ export default class Categorical extends React.Component {
       .attr('width', d => xScale(d.value))
       .on('click', function(d, i) {
         openMenu && openMenu(data[i], attrName, d3.event);
+      })
+      .on('mouseover', d => {
+        const x = d3.event.x - 10 - margin.left,
+          y = d3.event.y - 155 - margin.top;
+          d3.select('.tooltip').html(d.name+ ': '  + d.value)	
+          .style('left', (x) + 'px')
+          .style('display', 'block')		
+          .style('top', (y) + 'px');
+      })
+      .on('mouseout', () => {
+        d3.select('.tooltip').style('display', 'none')
       });
 
     const axisElem = svg

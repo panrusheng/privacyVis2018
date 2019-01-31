@@ -29,3 +29,11 @@
         outline: none;
         border-bottom: 1px solid rgba(138, 138, 138, 0.5);
         text-align: center; }
+
+.tooltip {
+  border-radius: 5px;
+  width: 150px;
+  height: 40px;
+  padding: 5px;
+  background-color: #e7eff8;
+  border: solid #1866BB 1px; }
