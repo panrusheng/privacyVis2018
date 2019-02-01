@@ -142,8 +142,35 @@ class AppStore {
       // const eventNos = new Set(data.nodes.map(item => item.eventNo));
       // data.links = data.links.filter(item => eventNos.has(item.source) && eventNos.has(item.target));
       data.links.forEach(item => item.value = parseFloat(item.value));
-
-      this.GBN = data;
+      let dataGBN = {};
+      dataGBN.nodes = [];
+      dataGBN.links = [];
+      let nullList = [];
+      for (let i = 0; i < data.nodes.length; i++) {
+        nullList.push(false);
+      }
+      for (let i=0; i < data.links.length; i++) {
+        nullList[data.links[i].source] = true;
+        nullList[data.links[i].target] = true;
+      }
+      
+      for (let i = 0; i < data.nodes.length; i++) {
+        if (nullList[i]) 
+        dataGBN.nodes.push(data.nodes[i]);
+      }
+      for (let i = 0; i < data.links.length; i++) {
+        
+        let source = data.links[i].source, target = data.links[i].target;
+        for (let j = source; j >= 0 ; j--) {
+          source = nullList[j]?source:source-1;
+        }
+        for (let j = target; j >= 0 ; j--) {
+          target = nullList[j]?target:target-1;
+        }
+        dataGBN.links.push({source:source, target:target, value:data.links[i].value,cpt:data.links[i].cpt})
+      }
+      this.GBN = dataGBN;
+      // this.GBN = data;
     });
   }
 
