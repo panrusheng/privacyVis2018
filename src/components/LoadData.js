@@ -88,21 +88,29 @@ export default class LoadData extends React.Component {
                 wrapClassName="attr-select-panel"
             >
                 <div className="load-data">
-                    <div><div style={{ cursor: 'pointer' }} onClick={this.uploadDataset.bind(this)}>Upload</div></div>
-                    <div className="datasets">
-                        { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
-                    </div>
                     <div className="attr-list">
+                        <div className="attr-list-item">
+                            <div style={{ width: '15px' }}/>
+                            <div style={{ width: '90px' }}>Attributes</div>
+                            <div style={{ width: '100px' }}>Types</div>
+                            <div style={{ width: '450px' }}>Description</div>
+                        </div>
                         { currentAttrList.map((attr, index) => (
                             <div className="attr-list-item">
                                 <div onClick={() => this.toggleCheck(index)}>{
                                     checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
                                 }</div>
-                                <div style={{ width: '40px' }}>{attr.attrName}</div>
-                                <div style={{ width: '70px' }}>{attr.type}</div>
-                                <div className="desc">{attr.description}</div>
+                                <div style={{ width: '90px' }}>{attr.attrName}</div>
+                                <div style={{ width: '100px' }}>{attr.type}</div>
+                                <div style={{ width: '450px' }} className="desc">{attr.description}</div>
                             </div>
                         )) }
+                    </div>
+                    <div className="load-panel">
+                        <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
+                        <div className="datasets">
+                            { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
+                        </div>
                     </div>
                 </div>
 
