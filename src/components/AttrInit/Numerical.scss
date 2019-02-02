@@ -5,7 +5,7 @@
   }
   .line {
     fill: none;
-    stroke: #1866BB;
+    stroke: #fff;
     stroke-width: 2;
   }
 
@@ -26,17 +26,18 @@
   }
 
   .area {
-    fill: aliceblue;
+    fill: #1866BB;
+    fill-opacity: 0.2;
   }
 
   .axis-ver {
-    line{
-      stroke: #333	;
-    }
+    // line{
+    //   stroke: #333	;
+    // }
     
-    path{
-      stroke: #333	;
-    }
+    // path{
+    //   stroke: #333	;
+    // }
     
     text{
       fill: #333	;

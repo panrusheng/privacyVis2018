@@ -22,21 +22,17 @@ export default class Categorical extends React.Component {
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    const rectWidth = height / data.length;
+    const rectWidth = (height - 20) / data.length;
 
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, height])
-      .range([0, height]);
-    
     svg
       .append('g')
       .selectAll('rect')
       .data(data)
       .enter()
       .append('rect')
-      .style('fill', 'aliceblue')
-      .style('stroke', '#1866BB')
+      .style('fill', '#1866BB')
+      .style('fill-opacity', 0.2)
+      .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
         return (width - xScale(d.value)) / 2;
@@ -46,29 +42,51 @@ export default class Categorical extends React.Component {
       })
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.value))
-      .on('click', function(d, i) {
+      .on('click', function (d, i) {
         openMenu && openMenu(data[i], attrName, d3.event);
       })
       .on('mouseover', d => {
         const x = d3.event.x - 10 - margin.left,
           y = d3.event.y - 155 - margin.top;
-          d3.select('.tooltip').html(d.name+ ': '  + d.value)	
+        d3.select('.tooltip').html(d.name + ': ' + d.value)
           .style('left', (x) + 'px')
-          .style('display', 'block')		
+          .style('display', 'block')
           .style('top', (y) + 'px');
       })
       .on('mouseout', () => {
         d3.select('.tooltip').style('display', 'none')
       });
 
-    const axisElem = svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      .call(d3.axisLeft(yScale))
-      .attr('transform', `translate(${width / 2}, 0)`);
+    // const axisElem = svg
+    //   .append('g')
+    //   .attr('class', 'axis-ver')
+    //   .call(d3.axisLeft(yScale))
+    //   .attr('transform', `translate(${width / 2}, 0)`);
 
-    axisElem.selectAll('text').remove();
-    axisElem.selectAll('.tick').remove();
+    // axisElem.selectAll('text').remove();
+    // axisElem.selectAll('.tick').remove();
+    if (d3.selectAll('#biggerArrow'.length == 0)) {
+      let defs = svg.append('defs').attr('class', 'axis-ver')
+        .append('marker')
+        .attr('id', 'biggerArrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 15)
+        .attr('markerHeight', 15)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L10,0L0,4L3,0')
+        .style('fill', '#333');
+    }
+    svg.append('line')
+      .attr('x1', width / 2)
+      .attr('x2', width / 2)
+      .attr('y1', 0)
+      .attr('y2', height - 2)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 1);
 
     svg
       .append('g')
@@ -79,8 +97,9 @@ export default class Categorical extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('x', (d, i) => width / 2 + 10)
+      .attr('x', (d, i) => width / 2 - 5)
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
+      .style('text-anchor', 'end')
       .text(d => d.name);
   }
 

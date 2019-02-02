@@ -68,19 +68,20 @@ export default class RecView extends Component {
 
     g.selectAll("." + name).remove();
 
-    let defs = g.append('defs').attr('class', name);
-
-    defs.append('marker')
-      .attr('id', 'arrow' + name)
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 13)
-      .attr('refY', 0)
-      .attr('markerWidth', 5)
-      .attr('markerHeight', 5)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-4L10,0L0,4L3,0')
-      .style('fill', '#74a3d6');
+    if (d3.selectAll('#arrowSub'.length == 0)) {
+      let defs = g.append('defs').attr('class', name);
+      defs.append('marker')
+        .attr('id', 'arrowSub')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 13)
+        .attr('refY', 0)
+        .attr('markerWidth', 5)
+        .attr('markerHeight', 5)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L10,0L0,4L3,0')
+        .style('fill', '#74a3d6');
+    }
 
     g.append('g')
       .attr('class', name)
@@ -93,7 +94,7 @@ export default class RecView extends Component {
       .attr('y1', d => nodes[d.source.index].y)
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
-      .attr('marker-end', 'url(#arrow' + name + ')')
+      .attr('marker-end', 'url(#arrowSub)')
       .style('stroke', '#999')
       .style('stroke-width', 2)
       .style('cursor', 'pointer');
@@ -109,7 +110,7 @@ export default class RecView extends Component {
         if (d.del) return "#ccc";
         return d.value < 0 ? '#FE2901' : '#7bbc88'
       })
-      .style('stroke-width', 3 )//d => d.del ? 2 : 3)
+      .style('stroke-width', 3)//d => d.del ? 2 : 3)
       // .style('stroke-dasharray', d => d.del ? "2 2" : "1 0")
       .style('stoke', d => d.del ? '#ccc' : '#none')
       .attr('cx', d => d.x)

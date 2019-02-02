@@ -52,7 +52,7 @@ export default class Numerical extends React.Component {
     const yScale = d3
       .scaleLinear()
       .domain([0, data.length - 1])
-      .range([0, height]);
+      .range([0, height - 20]);
 
     const line = d3
       .line()
@@ -119,7 +119,7 @@ export default class Numerical extends React.Component {
       .data([data])
       .attr('class', 'area')
       .attr('d', areaNeg);
-    
+
     svg
       .selectAll('circle')
       .data(data)
@@ -134,9 +134,9 @@ export default class Numerical extends React.Component {
       .on('mouseover', (d, i) => {
         const x = d3.event.x - 10 - margin.left,
           y = d3.event.y - 155 - margin.top;
-          d3.select('.tooltip').html(chartThis.props.attr.attrName+'('+attr.data[i].label+ '): '  + d)	
+        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + attr.data[i].label + '): ' + d)
           .style('left', (x) + 'px')
-          .style('display', 'block')		
+          .style('display', 'block')
           .style('top', (y) + 'px');
       })
       .on('mouseout', () => {
@@ -149,13 +149,36 @@ export default class Numerical extends React.Component {
       .call(
         d3.axisLeft(
           d3
-          .scaleLinear()
-          .range([0, height])
-          .domain([Math.min(...labels), Math.max(...labels)])
+            .scaleLinear()
+            .range([0, height - 20])
+            .domain([Math.min(...labels), Math.max(...labels)])
         )
       )
       .attr('transform', `translate(${width / 2 + 2}, 0)`);
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
+
+    if (d3.selectAll('#biggerArrow'.length == 0)) {
+      let defs = svg.append('defs').attr('class', 'axis-ver')
+        .append('marker')
+        .attr('id', 'biggerArrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 15)
+        .attr('markerHeight', 15)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L10,0L0,4L3,0')
+        .style('fill', '#333');
+    }
+    svg.append('line')
+      .attr('x1', width / 2)
+      .attr('x2', width / 2)
+      .attr('y1', 0)
+      .attr('y2', height - 2)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 1);
 
     // add break points to group attributes
     const chartThis = this;
@@ -181,19 +204,19 @@ export default class Numerical extends React.Component {
       .attr('class', 'break-point')
       .call(
         d3
-        .drag()
-        .on('drag', function (d, i) {
-          const [, y] = d3.mouse(dom);
-          let value = (y - margin.top) / (height - margin.top);
-          if (value < 0) value = 0;
-          if (value > 1) value = 1;
+          .drag()
+          .on('drag', function (d, i) {
+            const [, y] = d3.mouse(dom);
+            let value = (y - margin.top) / (height - margin.top);
+            if (value < 0) value = 0;
+            if (value > 1) value = 1;
 
-          chartThis.props.updateBreakPoint(
-            chartThis.props.attr.attrName,
-            i,
-            value
-          );
-        })
+            chartThis.props.updateBreakPoint(
+              chartThis.props.attr.attrName,
+              i,
+              value
+            );
+          })
       );
 
     const [labelMin, labelMax] = d3.extent(labels);
@@ -232,19 +255,19 @@ export default class Numerical extends React.Component {
       })
       .call(
         d3
-        .drag()
-        .on('drag', function (d, i) {
-          const [, y] = d3.mouse(dom);
-          let value = (y - margin.top) / (height - margin.top);
-          if (value < 0) value = 0;
-          if (value > 1) value = 1;
+          .drag()
+          .on('drag', function (d, i) {
+            const [, y] = d3.mouse(dom);
+            let value = (y - margin.top) / (height - margin.top);
+            if (value < 0) value = 0;
+            if (value > 1) value = 1;
 
-          chartThis.props.updateBreakPoint(
-            chartThis.props.attr.attrName,
-            i,
-            value
-          );
-        })
+            chartThis.props.updateBreakPoint(
+              chartThis.props.attr.attrName,
+              i,
+              value
+            );
+          })
       );
 
   }
@@ -293,14 +316,14 @@ export default class Numerical extends React.Component {
   }
 
   render() {
-    return ( <div className = "numerical-view">
+    return (<div className="numerical-view">
       <
-      svg ref = {
-        dom => (this.chartDom = dom)
-      }
-      onClick = {
-        this.handleChartClick
-      }
+        svg ref={
+          dom => (this.chartDom = dom)
+        }
+        onClick={
+          this.handleChartClick
+        }
       /> </div>
     );
   }

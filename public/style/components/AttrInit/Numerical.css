@@ -5,7 +5,7 @@
     user-select: none; }
   .numerical-view .line {
     fill: none;
-    stroke: #1866BB;
+    stroke: #fff;
     stroke-width: 2; }
   .numerical-view .overlay {
     fill: none;
@@ -17,11 +17,8 @@
     fill: none;
     stroke: #1866BB; }
   .numerical-view .area {
-    fill: aliceblue; }
-  .numerical-view .axis-ver line {
-    stroke: #333; }
-  .numerical-view .axis-ver path {
-    stroke: #333; }
+    fill: #1866BB;
+    fill-opacity: 0.2; }
   .numerical-view .axis-ver text {
     fill: #333; }
   .numerical-view .break-point {
