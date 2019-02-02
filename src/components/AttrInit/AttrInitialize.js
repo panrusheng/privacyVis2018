@@ -238,7 +238,7 @@ export default class AttrInitialize extends React.Component {
                   )}
                 </div>
                 */}
-                <p style = {{marginRigth: 5}}>Utility value</p>
+                <p style = {{margin: 1}}>Utility value</p>
                 <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{width: 70, textAlign: 'left'}} onChange={e =>
                         this.handleUtilityChange(attr.attrName, e)
                       } />

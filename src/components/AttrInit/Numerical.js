@@ -164,8 +164,8 @@ export default class Numerical extends React.Component {
         .attr('viewBox', '0 -5 10 10')
         .attr('refX', 10)
         .attr('refY', 0)
-        .attr('markerWidth', 15)
-        .attr('markerHeight', 15)
+        .attr('markerWidth', 8)
+        .attr('markerHeight', 8)
         .attr('orient', 'auto')
         .append('path')
         .attr('d', 'M0,-4L10,0L0,4L3,0')
@@ -178,7 +178,7 @@ export default class Numerical extends React.Component {
       .attr('y2', height - 2)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
-      .style('stroke-width', 1);
+      .style('stroke-width', 2);
 
     // add break points to group attributes
     const chartThis = this;

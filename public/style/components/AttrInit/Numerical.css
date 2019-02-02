@@ -20,7 +20,8 @@
     fill: #1866BB;
     fill-opacity: 0.2; }
   .numerical-view .axis-ver text {
-    fill: #333; }
+    fill: #333;
+    font-size: 12px; }
   .numerical-view .break-point {
     cursor: pointer; }
     .numerical-view .break-point.active, .numerical-view .break-point:hover {
