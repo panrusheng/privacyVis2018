@@ -1,29 +1,30 @@
-.numberical-view {
+.numerical-view {
+  text-align: center;
   /* Style the dots by assigning a fill and stroke */ }
-  .numberical-view svg {
+  .numerical-view svg {
     user-select: none; }
-  .numberical-view .line {
+  .numerical-view .line {
     fill: none;
-    stroke: #e0e8ff;
-    stroke-width: 3; }
-  .numberical-view .overlay {
+    stroke: #1866BB;
+    stroke-width: 2; }
+  .numerical-view .overlay {
     fill: none;
     pointer-events: all; }
-  .numberical-view .dot {
+  .numerical-view .dot {
     fill: #e0e8ff;
     stroke: #fff; }
-  .numberical-view .focus circle {
+  .numerical-view .focus circle {
     fill: none;
-    stroke: steelblue; }
-  .numberical-view .area {
+    stroke: #1866BB; }
+  .numerical-view .area {
     fill: aliceblue; }
-  .numberical-view .axis-ver line {
-    stroke: #9B9DA0; }
-  .numberical-view .axis-ver path {
-    stroke: #9B9DA0; }
-  .numberical-view .axis-ver text {
-    fill: #9B9DA0; }
-  .numberical-view .break-point {
+  .numerical-view .axis-ver line {
+    stroke: #333; }
+  .numerical-view .axis-ver path {
+    stroke: #333; }
+  .numerical-view .axis-ver text {
+    fill: #333; }
+  .numerical-view .break-point {
     cursor: pointer; }
-    .numberical-view .break-point.active, .numberical-view .break-point:hover {
+    .numerical-view .break-point.active, .numerical-view .break-point:hover {
       stroke: grey; }

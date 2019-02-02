@@ -1,8 +1,8 @@
-.categorical-view .axis-ver line {
-  stroke: #9B9DA0; }
-
-.categorical-view .axis-ver path {
-  stroke: #9B9DA0; }
-
-.categorical-view .axis-ver text {
-  fill: #9B9DA0; }
+.categorical-view {
+  text-align: center; }
+  .categorical-view .axis-ver line {
+    stroke: #333; }
+  .categorical-view .axis-ver path {
+    stroke: #333; }
+  .categorical-view .axis-ver text {
+    fill: #333; }

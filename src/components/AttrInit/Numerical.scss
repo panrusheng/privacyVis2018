@@ -1,11 +1,12 @@
-.numberical-view {
+.numerical-view {
+  text-align: center;
   svg {
     user-select: none;
   }
   .line {
     fill: none;
-    stroke: #e0e8ff;
-    stroke-width: 3;
+    stroke: #1866BB;
+    stroke-width: 2;
   }
 
   .overlay {
@@ -21,7 +22,7 @@
 
   .focus circle {
   fill: none;
-  stroke: steelblue;
+  stroke: #1866BB;
   }
 
   .area {
@@ -30,15 +31,15 @@
 
   .axis-ver {
     line{
-      stroke: #9B9DA0	;
+      stroke: #333	;
     }
     
     path{
-      stroke: #9B9DA0	;
+      stroke: #333	;
     }
     
     text{
-      fill: #9B9DA0	;
+      fill: #333	;
     }  
   }
 

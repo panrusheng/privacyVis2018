@@ -6,7 +6,7 @@ import { ContextMenu, ContextMenuTrigger } from 'react-contextmenu';
 import { hideMenu } from 'react-contextmenu/modules/actions';
 import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
-import { Checkbox } from 'antd';
+import { InputNumber } from 'antd';
 
 @inject(['store'])
 @observer
@@ -209,14 +209,14 @@ export default class AttrInitialize extends React.Component {
           <div className="chart" key={attr.attrName}>
             <div className="attr-info">
               <div className="title">{attr.attrName}</div>
-              <div>
-                <div className="form-block">
+              <div className="form-block">
+                {/* <div className="form-block">
                   <Checkbox
                     onChange={() => this.toggleAttrSensitive(attr.attrName)}
                     checked={attr.sensitive}
                   />
                   Sensitive
-                </div>
+                </div> 
                 <div className="form-block">
                   <Checkbox
                     checked={attr.utility !== undefined}
@@ -237,6 +237,11 @@ export default class AttrInitialize extends React.Component {
                     />
                   )}
                 </div>
+                */}
+                <p style = {{marginRigth: 5}}>Utility value</p>
+                <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{width: 70, textAlign: 'left'}} onChange={e =>
+                        this.handleUtilityChange(attr.attrName, e)
+                      } />
               </div>
               <div className='tooltip' style={{display: 'none', position: 'absolute'}}>
               </div>

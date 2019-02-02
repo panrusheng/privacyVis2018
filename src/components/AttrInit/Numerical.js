@@ -293,7 +293,7 @@ export default class Numerical extends React.Component {
   }
 
   render() {
-    return ( <div className = "numberical-view" >
+    return ( <div className = "numerical-view">
       <
       svg ref = {
         dom => (this.chartDom = dom)

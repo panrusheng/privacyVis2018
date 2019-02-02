@@ -35,9 +35,9 @@ export default class Categorical extends React.Component {
       .data(data)
       .enter()
       .append('rect')
-      .attr('fill', 'aliceblue')
-      .attr('stroke', '#e0e8ff')
-      .attr('stroke-width', '1')
+      .style('fill', 'aliceblue')
+      .style('stroke', '#1866BB')
+      .style('stroke-width', 1)
       .attr('x', (d, i) => {
         return (width - xScale(d.value)) / 2;
       })
@@ -77,7 +77,7 @@ export default class Categorical extends React.Component {
       .enter()
       .append('text')
       .attr('class', 'label')
-      .attr('fill', '#9B9DA0')
+      .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
       .attr('x', (d, i) => width / 2 + 10)
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
