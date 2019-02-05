@@ -41,7 +41,7 @@ export default class AttrNetwork extends Component {
     } = data;
     const merge = 'child' in nodes[0];
     let r = merge ? 10 : 8;
-    const rowHeight = 30, legendWidth = 135, legendHeigth = 140, legendHH = nullList.length * rowHeight + rowHeight + 10, fontSize = 13;
+    const rowHeight = 30, legendWidth = 135, legendHeigth = 140, legendHH = nullList.length ? (nullList.length * rowHeight + rowHeight + 10) : 0, fontSize = 13;
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
@@ -85,8 +85,8 @@ export default class AttrNetwork extends Component {
       .attr('rx', 5)
       .attr('ry', 5)
       .style('fill', '#fff')
-      .style('stroke', '#1866BB')
-      .style('stoke-width', 1);
+      .style('stroke', '#ccc')
+      .style('stroke-dasharray', '5 5');
     legend.append('text')
       .attr('x', legendWidth / 2)
       .attr('y', legendHH + rowHeight)
@@ -98,7 +98,7 @@ export default class AttrNetwork extends Component {
       .attr('x2', legendWidth - 5)
       .attr('y1', legendHH + 40)
       .attr('y2', legendHH + 40)
-      .style('stroke', '#74a3d6')
+      .style('stroke', '#ccc')
       .style('stroke-dasharray', '2 1');
 
     let legendCircle = legend.selectAll('legend')
@@ -127,42 +127,42 @@ export default class AttrNetwork extends Component {
       .attr('stop-color', 'rgba(153,153,153,1)')
       .attr('offset', '1');
     legend.append('rect')
-    .attr('x', 10)
-    .attr('y', legendHH + rowHeight * 4 + 10)
-    .attr('width', legendWidth - 20)
-    .attr('height', 5)
-    .style('fill', 'url(#edgeGradient)');
+      .attr('x', 10)
+      .attr('y', legendHH + rowHeight * 4 + 10)
+      .attr('width', legendWidth - 20)
+      .attr('height', 5)
+      .style('fill', 'url(#edgeGradient)');
     legend.append('text')
-    .attr('x', legendWidth/2)
+      .attr('x', legendWidth / 2)
       .attr('y', legendHH + 4 * rowHeight - r + fontSize)
       .style('text-anchor', 'middle')
       .text('Correlation (MI)');
 
-    legend.append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', legendWidth)
-      .attr('height', legendHH)
-      .attr('rx', 5)
-      .attr('ry', 5)
-      .style('fill', '#fff')
-      .style('stroke', '#1866BB')
-      .style('stoke-width', 1);
-    legend.append('text')
-      .attr('x', legendWidth / 2)
-      .attr('y', rowHeight - 10)
-      .style('font-size', 18)
-      .style('text-anchor', 'middle')
-      .text('Irrelevant events');
-    legend.append('line')
-      .attr('x1', 5)
-      .attr('x2', legendWidth - 5)
-      .attr('y1', rowHeight)
-      .attr('y2', rowHeight)
-      .style('stroke', '#74a3d6')
-      .style('stroke-dasharray', '2 1');
-
-
+    if (nullList.length > 0) {
+      legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', legendWidth)
+        .attr('height', legendHH)
+        .attr('rx', 5)
+        .attr('ry', 5)
+        .style('fill', '#fff')
+        .style('stroke', '#ccc')
+        .style('stroke-dasharray', '5 5');
+      legend.append('text')
+        .attr('x', legendWidth / 2)
+        .attr('y', rowHeight - 10)
+        .style('font-size', 18)
+        .style('text-anchor', 'middle')
+        .text('Irrelevant events');
+      legend.append('line')
+        .attr('x1', 5)
+        .attr('x2', legendWidth - 5)
+        .attr('y1', rowHeight)
+        .attr('y2', rowHeight)
+        .style('stroke', '#ccc')
+        .style('stroke-dasharray', '2 1');
+    }
     for (let i = 0; i < nullList.length; i++) {
       let n = nullList[i];
       n.x = ww - legendWidth + r + 11;
@@ -199,8 +199,8 @@ export default class AttrNetwork extends Component {
       .style('stroke', '#999')
       .style('stroke-dasharray', '10 5')
       .style('stroke-width', 4);
-
-    const link = g
+    //links
+    g
       .append('g')
       .attr('class', 'n2d')
       .selectAll('line')
@@ -504,8 +504,8 @@ export default class AttrNetwork extends Component {
 
           });
       });
-
-    const node = g
+    //nodes
+    g
       .append('g')
       .attr('class', 'n2d')
       .selectAll('circle')
@@ -686,7 +686,6 @@ export default class AttrNetwork extends Component {
               });
           });
       });
-
     //label
     g
       .append('g')
@@ -702,7 +701,6 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', d => (d.x < ww - 60 ? 'start' : 'end'))
       .text(d => d.id)
       .style('fill', '#333');
-
   }
 
   render() {
