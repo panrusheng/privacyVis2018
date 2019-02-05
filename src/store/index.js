@@ -66,6 +66,7 @@ class AppStore {
     nodes: [],
     links: []
   };
+  nodeList4links = [];
   @observable
   recList = {
     group: [{
@@ -145,7 +146,8 @@ class AppStore {
       let dataGBN = {};
       dataGBN.nodes = [];
       dataGBN.links = [];
-      let nullList = [];
+      dataGBN.nullNodes = [];
+      let nullList = [], nodeList4links = [];
       for (let i = 0; i < data.nodes.length; i++) {
         nullList.push(false);
       }
@@ -155,8 +157,12 @@ class AppStore {
       }
       
       for (let i = 0; i < data.nodes.length; i++) {
-        if (nullList[i]) 
-        dataGBN.nodes.push(data.nodes[i]);
+        if (nullList[i]) {
+          dataGBN.nodes.push(data.nodes[i]);
+          nodeList4links.push(i);
+        } else {
+          dataGBN.nullNodes.push(data.nodes[i]);
+        }
       }
       for (let i = 0; i < data.links.length; i++) {
         
@@ -170,6 +176,7 @@ class AppStore {
         dataGBN.links.push({source:source, target:target, value:data.links[i].value,cpt:data.links[i].cpt})
       }
       this.GBN = dataGBN;
+      this.nodeList4links = nodeList4links;
       // this.GBN = data;
     });
   }

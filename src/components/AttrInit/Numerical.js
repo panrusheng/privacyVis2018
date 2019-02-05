@@ -132,8 +132,8 @@ export default class Numerical extends React.Component {
       .style('stroke-width', 2)
       .style('fill', '#fff')
       .on('mouseover', (d, i) => {
-        const x = d3.event.x - 10 - margin.left,
-          y = d3.event.y - 155 - margin.top;
+        const x = d3.event.x + 5 - margin.left,
+          y = d3.event.y - 145 - margin.top;
         d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + attr.data[i].label + '): ' + d)
           .style('left', (x) + 'px')
           .style('display', 'block')

@@ -26,7 +26,8 @@ export default class AttrNetwork extends Component {
     let {
       canvas,
       data,
-      filter
+      filter,
+      nullList
     } = this.props;
     if (data.nodes.length === 0) return;
     let margin = 50;
@@ -40,6 +41,7 @@ export default class AttrNetwork extends Component {
     } = data;
     const merge = 'child' in nodes[0];
     let r = merge ? 10 : 8;
+    const rowHeight = 30, legendWidth = 135, legendHeigth = 140, legendHH = nullList.length * rowHeight + rowHeight + 10, fontSize = 13;
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
@@ -52,6 +54,7 @@ export default class AttrNetwork extends Component {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
     }
+
     const g = d3
       .select(gDOM)
       .attr('width', ww)
@@ -69,6 +72,104 @@ export default class AttrNetwork extends Component {
         d3.selectAll('.edgeDetail').remove();
         d3.selectAll('.context-menu').remove();
       });
+
+    //legend
+    let legend = g.append('g')
+      .attr('class', 'n2d')
+      .attr('transform', 'translate(' + (ww - legendWidth - 1) + ',' + (hh - legendHeigth - legendHH - 20) + ')');
+    legend.append('rect')
+      .attr('x', 0)
+      .attr('y', legendHH + 10)
+      .attr('width', legendWidth)
+      .attr('height', legendHeigth)
+      .attr('rx', 5)
+      .attr('ry', 5)
+      .style('fill', '#fff')
+      .style('stroke', '#1866BB')
+      .style('stoke-width', 1);
+    legend.append('text')
+      .attr('x', legendWidth / 2)
+      .attr('y', legendHH + rowHeight)
+      .style('font-size', 18)
+      .style('text-anchor', 'middle')
+      .text('Legend');
+    legend.append('line')
+      .attr('x1', 5)
+      .attr('x2', legendWidth - 5)
+      .attr('y1', legendHH + 40)
+      .attr('y2', legendHH + 40)
+      .style('stroke', '#74a3d6')
+      .style('stroke-dasharray', '2 1');
+
+    let legendCircle = legend.selectAll('legend')
+      .data([{ type: 'Sensitive', color: '#BC1A1A' }, { type: 'Non-sensitive', color: '#7bbc88' }])
+      .enter();
+    legendCircle.append('circle')
+      .attr('cx', 20)
+      .attr('cy', (d, i) => legendHH + rowHeight * i + 2 * rowHeight)
+      .attr('r', r)
+      .style('fill', d => d.color);
+
+    legendCircle.append('text')
+      .attr('x', r + 25)
+      .attr('y', (d, i) => legendHH + rowHeight * i + 2 * rowHeight - r + fontSize)
+      .text(d => d.type);
+
+    let mainGradient = g.append('linearGradient').attr('id', 'edgeGradient');
+
+    mainGradient.append('stop')
+      .attr('class', 'stop-left')
+      .attr('stop-color', 'rgba(153,153,153,0)')
+      .attr('offset', '0');
+
+    mainGradient.append('stop')
+      .attr('class', 'stop-right')
+      .attr('stop-color', 'rgba(153,153,153,1)')
+      .attr('offset', '1');
+    legend.append('rect')
+    .attr('x', 10)
+    .attr('y', legendHH + rowHeight * 4 + 10)
+    .attr('width', legendWidth - 20)
+    .attr('height', 5)
+    .style('fill', 'url(#edgeGradient)');
+    legend.append('text')
+    .attr('x', legendWidth/2)
+      .attr('y', legendHH + 4 * rowHeight - r + fontSize)
+      .style('text-anchor', 'middle')
+      .text('Correlation (MI)');
+
+    legend.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', legendWidth)
+      .attr('height', legendHH)
+      .attr('rx', 5)
+      .attr('ry', 5)
+      .style('fill', '#fff')
+      .style('stroke', '#1866BB')
+      .style('stoke-width', 1);
+    legend.append('text')
+      .attr('x', legendWidth / 2)
+      .attr('y', rowHeight - 10)
+      .style('font-size', 18)
+      .style('text-anchor', 'middle')
+      .text('Irrelevant events');
+    legend.append('line')
+      .attr('x1', 5)
+      .attr('x2', legendWidth - 5)
+      .attr('y1', rowHeight)
+      .attr('y2', rowHeight)
+      .style('stroke', '#74a3d6')
+      .style('stroke-dasharray', '2 1');
+
+
+    for (let i = 0; i < nullList.length; i++) {
+      let n = nullList[i];
+      n.x = ww - legendWidth + r + 11;
+      n.y = hh - legendHeigth - legendHH + rowHeight * i + rowHeight;
+      nodes.push(n);
+    }
+
     let defs = g.append('defs').attr('class', 'n2d');
 
     defs
@@ -96,6 +197,7 @@ export default class AttrNetwork extends Component {
       .attr('target-index', -1)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#999')
+      .style('stroke-dasharray', '10 5')
       .style('stroke-width', 4);
 
     const link = g
@@ -274,9 +376,10 @@ export default class AttrNetwork extends Component {
         d3.event.preventDefault();
         const x = d3.event.x - 10 - 950,
           y = d3.event.y - 155,
-          height = 30 * 5,
+          height = rowHeight * 5,
           width = 115;
         let newCPT = d.cpt;
+        let sourceID = d.source.index, targetID = d.target.index;
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
@@ -289,26 +392,18 @@ export default class AttrNetwork extends Component {
           .style('fill', '#e7eff8')
           .style('stroke', '#1866BB')
           .style('stoke-width', 1);
-        g.append('text')
+        let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
+        'P(' + nodes[targetID].id.slice(0, 3) + '):',
+        'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
+        'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):']
+        g.selectAll('fillEmpth')
+          .data(titleList)
+          .enter()
+          .append('text')
           .attr('class', 'context-menu')
           .attr('x', x + 5)
-          .attr('y', y + 17)
-          .text('P(' + nodes[d.source.index].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5)
-          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5 * 2)
-          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '|' + nodes[d.source.index].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5 * 3)
-          .text('P(' + nodes[d.target.index].id.slice(0, 3) + '|' + nodes[d.source.index].id.slice(0, 3) + '\'):');
+          .attr('y', (d, i) => y + 17 + height / 5 * i)
+          .text(d => d);
         g.selectAll('split-line')
           .data([1, 2, 3, 4])
           .enter()
@@ -375,7 +470,7 @@ export default class AttrNetwork extends Component {
               .attr('x', x + 80)
               .attr('y', y - 5 + ii * height / 5)
               .attr('width', 35)
-              .attr('height', 30)
+              .attr('height', rowHeight)
               .append('xhtml:form')
               .append('input')
               .attr('class', 'inputSVG')
@@ -383,7 +478,7 @@ export default class AttrNetwork extends Component {
                 this.focus();
                 return dd.toFixed(2);
               })
-              .attr('style', 'width: 33px; height: 30px;')
+              .attr('style', 'width: 33px; height: ' + rowHeight + 'px;')
               .on('blur', function () {
                 let txt = inp.node().value;
                 el.text(txt);
@@ -437,8 +532,7 @@ export default class AttrNetwork extends Component {
               .attr('y2', startY)
               .attr('source-index', i)
               .attr('target-index', -1)
-              .style('stroke', '#74a3d6')
-              .style('stroke-width', 4);
+              .style('stroke', '#999');
           })
           .on('drag', function () {
             const coordinates = d3.mouse(this);
@@ -457,7 +551,7 @@ export default class AttrNetwork extends Component {
           .attr('x2', startX)
           .attr('target-index', i)
           .attr('y2', startY);
-        const height = 30 * 5,
+        const height = rowHeight * 5,
           width = 115,
           x =
             (parseFloat(addlink.attr('x1')) +
@@ -482,26 +576,18 @@ export default class AttrNetwork extends Component {
           .style('fill', '#e7eff8')
           .style('stroke', '#1866bb')
           .style('stoke-width', 1);
-        g.append('text')
+        let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
+        'P(' + nodes[i].id.slice(0, 3) + '):',
+        'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
+        'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):']
+        g.selectAll('fillEmpth')
+          .data(titleList)
+          .enter()
+          .append('text')
           .attr('class', 'context-menu')
           .attr('x', x + 5)
-          .attr('y', y + 17)
-          .text('P(' + nodes[sourceID].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5)
-          .text('P(' + nodes[i].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5 * 2)
-          .text('P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):');
-        g.append('text')
-          .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', y + 17 + height / 5 * 3)
-          .text('P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):');
+          .attr('y', (d, i) => y + 17 + height / 5 * i)
+          .text(d => d);
         g.selectAll('split-line')
           .data([1, 2, 3, 4])
           .enter()
@@ -568,7 +654,7 @@ export default class AttrNetwork extends Component {
               .attr('x', x + 80)
               .attr('y', y - 5 + ii * height / 5)
               .attr('width', 35)
-              .attr('height', 30)
+              .attr('height', rowHeight)
               .append('xhtml:form')
               .append('input')
               .attr('class', 'inputSVG')
@@ -576,7 +662,7 @@ export default class AttrNetwork extends Component {
                 this.focus();
                 return dd.toFixed(2);
               })
-              .attr('style', 'width: 33px; height: 30px;')
+              .attr('style', 'width: 33px; height: ' + rowHeight + 'px;')
               .on('blur', function () {
                 let txt = inp.node().value;
                 el.text(txt);
@@ -601,20 +687,22 @@ export default class AttrNetwork extends Component {
           });
       });
 
-    const text = g
+    //label
+    g
       .append('g')
       .attr('class', 'n2d')
       .selectAll('text')
       .data(nodes)
       .enter()
       .append('text')
-      .attr('dy', -r)
-      .attr('dx', d => (d.x < ww - 60 ? r + 1 : -(r + 1)))
+      .attr('dy', fontSize - r)
+      .attr('dx', d => (d.x < ww - 60 ? r + 4 : -(r + 4)))
       .attr('x', d => d.x)
       .attr('y', d => d.y)
-      .attr('text-anchor', d => (d.x < ww - 60 ? 'start' : 'end'))
+      .style('text-anchor', d => (d.x < ww - 60 ? 'start' : 'end'))
       .text(d => d.id)
       .style('fill', '#333');
+
   }
 
   render() {

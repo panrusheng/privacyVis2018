@@ -146,6 +146,7 @@ export default class Attribute extends React.Component {
               data={layout}
               canvas={canvas}
               filter={this.state.filterValue}
+              nullList={data.nullNodes}
             />
           </svg>
         </div>
