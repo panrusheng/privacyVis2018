@@ -22,6 +22,12 @@ class App extends React.Component {
     // test
     this.props.store.addAttribute('wei');
     this.props.store.addAttribute('res');
+    this.props.store.addAttribute('fue');
+    this.props.store.addAttribute('sch');
+    this.props.store.addAttribute('cat');
+    this.props.store.addAttribute('fmp');
+    this.props.store.addAttribute('jol');
+    this.props.store.addAttribute('he');
     this.props.store.getGBN();
     this.props.store.getAllRecords();
   }
@@ -58,6 +64,7 @@ class App extends React.Component {
             { systemStage === 2 && <ModelView /> }
           </div>
         </div>
+        <div className='tooltip' style={{display: 'none', position: 'absolute'}}/>
       </div>
     );
   }

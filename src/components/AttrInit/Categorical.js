@@ -21,7 +21,7 @@ export default class Categorical extends React.Component {
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
     const rectWidth = (height - 20) / data.length;
 
     svg
@@ -46,8 +46,8 @@ export default class Categorical extends React.Component {
         openMenu && openMenu(data[i], attrName, d3.event);
       })
       .on('mouseover', d => {
-        const x = d3.event.x + 5 - margin.left,
-          y = d3.event.y - 145 - margin.top;
+        const x = d3.event.x + 15 - margin.left,
+          y = d3.event.y - 35 - margin.top;
         d3.select('.tooltip').html(d.name + ': ' + d.value)
           .style('left', (x) + 'px')
           .style('display', 'block')

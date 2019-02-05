@@ -10,7 +10,8 @@
     -webkit-border-radius: 5px;
     border: solid 1px #999; }
   .attribute-view .attr-operations {
-    display: flex; }
+    display: flex;
+    justify-content: space-between; }
     .attribute-view .attr-operations .operation {
       display: flex;
       margin-right: 20px;

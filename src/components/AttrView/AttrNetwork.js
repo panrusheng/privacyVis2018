@@ -8,6 +8,7 @@ import {
 import {
   inject
 } from 'mobx-react';
+import { Row } from 'antd';
 @inject(['store'])
 export default class AttrNetwork extends Component {
   constructor(props) {
@@ -30,7 +31,6 @@ export default class AttrNetwork extends Component {
       nullList
     } = this.props;
     if (data.nodes.length === 0) return;
-    let margin = 50;
     let {
       ww,
       hh
@@ -39,17 +39,25 @@ export default class AttrNetwork extends Component {
       nodes,
       links
     } = data;
-    const merge = 'child' in nodes[0];
-    let r = merge ? 10 : 8;
-    const rowHeight = 30, legendWidth = 135, legendHeigth = 140, legendHH = nullList.length ? (nullList.length * rowHeight + rowHeight + 10) : 0, fontSize = 13;
+    const margin = 50,
+      merge = 'child' in nodes[0],
+      r = merge ? 10 : 8,
+      rowHeight = 30,
+      legendWidth = 135,
+      legendHeight = 140,
+      legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
+      fontSize = 13;
+
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
       .range([0 + margin, ww - margin]);
+
     const ScaleY = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + margin, hh - margin]);
+
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
@@ -59,8 +67,10 @@ export default class AttrNetwork extends Component {
       .select(gDOM)
       .attr('width', ww)
       .attr('height', hh);
-    g.selectAll('.n2d').remove();
+
+    d3.selectAll('.n2d').remove();
     d3.selectAll('.edgeDetail').remove();
+
     g.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -76,43 +86,43 @@ export default class AttrNetwork extends Component {
     //legend
     let legend = g.append('g')
       .attr('class', 'n2d')
-      .attr('transform', 'translate(' + (ww - legendWidth - 1) + ',' + (hh - legendHeigth - legendHH - 20) + ')');
+      .attr('transform', 'translate(' + 10 + ',' + (hh - legendHeight - 10) + ')');
     legend.append('rect')
       .attr('x', 0)
-      .attr('y', legendHH + 10)
+      .attr('y', 0)
       .attr('width', legendWidth)
-      .attr('height', legendHeigth)
+      .attr('height', legendHeight)
       .attr('rx', 5)
       .attr('ry', 5)
       .style('fill', '#fff')
       .style('stroke', '#ccc')
-      .style('stroke-dasharray', '5 5');
+      .style('stroke-dasharray', '2 1');
     legend.append('text')
       .attr('x', legendWidth / 2)
-      .attr('y', legendHH + rowHeight)
+      .attr('y', rowHeight - 10)
       .style('font-size', 18)
       .style('text-anchor', 'middle')
       .text('Legend');
     legend.append('line')
       .attr('x1', 5)
       .attr('x2', legendWidth - 5)
-      .attr('y1', legendHH + 40)
-      .attr('y2', legendHH + 40)
+      .attr('y1', rowHeight)
+      .attr('y2', rowHeight)
       .style('stroke', '#ccc')
-      .style('stroke-dasharray', '2 1');
+      .style('stroke-dasharray', '5 5');
 
     let legendCircle = legend.selectAll('legend')
       .data([{ type: 'Sensitive', color: '#BC1A1A' }, { type: 'Non-sensitive', color: '#7bbc88' }])
       .enter();
     legendCircle.append('circle')
       .attr('cx', 20)
-      .attr('cy', (d, i) => legendHH + rowHeight * i + 2 * rowHeight)
+      .attr('cy', (d, i) => rowHeight * i + rowHeight + 20)
       .attr('r', r)
       .style('fill', d => d.color);
 
     legendCircle.append('text')
       .attr('x', r + 25)
-      .attr('y', (d, i) => legendHH + rowHeight * i + 2 * rowHeight - r + fontSize)
+      .attr('y', (d, i) => rowHeight * i + rowHeight - r + fontSize + 20)
       .text(d => d.type);
 
     let mainGradient = g.append('linearGradient').attr('id', 'edgeGradient');
@@ -128,46 +138,52 @@ export default class AttrNetwork extends Component {
       .attr('offset', '1');
     legend.append('rect')
       .attr('x', 10)
-      .attr('y', legendHH + rowHeight * 4 + 10)
+      .attr('y', rowHeight * 4)
       .attr('width', legendWidth - 20)
       .attr('height', 5)
       .style('fill', 'url(#edgeGradient)');
     legend.append('text')
       .attr('x', legendWidth / 2)
-      .attr('y', legendHH + 4 * rowHeight - r + fontSize)
+      .attr('y', 3 * rowHeight - r + fontSize + 20)
       .style('text-anchor', 'middle')
       .text('Correlation (MI)');
 
-    if (nullList.length > 0) {
-      legend.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', legendWidth)
-        .attr('height', legendHH)
-        .attr('rx', 5)
-        .attr('ry', 5)
-        .style('fill', '#fff')
-        .style('stroke', '#ccc')
-        .style('stroke-dasharray', '5 5');
-      legend.append('text')
-        .attr('x', legendWidth / 2)
-        .attr('y', rowHeight - 10)
-        .style('font-size', 18)
-        .style('text-anchor', 'middle')
-        .text('Irrelevant events');
-      legend.append('line')
-        .attr('x1', 5)
-        .attr('x2', legendWidth - 5)
-        .attr('y1', rowHeight)
-        .attr('y2', rowHeight)
-        .style('stroke', '#ccc')
-        .style('stroke-dasharray', '2 1');
-    }
-    for (let i = 0; i < nullList.length; i++) {
-      let n = nullList[i];
-      n.x = ww - legendWidth + r + 11;
-      n.y = hh - legendHeigth - legendHH + rowHeight * i + rowHeight;
-      nodes.push(n);
+    if (!merge) {
+      if (nullList.length > 0) {
+        let ListSvg = g.append('g')
+          .attr('class', 'n2d')
+          .attr('transform', 'translate(' + (ww - legendWidth - 1) + ',' + (hh - legendHH - 10) + ')');
+        ListSvg.append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', legendWidth)
+          .attr('height', legendHH)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#fff')
+          .style('stroke', '#ccc')
+          .style('stroke-dasharray', '2 1');
+        ListSvg.append('text')
+          .attr('x', legendWidth / 2)
+          .attr('y', rowHeight - 10)
+          .style('font-size', 18)
+          .style('text-anchor', 'middle')
+          .text('Irrelevant events');
+        ListSvg.append('line')
+          .attr('x1', 5)
+          .attr('x2', legendWidth - 5)
+          .attr('y1', rowHeight)
+          .attr('y2', rowHeight)
+          .style('stroke', '#ccc')
+          .style('stroke-dasharray', '5 5');
+      }
+      for (let i = 0; i < nullList.length; i++) {
+        let n = nullList[i];
+        n.x = ww - legendWidth + r + 11;
+        n.y = hh - legendHH + rowHeight * i + rowHeight + 10;
+        nodes.push(n);
+      }
+
     }
 
     let defs = g.append('defs').attr('class', 'n2d');
@@ -308,8 +324,17 @@ export default class AttrNetwork extends Component {
             'fill',
             nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88'
           )
-          .append('title')
-          .text(dd => dd);
+          .on('mouseover', dd => {
+            const x = d3.event.x + 5,
+              y = d3.event.y - 35;
+            d3.select('.tooltip').html(dd.split('_')[1])
+              .style('left', (x) + 'px')
+              .style('display', 'block')
+              .style('top', (y) + 'px');
+          })
+          .on('mouseout', () => {
+            d3.select('.tooltip').style('display', 'none')
+          });
 
         edgeDetail
           .append('g')
@@ -344,8 +369,17 @@ export default class AttrNetwork extends Component {
             'fill',
             nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88'
           )
-          .append('title')
-          .text(dd => dd);
+          .on('mouseover', dd => {
+            const x = d3.event.x + 5,
+              y = d3.event.y - 35;
+            d3.select('.tooltip').html(dd.split('_')[1])
+              .style('left', (x) + 'px')
+              .style('display', 'block')
+              .style('top', (y) + 'px');
+          })
+          .on('mouseout', () => {
+            d3.select('.tooltip').style('display', 'none')
+          });
         edgeDetail
           .append('g')
           .selectAll('.triE')

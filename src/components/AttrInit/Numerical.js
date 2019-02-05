@@ -95,7 +95,7 @@ export default class Numerical extends React.Component {
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
 
     const lineGraph = svg
       .append('path')
@@ -132,8 +132,8 @@ export default class Numerical extends React.Component {
       .style('stroke-width', 2)
       .style('fill', '#fff')
       .on('mouseover', (d, i) => {
-        const x = d3.event.x + 5 - margin.left,
-          y = d3.event.y - 145 - margin.top;
+        const x = d3.event.x + 15 - margin.left,
+          y = d3.event.y - 35 - margin.top;
         d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + attr.data[i].label + '): ' + d)
           .style('left', (x) + 'px')
           .style('display', 'block')
@@ -191,10 +191,10 @@ export default class Numerical extends React.Component {
       .append('line')
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 2)
-      .attr('y2', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 2)
-      .style('stroke', '#999')
-      .style('stroke-dasharray', '2 1')
+      .attr('y1', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
+      .attr('y2', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
+      .style('stroke', '#333')
+      .style('stroke-dasharray', '10 5')
       .attr('class', 'breakpoint')
       .on('click', (d, i) => {
         d3.event.stopPropagation();
@@ -227,13 +227,13 @@ export default class Numerical extends React.Component {
       .data(breakPoints)
       .enter()
       .append('text')
-      .attr('x', () => width - 2)
+      .attr('x', () => width - 6)
       .attr('y', d => {
-        return d * ((height - 2) / height) * yScale(data.length - 1);
+        return d * ((height - 2) / height) * yScale(data.length - 1) - 2;
       })
       .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
       .style('text-anchor', 'end')
-      .style('fill', '#999');
+      .style('fill', '#333');
 
     svg
       .append('g')
@@ -241,10 +241,10 @@ export default class Numerical extends React.Component {
       .data(breakPoints)
       .enter()
       .append('circle')
-      .attr('r', () => 4)
-      .attr('cx', () => width + 4)
-      .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1) + 3)
-      .attr('stroke', '#999')
+      .attr('r', () => 5)
+      .attr('cx', () => width)
+      .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1))
+      .attr('stroke', '#333')
       .attr('fill', 'transparent')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')

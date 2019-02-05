@@ -60,15 +60,15 @@ export default class AttrInitialize extends React.Component {
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
     let width = Math.ceil(w / count);
-    if (width < 280 || !width) {
-      width = 280;
+    if (width < 200 || !width) {
+      width = 200;
     } else if (width > 320) {
       width = 320;
     }
 
-    width -= 20; //for margin
+    width -= 15; //for margin
 
-    const height = Math.ceil(h - 260);
+    const height = Math.ceil(h - 130);
 
     if (
       height === this.state.attrSize.height &&
@@ -242,8 +242,6 @@ export default class AttrInitialize extends React.Component {
                 <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{width: 70, textAlign: 'left'}} onChange={e =>
                         this.handleUtilityChange(attr.attrName, e)
                       } />
-              </div>
-              <div className='tooltip' style={{display: 'none', position: 'absolute'}}>
               </div>
             </div>
             {this.renderAttr(attr)}
