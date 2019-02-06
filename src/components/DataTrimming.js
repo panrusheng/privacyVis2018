@@ -75,16 +75,21 @@ export default class DistTrimming extends React.Component {
 
     switch (attr.type) {
       case 'numerical': {
+        const data = [{label: 0.3, curV: 28, oriV: 34, triV: 25},
+        {label: 0.4, curV: 2, oriV: 2, triV: 2},
+        {label: 0.9, curV: 9, oriV: 10, triV: 7}];
         return (
-          <NumeTrim
-            attr={attr}
-            {...attrSize}
-          />
+          <NumeTrim data={data} {...attrSize} attrName = {attr.attrName}/>
         );
       }
       case 'categorical': {
+        //const data = attr.group
+        const data = [{name: 'Western', curV: 20, oriV: 21, triV: 16},
+        {name: 'S.Eastern', curV: 10, oriV: 12, triV: 10},
+        {name: 'N.Eastern', curV: 28, oriV: 34, triV: 20},
+        {name: 'Belfast', curV: 3, oriV: 4, triV: 3}];
         return (
-          <CateTrim {...attrSize} attr={attr} />
+          <CateTrim {...attrSize} data={data} attrName = {attr.attrName}/>
         );
       }
       default:
@@ -96,7 +101,7 @@ export default class DistTrimming extends React.Component {
     const { selectedAttributes } = this.props.store;
     return (
       <div className="data-trim-view">
-        <div className="title">Data Trimming View</div>
+        <div className="view-title">Data Trimming View</div>
         <div className="attr-trim" ref={dom => {
             if (dom) this.wrapper = dom;
           }}>
@@ -111,6 +116,20 @@ export default class DistTrimming extends React.Component {
               {this.renderAttr(attr)}
             </div>
           ))}
+        </div>
+        <div className="trim-legend">
+            <div className='trim-legend-unit'>
+              <div className="trim-original"/>
+              <label>Original distribution</label>
+            </div>
+            <div className='trim-legend-unit'>
+              <div className="trim-current"/>
+              <label>Current distribution</label>
+            </div>
+            <div className='trim-legend-unit'>
+              <div className="trim-trim"/>
+              <label>Suggested removal parts</label>
+            </div>
         </div>
       </div>
     );

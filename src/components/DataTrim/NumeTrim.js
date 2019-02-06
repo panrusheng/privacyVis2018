@@ -1,5 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
+import { toJS } from 'mobx';
 
 export default class NumeTrim extends React.Component {
   constructor(props) {
@@ -9,36 +10,38 @@ export default class NumeTrim extends React.Component {
 
   componentDidMount() {
     const {
-      attr,
+      data,
       width,
       height,
       margin
     } = this.props;
-    if (!attr || !this.chartDom) return;
+    if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, attr, width, height, margin);
+    this.draw(this.chartDom, data, width, height, margin);
   }
 
   componentDidUpdate() {
     const {
-      attr,
+      data,
       width,
       height,
-      margin
+      margin,
+      attrName
     } = this.props;
-    if (!attr || !this.chartDom) return;
+    if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, attr, width, height, margin);
+    this.draw(this.chartDom, data, width, height, margin, attrName);
   }
 
-  draw(dom, attr, width, height, margin) {
-    let chartThis = this;
-    const data = attr.data.map(item => item.value);
-    const labels = attr.data.map(item => item.label);
+  draw(dom, data, width, height, margin, attrName) {
+    const oriV = data.map(item => item.oriV);
+    const triV = data.map(item => item.triV);
+    const curV = data.map(item => item.curV);
+    const labels = data.map(item => item.label);
     dom.innerHTML = '';
     const xScale = d3
       .scaleLinear()
-      .domain([-Math.max(...data), Math.max(...data)])
+      .domain([-Math.max(...oriV), Math.max(...oriV)])
       .range([width, 0]);
 
     const yScale = d3
@@ -48,38 +51,28 @@ export default class NumeTrim extends React.Component {
 
     const line = d3
       .line()
-      .x(function (d) {
-        return xScale(d);
-      })
-      .y(function (d, i) {
-        return yScale(i);
-      })
+      .x(d => xScale(d))
+      .y((d, i) => yScale(i))
       .curve(d3.curveMonotoneY);
 
     const area = d3
       .area()
       .x0(width / 2)
-      .x1(function (d) {
-        return xScale(d);
-      })
-      .y(function (d, i) {
-        return yScale(i);
-      })
+      .x1(d => xScale(d))
+      .y((d, i) => yScale(i))
       .curve(d3.curveMonotoneY);
+
     const lineNeg = d3
       .line()
       .x(d => xScale(-d))
       .y((d, i) => yScale(i))
       .curve(d3.curveMonotoneY);
+
     const areaNeg = d3
       .area()
       .x0(width / 2)
-      .x1(function (d) {
-        return xScale(-d);
-      })
-      .y(function (d, i) {
-        return yScale(i);
-      })
+      .x1(d => xScale(-d))
+      .y((d, i) => yScale(i))
       .curve(d3.curveMonotoneY);
 
     const svg = d3
@@ -89,44 +82,74 @@ export default class NumeTrim extends React.Component {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
 
-    const lineGraph = svg
-      .append('path')
-      .datum(data)
-      .attr('class', 'line')
-      .attr('d', line);
+    if (d3.selectAll('#trim-stripe'.length == 0)) {
+      let pattern = svg.append('pattern')
+        .attr('id', 'trim-stripe')
+        .attr('width', 4)
+        .attr('height', 4)
+        .attr('patternUnits', 'userSpaceOnUse');
+      pattern.append('rect')
+        .attr('width', 4)
+        .attr('height', 4)
+        .style('fill', '#d0e0f0')
+      pattern.append('path')
+        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+        .style('stroke', '#333')
+        .style('stroke-width', 1);
+    }
 
     svg
       .append('path')
-      .datum(data)
-      .attr('class', 'line')
-      .attr('d', lineNeg);
+      .attr('d', area(curV))
+      .style('stroke', 'none')
+      .style('fill', 'url(#trim-stripe)');
+    svg
+      .append('path')
+      .attr('d', areaNeg(curV))
+      .style('stroke', 'none')
+      .style('fill', 'url(#trim-stripe)');
+
+    svg.append('path')
+      .attr('d', area(triV))
+      .style('stroke', 'none')
+      .style('fill', '#d0e0f0');
+
+    svg.append('path')
+      .attr('d', areaNeg(triV))
+      .style('stroke', 'none')
+      .style('fill', '#d0e0f0');
 
     svg
       .append('path')
-      .data([data])
-      .attr('class', 'area')
-      .attr('d', area);
+      .attr('class', 'line')
+      .attr('d', line(oriV))
+      .style('stroke', '#1866BB')
+      .style('fill', 'none')
+      .style('stroke-width', 1);
+
     svg
       .append('path')
-      .data([data])
-      .attr('class', 'area')
-      .attr('d', areaNeg);
+      .attr('class', 'line')
+      .attr('d', lineNeg(oriV))
+      .style('stroke', '#1866BB')
+      .style('fill', 'none')
+      .style('stroke-width', 1);
 
     svg
       .selectAll('circle')
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', d => xScale(-d))
+      .attr('cx', d => xScale(-d.oriV))
       .attr('cy', (d, i) => yScale(i))
       .attr('r', 5)
       .style('stroke', '#1866BB')
       .style('stroke-width', 2)
       .style('fill', '#fff')
-      .on('mouseover', (d, i) => {
+      .on('mouseover', (d) => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + attr.data[i].label + '): ' + d)
+        d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + + d.oriV + '/' + d.curV + '/' + d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -150,7 +173,7 @@ export default class NumeTrim extends React.Component {
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
 
     if (d3.selectAll('#biggerArrow'.length == 0)) {
-      let defs = svg.append('defs').attr('class', 'axis-ver')
+      svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')
         .attr('viewBox', '0 -5 10 10')

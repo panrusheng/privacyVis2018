@@ -66,7 +66,7 @@ export default class Categorical extends React.Component {
     // axisElem.selectAll('text').remove();
     // axisElem.selectAll('.tick').remove();
     if (d3.selectAll('#biggerArrow'.length == 0)) {
-      let defs = svg.append('defs').attr('class', 'axis-ver')
+      svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')
         .attr('viewBox', '0 -5 10 10')

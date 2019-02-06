@@ -25,10 +25,6 @@ class App extends React.Component {
     this.props.store.addAttribute('res');
     this.props.store.addAttribute('fue');
     this.props.store.addAttribute('sch');
-    this.props.store.addAttribute('cat');
-    this.props.store.addAttribute('fmp');
-    this.props.store.addAttribute('jol');
-    this.props.store.addAttribute('he');
     this.props.store.getGBN();
     this.props.store.getAllRecords();
   }
