@@ -79,8 +79,7 @@ export default class RecView extends Component {
         .attr('markerHeight', 5)
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#74a3d6');
+        .attr('d', 'M0,-4L10,0L0,4L3,0');
     }
 
     g.append('g')
@@ -95,7 +94,7 @@ export default class RecView extends Component {
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrowSub)')
-      .style('stroke', '#999')
+      .style('stroke', '#666')
       .style('stroke-width', 2)
       .style('cursor', 'pointer');
 

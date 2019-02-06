@@ -5,7 +5,8 @@ import RecView from './components/RecView';
 import './App.scss';
 import { inject, observer } from 'mobx-react';
 import AttrInitialize from './components/AttrInit/AttrInitialize.js';
-import ModelView from './components/ModelView'
+import ModelView from './components/ModelView';
+import DataTrimming from './components/DataTrimming';
 
 const stages = [
   'Inference Initialization',
@@ -56,7 +57,7 @@ class App extends React.Component {
           <div className="col">
             { systemStage === 0 && <AttrInitialize /> }
             { systemStage === 1 && <TableView /> }
-            { systemStage === 2 && <TableView /> }
+            { systemStage === 2 && <DataTrimming /> }
           </div>
           <div className="col">
             { systemStage === 0 && <Attribute />}

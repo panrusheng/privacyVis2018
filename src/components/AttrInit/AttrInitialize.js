@@ -200,17 +200,17 @@ export default class AttrInitialize extends React.Component {
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>
         <div
-        className="attr-init"
-        ref={dom => {
-          if (dom) this.wrapper = dom;
-        }}
-      >
-        {selectedAttributes.map(attr => (
-          <div className="chart" key={attr.attrName}>
-            <div className="attr-info">
-              <div className="title">{attr.attrName}</div>
-              <div className="form-block">
-                {/* <div className="form-block">
+          className="attr-init"
+          ref={dom => {
+            if (dom) this.wrapper = dom;
+          }}
+        >
+          {selectedAttributes.map(attr => (
+            <div className="chart" key={attr.attrName}>
+              <div className="attr-info">
+                <div className="title">{attr.attrName}</div>
+                <div className="form-block">
+                  {/* <div className="form-block">
                   <Checkbox
                     onChange={() => this.toggleAttrSensitive(attr.attrName)}
                     checked={attr.sensitive}
@@ -238,38 +238,38 @@ export default class AttrInitialize extends React.Component {
                   )}
                 </div>
                 */}
-                <p style = {{margin: 1}}>Utility value</p>
-                <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{width: 70, textAlign: 'left'}} onChange={e =>
-                        this.handleUtilityChange(attr.attrName, e)
-                      } />
+                  <p style={{ margin: 1 }}>Utility value</p>
+                  <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                    this.handleUtilityChange(attr.attrName, e)
+                  } />
+                </div>
               </div>
+              {this.renderAttr(attr)}
             </div>
-            {this.renderAttr(attr)}
-          </div>
-        ))}
-        <ContextMenu
-          id="merge-panel-menu"
-          onShow={() => {
-            this.panel && this.panel.resetState();
-          }}
-        >
-          <MergePanel
-            ref={dom => (this.panel = dom)}
-            confirmMerge={this.confirmMerge}
-            demergeGroup={this.demergeGroup}
-            hideMenu={this.hideMenu}
-            position={{ x, y }}
-            current={current}
-            groups={groups}
-          />
-        </ContextMenu>
-        <ContextMenuTrigger
-          id="merge-panel-menu"
-          ref={dom => (this.trigger = dom)}
-        >
-          <div />
-        </ContextMenuTrigger>
-      </div>
+          ))}
+          <ContextMenu
+            id="merge-panel-menu"
+            onShow={() => {
+              this.panel && this.panel.resetState();
+            }}
+          >
+            <MergePanel
+              ref={dom => (this.panel = dom)}
+              confirmMerge={this.confirmMerge}
+              demergeGroup={this.demergeGroup}
+              hideMenu={this.hideMenu}
+              position={{ x, y }}
+              current={current}
+              groups={groups}
+            />
+          </ContextMenu>
+          <ContextMenuTrigger
+            id="merge-panel-menu"
+            ref={dom => (this.trigger = dom)}
+          >
+            <div />
+          </ContextMenuTrigger>
+        </div>
       </div>
     );
   }

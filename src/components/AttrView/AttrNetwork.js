@@ -112,7 +112,7 @@ export default class AttrNetwork extends Component {
       .style('stroke-dasharray', '5 5');
 
     let legendCircle = legend.selectAll('legend')
-      .data([{ type: 'Sensitive', color: '#BC1A1A' }, { type: 'Non-sensitive', color: '#7bbc88' }])
+      .data([{ type: 'Sensitive', color: '#FE2901' }, { type: 'Non-sensitive', color: '#7bbc88' }])
       .enter();
     legendCircle.append('circle')
       .attr('cx', 20)
@@ -129,12 +129,12 @@ export default class AttrNetwork extends Component {
 
     mainGradient.append('stop')
       .attr('class', 'stop-left')
-      .attr('stop-color', 'rgba(153,153,153,0)')
+      .attr('stop-color', 'rgba(102,102,102,0)')
       .attr('offset', '0');
 
     mainGradient.append('stop')
       .attr('class', 'stop-right')
-      .attr('stop-color', 'rgba(153,153,153,1)')
+      .attr('stop-color', 'rgba(102,102,102,1)')
       .attr('offset', '1');
     legend.append('rect')
       .attr('x', 10)
@@ -194,12 +194,12 @@ export default class AttrNetwork extends Component {
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 13)
       .attr('refY', 0)
-      .attr('markerWidth', 4)
-      .attr('markerHeight', 4)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-4L10,0L0,4L3,0')
-      .style('fill', '#999');
+      .style('fill', '#666');
 
     const addlink = g
       .append('line')
@@ -212,9 +212,9 @@ export default class AttrNetwork extends Component {
       .attr('source-index', -1)
       .attr('target-index', -1)
       .attr('marker-end', 'url(#arrow)')
-      .style('stroke', '#999')
+      .style('stroke', '#666')
       .style('stroke-dasharray', '10 5')
-      .style('stroke-width', 4);
+      .style('stroke-width', 3);
     //links
     g
       .append('g')
@@ -229,8 +229,8 @@ export default class AttrNetwork extends Component {
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
-      .style('stroke', '#999')
-      .style('stroke-width', 4)
+      .style('stroke', '#666')
+      .style('stroke-width', 3)
       .style('cursor', 'pointer')
       .on('click', d => {
         if (!merge) {
@@ -402,7 +402,7 @@ export default class AttrNetwork extends Component {
             );
           })
           .style('opacity', dd => dd.value)
-          .style('stroke', '#999')
+          .style('stroke', '#666')
           .style('stroke-width', 2);
       })
       .on('contextmenu', d => {
@@ -547,7 +547,7 @@ export default class AttrNetwork extends Component {
       .enter()
       .append('circle')
       .attr('r', r)
-      .style('fill', d => (d.value < 0 ? '#BC1A1A' : '#7bbc88'))
+      .style('fill', d => (d.value < 0 ? '#FE2901' : '#7bbc88'))
       .style('stroke-width', 3)
       .style('stroke', 'none')
       .attr('cx', d => d.x)
@@ -565,8 +565,7 @@ export default class AttrNetwork extends Component {
               .attr('x2', startX)
               .attr('y2', startY)
               .attr('source-index', i)
-              .attr('target-index', -1)
-              .style('stroke', '#999');
+              .attr('target-index', -1);
           })
           .on('drag', function () {
             const coordinates = d3.mouse(this);

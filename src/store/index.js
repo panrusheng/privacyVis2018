@@ -108,6 +108,12 @@ class AppStore {
   piechart = {original: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}], 
   processed: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}]};
 
+  @observable
+  trimPlan = {};
+
+  @observable
+  trimList = [];
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets
@@ -259,6 +265,7 @@ class AppStore {
           attr.sensitive = false;
           attr.utility = undefined;
           this.selectedAttributes.push(attr);
+          this.trimList.push(false);
         }
       });
   }
