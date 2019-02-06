@@ -57,6 +57,7 @@
       .table-view .table .table-header.left .scroll-wrapper {
         overflow: hidden;
         width: fit-content;
+        width: -moz-fit-content;
         max-height: 168px; }
         .table-view .table .table-header.left .scroll-wrapper::-webkit-scrollbar {
           height: 0px;
@@ -102,6 +103,7 @@
       .table-view .table .table-body .scroll-wrapper.extent-rows {
         overflow-y: auto;
         width: fit-content;
+        width: -moz-fit-content;
         max-height: 168px; }
         .table-view .table .table-body .scroll-wrapper.extent-rows::-webkit-scrollbar {
           height: 0px;
@@ -114,7 +116,8 @@
         border-left: none; }
     .table-view .table .table-row {
       display: flex;
-      width: fit-content; }
+      width: fit-content;
+      width: -moz-fit-content; }
       .table-view .table .table-row.group {
         box-shadow: 0 2 2px #999;
         cursor: pointer; }
@@ -127,7 +130,8 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 60px;
-      height: 30px; }
+      height: 30px;
+      min-width: 60px; }
       .table-view .table .table-cell .bg {
         position: absolute;
         top: 0;
@@ -144,4 +148,5 @@
       width: 100%;
       background: rgba(0, 0, 0, 0.1); }
   .table-view .scroll-wrapper {
-    position: relative; }
+    position: relative;
+    overflow: -moz-scrollbars-none; }
