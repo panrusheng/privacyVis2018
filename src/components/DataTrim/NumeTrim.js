@@ -1,18 +1,10 @@
 import React from 'react';
 import * as d3 from 'd3';
-import './Numerical.scss';
 
-export default class Numerical extends React.Component {
-  static defaultProps = {
-    data: []
-  };
-
-  dragging = false;
-
+export default class NumeTrim extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleChartClick = this.handleChartClick.bind(this);
   }
 
   componentDidMount() {
@@ -40,9 +32,9 @@ export default class Numerical extends React.Component {
   }
 
   draw(dom, attr, width, height, margin) {
+    let chartThis = this;
     const data = attr.data.map(item => item.value);
     const labels = attr.data.map(item => item.label);
-    const breakPoints = attr.breakPoints; // break points range from 0 to 1
     dom.innerHTML = '';
     const xScale = d3
       .scaleLinear()
@@ -179,140 +171,6 @@ export default class Numerical extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
-
-    // add break points to group attributes
-    const chartThis = this;
-
-    svg
-      .append('g')
-      .selectAll('line')
-      .data(breakPoints)
-      .enter()
-      .append('line')
-      .attr('x1', 0)
-      .attr('x2', width)
-      .attr('y1', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
-      .attr('y2', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
-      .style('stroke', '#333')
-      .style('stroke-dasharray', '10 5')
-      .attr('class', 'breakpoint')
-      .on('click', (d, i) => {
-        d3.event.stopPropagation();
-        this.props.removeBreakPoint &&
-          this.props.removeBreakPoint(this.props.attr.attrName, i);
-      })
-      .attr('class', 'break-point')
-      .call(
-        d3
-          .drag()
-          .on('drag', function (d, i) {
-            const [, y] = d3.mouse(dom);
-            let value = (y - margin.top) / (height - margin.top);
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
-
-            chartThis.props.updateBreakPoint(
-              chartThis.props.attr.attrName,
-              i,
-              value
-            );
-          })
-      );
-
-    const [labelMin, labelMax] = d3.extent(labels);
-
-    svg
-      .append('g')
-      .selectAll('text')
-      .data(breakPoints)
-      .enter()
-      .append('text')
-      .attr('x', () => width - 6)
-      .attr('y', d => {
-        return d * ((height - 2) / height) * yScale(data.length - 1) - 2;
-      })
-      .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
-      .style('text-anchor', 'end')
-      .style('fill', '#333');
-
-    svg
-      .append('g')
-      .selectAll('circle')
-      .data(breakPoints)
-      .enter()
-      .append('circle')
-      .attr('r', () => 5)
-      .attr('cx', () => width)
-      .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1))
-      .attr('stroke', '#333')
-      .attr('fill', 'transparent')
-      .attr('stroke-width', 2)
-      .style('cursor', 'pointer')
-      .on('click', (d, i) => {
-        d3.event.stopPropagation();
-        this.props.removeBreakPoint &&
-          this.props.removeBreakPoint(this.props.attr.attrName, i);
-      })
-      .call(
-        d3
-          .drag()
-          .on('drag', function (d, i) {
-            const [, y] = d3.mouse(dom);
-            let value = (y - margin.top) / (height - margin.top);
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
-
-            chartThis.props.updateBreakPoint(
-              chartThis.props.attr.attrName,
-              i,
-              value
-            );
-          })
-      );
-
-  }
-
-  handleChartClick(e) {
-    const type = e.target.tagName;
-    let point;
-
-    switch (type) {
-      case 'path':
-        {
-          const {
-            height
-          } = this.props;
-          const {
-            top
-          } = e.target.getBoundingClientRect();
-          const y = e.clientY - top;
-          point = y / height;
-          break;
-        }
-      case 'svg':
-        {
-          const {
-            height,
-            margin: {
-              top
-            }
-          } = this.props;
-          const y = e.clientY - e.target.getBoundingClientRect().top;
-          point = (y - top) / height;
-          break;
-        }
-      default:
-        {
-          point = -1;
-        }
-    }
-
-    point = point.toFixed(2);
-
-    if (point > 0 && point < 1) {
-      this.props.addBreakPoint &&
-        this.props.addBreakPoint(this.props.attr.attrName, point);
-    }
   }
 
   render() {
@@ -321,15 +179,12 @@ export default class Numerical extends React.Component {
         svg ref={
           dom => (this.chartDom = dom)
         }
-        onClick={
-          this.handleChartClick
-        }
       /> </div>
     );
   }
 }
 
-Numerical.defaultProps = {
+NumeTrim.defaultProps = {
   width: 300,
   height: 900,
   margin: {
@@ -338,5 +193,4 @@ Numerical.defaultProps = {
     bottom: 10,
     left: 10
   },
-  breakPoints: [],
 };

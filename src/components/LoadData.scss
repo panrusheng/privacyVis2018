@@ -1,31 +1,35 @@
 .load-data {
+    font-size: 18px;
+    .load-panel {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dotted #e8e8e8;
 
-    .datasets {
-        display: flex;
-
-        .button {
-            height: 40px;
-            border-radius: 10px;
-            border: 1px solid #ececec;
+        .datasets {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 10px;
-            cursor: pointer;
 
-            &.active {
-                background-color: #999;
-                color: white;
+            .button {
+                height: 40px;
+                border-radius: 10px;
+                border: 1px solid #ececec;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0 10px;
+                cursor: pointer;
 
+                &.active {
+                    background-color: #999;
+                    color: white;
+                }
             }
-        }
-
-        margin-bottom: 20px;
+            margin-bottom: 20px;
+        } 
     }
-
     .attr-list {
-        height: 500px;
+        max-height: 800px;
         overflow-y: auto;
+        line-height: 40px;
     }
 
     .attr-list-item {
@@ -54,4 +58,9 @@
         display: inline-block;
 
     }
+}
+
+.ant-modal-content {
+    width: 1000px;
+    right: 250px;
 }

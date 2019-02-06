@@ -18,6 +18,7 @@
   }
   .attr-operations {
     display: flex;
+    justify-content: space-between;
 
     .operation {
       display: flex;
@@ -40,7 +41,11 @@
       }
 
       .ant-slider-rail {
-        background-color: #1890ff;
+        background-color: #1866bb;
+      }
+      
+      .ant-slider-handle {
+        stroke: #1866bb;
       }
 
       &:last-child {

@@ -479,13 +479,19 @@ export default class TableView extends React.Component {
           <div className="view-title">Data Table View</div>
 
         </div>
-        { this.state.omitValue ? this.renderOmitValView() : this.renderTable() }          
-        <div className="operation">
-          <label>Omit Value</label>
-          <Switch
-            checked={this.state.omitValue}
-            onChange={checked => this.setState({ omitValue: checked })}
-          />
+        { this.state.omitValue ? this.renderOmitValView() : this.renderTable() }  
+        <div className="table-foot">   
+          <div className="table-legend">
+            <label>Utitliy Value:</label>
+            <div className="gradient-color"/>
+          </div>     
+          <div className="operation">
+            <label>Omit Value</label>
+            <Switch
+              checked={this.state.omitValue}
+              onChange={checked => this.setState({ omitValue: checked })}
+            />
+          </div>
         </div>
       </div>
     );

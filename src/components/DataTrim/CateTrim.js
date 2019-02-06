@@ -1,16 +1,13 @@
 import React from 'react';
 import * as d3 from 'd3';
 import { toJS } from 'mobx';
-import './Categorical.scss';
 
-export default class Categorical extends React.Component {
+export default class CateTrim extends React.Component {
   draw(dom, attr, width, height, margin) {
     const data = toJS(attr.groups);
     const attrName = attr.attrName;
-    const openMenu = this.props.openMenu;
     dom.innerHTML = '';
     const dataValue = data.map(item => item.value);
-    const n = dataValue.length + 1;
     const xScale = d3
       .scaleLinear()
       .domain([0, Math.max(...dataValue)])
@@ -42,9 +39,6 @@ export default class Categorical extends React.Component {
       })
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.value))
-      .on('click', function (d, i) {
-        openMenu && openMenu(data[i], attrName, d3.event);
-      })
       .on('mouseover', d => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
@@ -57,14 +51,6 @@ export default class Categorical extends React.Component {
         d3.select('.tooltip').style('display', 'none')
       });
 
-    // const axisElem = svg
-    //   .append('g')
-    //   .attr('class', 'axis-ver')
-    //   .call(d3.axisLeft(yScale))
-    //   .attr('transform', `translate(${width / 2}, 0)`);
-
-    // axisElem.selectAll('text').remove();
-    // axisElem.selectAll('.tick').remove();
     if (d3.selectAll('#biggerArrow'.length == 0)) {
       let defs = svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
@@ -128,7 +114,7 @@ export default class Categorical extends React.Component {
   }
 }
 
-Categorical.defaultProps = {
+CateTrim.defaultProps = {
   width: 300,
   height: 900,
   margin: { top: 10, right: 10, bottom: 10, left: 10 }

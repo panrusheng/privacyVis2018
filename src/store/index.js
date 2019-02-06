@@ -66,6 +66,7 @@ class AppStore {
     nodes: [],
     links: []
   };
+  nodeList4links = [];
   @observable
   recList = {
     group: [{
@@ -107,6 +108,12 @@ class AppStore {
   piechart = {original: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}], 
   processed: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}]};
 
+  @observable
+  trimPlan = {};
+
+  @observable
+  trimList = [];
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets
@@ -142,8 +149,41 @@ class AppStore {
       // const eventNos = new Set(data.nodes.map(item => item.eventNo));
       // data.links = data.links.filter(item => eventNos.has(item.source) && eventNos.has(item.target));
       data.links.forEach(item => item.value = parseFloat(item.value));
-
-      this.GBN = data;
+      let dataGBN = {};
+      dataGBN.nodes = [];
+      dataGBN.links = [];
+      dataGBN.nullNodes = [];
+      let nullList = [], nodeList4links = [];
+      for (let i = 0; i < data.nodes.length; i++) {
+        nullList.push(false);
+      }
+      for (let i=0; i < data.links.length; i++) {
+        nullList[data.links[i].source] = true;
+        nullList[data.links[i].target] = true;
+      }
+      
+      for (let i = 0; i < data.nodes.length; i++) {
+        if (nullList[i]) {
+          dataGBN.nodes.push(data.nodes[i]);
+          nodeList4links.push(i);
+        } else {
+          dataGBN.nullNodes.push(data.nodes[i]);
+        }
+      }
+      for (let i = 0; i < data.links.length; i++) {
+        
+        let source = data.links[i].source, target = data.links[i].target;
+        for (let j = source; j >= 0 ; j--) {
+          source = nullList[j]?source:source-1;
+        }
+        for (let j = target; j >= 0 ; j--) {
+          target = nullList[j]?target:target-1;
+        }
+        dataGBN.links.push({source:source, target:target, value:data.links[i].value,cpt:data.links[i].cpt})
+      }
+      this.GBN = dataGBN;
+      this.nodeList4links = nodeList4links;
+      // this.GBN = data;
     });
   }
 
@@ -225,6 +265,7 @@ class AppStore {
           attr.sensitive = false;
           attr.utility = undefined;
           this.selectedAttributes.push(attr);
+          this.trimList.push(false);
         }
       });
   }

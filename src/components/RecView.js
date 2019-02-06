@@ -44,25 +44,14 @@ export default class RecView extends React.Component {
       .style('fill', '#999')
       .text('Number of occurrence');
     let g2 = d3.select('#rec-arrow-col').append('g');
-    let defs2 = g2.append('defs').attr('class', 'rec-arrow');
-    defs2.append('marker')
-      .attr('id', 'arrow-c')
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 8)
-      .attr('refY', 0)
-      .attr('markerWidth', 5)
-      .attr('markerHeight', 5)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-4L10,0L0,4L3,0')
-      .style('fill', '#999');
+    
     g2.append('line')
       .attr('class', 'rec-arrow')
       .attr('x1', 220)
       .attr('y1', 20)
       .attr('x2', 873)
       .attr('y2', 20)
-      .attr('marker-end', 'url(#arrow-c)')
+      .attr('marker-end', 'url(#arrow-r)')
       .style('stroke', '#ccc')
       .style('stroke-width', 6);
     g2.append('text')

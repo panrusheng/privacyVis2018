@@ -1,15 +1,16 @@
 .categorical-view {
+  text-align: center;
     .axis-ver {
-        line{
-          stroke: #9B9DA0	;
-        }
+        // line{
+        //   stroke: #333	;
+        // }
         
-        path{
-          stroke: #9B9DA0	;
-        }
+        // path{
+        //   stroke: #333	;
+        // }
         
         text{
-          fill: #9B9DA0	;
+          fill: #333	;
         }  
       }
 }

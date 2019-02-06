@@ -39,8 +39,8 @@ export default class Attribute extends React.Component {
         'link',
         d3
           .forceLink(links)
-          .distance(10)
-          .strength(1)
+          .distance(5)
+          .strength(2)
           .iterations(1)
       )
       .force('x', d3.forceX())
@@ -112,7 +112,7 @@ export default class Attribute extends React.Component {
     let data = toJS(this.props.store.GBN); // deep copy
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);
-    canvas = { ww: 900, hh: 900 };
+    canvas = { ww: 940, hh: 920 };
     if (this.state.mergeAttribute) {
       data = this.mergeGraph(data.nodes, data.links);
     }
@@ -146,6 +146,7 @@ export default class Attribute extends React.Component {
               data={layout}
               canvas={canvas}
               filter={this.state.filterValue}
+              nullList={data.nullNodes}
             />
           </svg>
         </div>

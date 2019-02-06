@@ -2,6 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import CheckedIcon from '../assets/image/checked.svg';
 import NotCheckedIcon from '../assets/image/notchecked.svg';
+import HidenIcon from '../assets/image/blind.svg';
 import axis from '../utils/axios'
 import { Modal } from 'antd';
 import axios from '../utils/axios';
@@ -14,7 +15,7 @@ export default class LoadData extends React.Component {
     state = {
         currentDataset: null,
         datasets: [],
-        checkedIndex: [],
+        currentSelected: [],
     }
 
     constructor(props) {
@@ -47,23 +48,28 @@ export default class LoadData extends React.Component {
     }
 
     toggleCheck(index) {
-        let checkedIndex = [...this.state.checkedIndex];
+        // let checkedIndex = [...this.state.checkedIndex];
         
-        if (checkedIndex.findIndex(item => item === index) >= 0) {
-            checkedIndex = checkedIndex.filter(item => item !== index);
-        } else {
-            checkedIndex.push(index);
-        }
+        // if (checkedIndex.findIndex(item => item === index) >= 0) {
+        //     checkedIndex = checkedIndex.filter(item => item !== index);
+        // } else {
+        //     checkedIndex.push(index);
+        // }
 
-        this.setState({ checkedIndex });
+        // this.setState({ checkedIndex });
+        let currentSelected = [...this.state.currentSelected];
+        currentSelected[index] += 1;
+        currentSelected[index] > 2 ? 0:currentSelected[index];
+        this.setState({ currentSelected });
     }
 
     getAllDataSet() {
         axis.post('/load_data')
             .then(data => {
-                const attrList = [];
+                const attrList = [], selectedList = [];
                 for (const attrName in data.attrList) {
                     attrList.push({ attrName, ...data.attrList[attrName] });
+                    selectedList.push(0);
                 }
 
                 this.setState({
@@ -72,12 +78,13 @@ export default class LoadData extends React.Component {
                         attrList,
                     }],
                     currentDataset: 'user',
+                    currentSelected: selectedList,
                 });
             });
     }
 
     render() {
-        const { datasets, currentDataset, checkedIndex } = this.state;
+        const { datasets, currentDataset, currentSelected } = this.state;
         const currentAttrList = (datasets.find(item => item.dataset === currentDataset) || {}).attrList || [];
 
         return (
@@ -88,21 +95,30 @@ export default class LoadData extends React.Component {
                 wrapClassName="attr-select-panel"
             >
                 <div className="load-data">
-                    <div><div style={{ cursor: 'pointer' }} onClick={this.uploadDataset.bind(this)}>Upload</div></div>
-                    <div className="datasets">
-                        { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
-                    </div>
                     <div className="attr-list">
+                        <div className="attr-list-item">
+                            <div style={{ width: '15px' }}/>
+                            <div style={{ width: '90px' }}>Attributes</div>
+                            <div style={{ width: '100px' }}>Continuous</div>
+                            <div style={{ width: '450px' }}>Description</div>
+                        </div>
                         { currentAttrList.map((attr, index) => (
                             <div className="attr-list-item">
                                 <div onClick={() => this.toggleCheck(index)}>{
-                                    checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
+                                    //checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
+                                    currentSelected[index] == 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] == 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
                                 }</div>
-                                <div style={{ width: '40px' }}>{attr.attrName}</div>
-                                <div style={{ width: '70px' }}>{attr.type}</div>
-                                <div className="desc">{attr.description}</div>
+                                <div style={{ width: '90px' }}>{attr.attrName}</div>
+                                <div style={{ width: '100px' }}>{attr.type == 'numerical'? 'yes':'no'}</div>
+                                <div style={{ width: '450px' }} className="desc">{attr.description}</div>
                             </div>
                         )) }
+                    </div>
+                    <div className="load-panel">
+                        <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
+                        <div className="datasets">
+                            { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
+                        </div>
                     </div>
                 </div>
 

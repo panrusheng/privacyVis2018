@@ -7,15 +7,18 @@
 
 .attr-init {
   display: flex;
+  max-width: 1000px;
   overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
-  height: 100%; }
+  height: 960px; }
   .attr-init .chart {
-    min-width: 320px;
+    min-width: 200px;
     max-width: 380px;
+    height: 950px;
     flex: 1; }
   .attr-init .attr-info {
-    height: 120px;
+    height: 90px;
     text-align: center; }
     .attr-init .attr-info .title {
       font-size: 24px;
@@ -30,10 +33,5 @@
         border-bottom: 1px solid rgba(138, 138, 138, 0.5);
         text-align: center; }
 
-.tooltip {
-  border-radius: 5px;
-  width: 150px;
-  height: 40px;
-  padding: 5px;
-  background-color: #e7eff8;
-  border: solid #1866BB 1px; }
+.ant-input-number-input {
+  padding: 5px; }

@@ -10,7 +10,8 @@
     -webkit-border-radius: 5px;
     border: solid 1px #999; }
   .attribute-view .attr-operations {
-    display: flex; }
+    display: flex;
+    justify-content: space-between; }
     .attribute-view .attr-operations .operation {
       display: flex;
       margin-right: 20px;
@@ -25,7 +26,9 @@
         background-color: #f5f5f5;
         border-radius: 4; }
       .attribute-view .attr-operations .operation .ant-slider-rail {
-        background-color: #1890ff; }
+        background-color: #1866bb; }
+      .attribute-view .attr-operations .operation .ant-slider-handle {
+        stroke: #1866bb; }
       .attribute-view .attr-operations .operation:last-child {
         margin-right: 0; }
       .attribute-view .attr-operations .operation:first-child {

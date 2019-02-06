@@ -6,7 +6,7 @@ import { ContextMenu, ContextMenuTrigger } from 'react-contextmenu';
 import { hideMenu } from 'react-contextmenu/modules/actions';
 import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
-import { Checkbox } from 'antd';
+import { InputNumber } from 'antd';
 
 @inject(['store'])
 @observer
@@ -60,15 +60,15 @@ export default class AttrInitialize extends React.Component {
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
     let width = Math.ceil(w / count);
-    if (width < 280 || !width) {
-      width = 280;
+    if (width < 200 || !width) {
+      width = 200;
     } else if (width > 320) {
       width = 320;
     }
 
-    width -= 20; //for margin
+    width -= 15; //for margin
 
-    const height = Math.ceil(h - 260);
+    const height = Math.ceil(h - 130);
 
     if (
       height === this.state.attrSize.height &&
@@ -200,23 +200,23 @@ export default class AttrInitialize extends React.Component {
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>
         <div
-        className="attr-init"
-        ref={dom => {
-          if (dom) this.wrapper = dom;
-        }}
-      >
-        {selectedAttributes.map(attr => (
-          <div className="chart" key={attr.attrName}>
-            <div className="attr-info">
-              <div className="title">{attr.attrName}</div>
-              <div>
+          className="attr-init"
+          ref={dom => {
+            if (dom) this.wrapper = dom;
+          }}
+        >
+          {selectedAttributes.map(attr => (
+            <div className="chart" key={attr.attrName}>
+              <div className="attr-info">
+                <div className="title">{attr.attrName}</div>
                 <div className="form-block">
+                  {/* <div className="form-block">
                   <Checkbox
                     onChange={() => this.toggleAttrSensitive(attr.attrName)}
                     checked={attr.sensitive}
                   />
                   Sensitive
-                </div>
+                </div> 
                 <div className="form-block">
                   <Checkbox
                     checked={attr.utility !== undefined}
@@ -237,36 +237,39 @@ export default class AttrInitialize extends React.Component {
                     />
                   )}
                 </div>
+                */}
+                  <p style={{ margin: 1 }}>Utility value</p>
+                  <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                    this.handleUtilityChange(attr.attrName, e)
+                  } />
+                </div>
               </div>
-              <div className='tooltip' style={{display: 'none', position: 'absolute'}}>
-              </div>
+              {this.renderAttr(attr)}
             </div>
-            {this.renderAttr(attr)}
-          </div>
-        ))}
-        <ContextMenu
-          id="merge-panel-menu"
-          onShow={() => {
-            this.panel && this.panel.resetState();
-          }}
-        >
-          <MergePanel
-            ref={dom => (this.panel = dom)}
-            confirmMerge={this.confirmMerge}
-            demergeGroup={this.demergeGroup}
-            hideMenu={this.hideMenu}
-            position={{ x, y }}
-            current={current}
-            groups={groups}
-          />
-        </ContextMenu>
-        <ContextMenuTrigger
-          id="merge-panel-menu"
-          ref={dom => (this.trigger = dom)}
-        >
-          <div />
-        </ContextMenuTrigger>
-      </div>
+          ))}
+          <ContextMenu
+            id="merge-panel-menu"
+            onShow={() => {
+              this.panel && this.panel.resetState();
+            }}
+          >
+            <MergePanel
+              ref={dom => (this.panel = dom)}
+              confirmMerge={this.confirmMerge}
+              demergeGroup={this.demergeGroup}
+              hideMenu={this.hideMenu}
+              position={{ x, y }}
+              current={current}
+              groups={groups}
+            />
+          </ContextMenu>
+          <ContextMenuTrigger
+            id="merge-panel-menu"
+            ref={dom => (this.trigger = dom)}
+          >
+            <div />
+          </ContextMenuTrigger>
+        </div>
       </div>
     );
   }
