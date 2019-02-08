@@ -6,7 +6,8 @@ import { ContextMenu, ContextMenuTrigger } from 'react-contextmenu';
 import { hideMenu } from 'react-contextmenu/modules/actions';
 import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
-import { InputNumber } from 'antd';
+import { InputNumber, Button } from 'antd';
+import * as d3 from 'd3';
 
 @inject(['store'])
 @observer
@@ -23,6 +24,8 @@ export default class AttrInitialize extends React.Component {
     this.removeBreakPoint = this.removeBreakPoint.bind(this);
     this.updateBreakPoint = this.updateBreakPoint.bind(this);
     this.demergeGroup = this.demergeGroup.bind(this);
+    this.scrollLeft = this.scrollLeft.bind(this);
+    this.scrollRight = this.scrollRight.bind(this);
   }
 
   state = {
@@ -48,6 +51,7 @@ export default class AttrInitialize extends React.Component {
 
   componentDidUpdate() {
     this.setSize();
+    this.scrollLeft();
   }
 
   componentWillUnmount() {
@@ -168,6 +172,34 @@ export default class AttrInitialize extends React.Component {
     this.props.store.updateAttr(attrName, { utility: value });
   }
 
+  scrollRight() {
+    let x = parseInt(d3.select('.attr-init').style('left'));
+    if (!x) {
+      d3.select('.attr-init').style('left', 0);
+      x = 0;
+    }
+    const w = this.state.attrSize.width;
+    const count = (this.props.store.selectedAttributes || []).length;
+    const maxDistance = parseInt(d3.select('.init-content').style('width')) - count * (w + 15);
+    const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
+    d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
+    d3.select('.init-left').attr('disabled', null);
+    if (moveLeft == maxDistance) d3.select('.init-right').attr('disabled', true);
+  }
+
+  scrollLeft() {
+    let x = parseInt(d3.select('.attr-init').style('left'));
+    if (!x) {
+      d3.select('.attr-init').style('left', 0);
+      x = 0;
+    }
+    const w = this.state.attrSize.width;
+    const moveLeft = (x + w >= 0) ? 0 : (x + w);
+    d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
+    d3.select('.init-right').attr('disabled', null);
+    if (moveLeft == 0) d3.select('.init-left').attr('disabled', true);
+  }
+
   renderAttr(attr) {
     const { attrSize } = this.state;
 
@@ -196,21 +228,23 @@ export default class AttrInitialize extends React.Component {
   render() {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
+    const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 15) > 940;
     return (
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>
-        <div
-          className="attr-init"
-          ref={dom => {
-            if (dom) this.wrapper = dom;
-          }}
-        >
-          {selectedAttributes.map(attr => (
-            <div className="chart" key={attr.attrName}>
-              <div className="attr-info">
-                <div className="title">{attr.attrName}</div>
-                <div className="form-block">
-                  {/* <div className="form-block">
+        <div className="init-content">
+          <div
+            className="attr-init"
+            ref={dom => {
+              if (dom) this.wrapper = dom;
+            }}
+          >
+            {selectedAttributes.map(attr => (
+              <div className="chart" key={attr.attrName}>
+                <div className="attr-info">
+                  <div className="title">{attr.attrName}</div>
+                  <div className="form-block">
+                    {/* <div className="form-block">
                   <Checkbox
                     onChange={() => this.toggleAttrSensitive(attr.attrName)}
                     checked={attr.sensitive}
@@ -238,37 +272,40 @@ export default class AttrInitialize extends React.Component {
                   )}
                 </div>
                 */}
-                  <p style={{ margin: 1 }}>Utility value</p>
-                  <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
-                    this.handleUtilityChange(attr.attrName, e)
-                  } />
+                    <p style={{ margin: 1 }}>Utility value</p>
+                    <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                      this.handleUtilityChange(attr.attrName, e)
+                    } />
+                  </div>
                 </div>
+                {this.renderAttr(attr)}
               </div>
-              {this.renderAttr(attr)}
-            </div>
-          ))}
-          <ContextMenu
-            id="merge-panel-menu"
-            onShow={() => {
-              this.panel && this.panel.resetState();
-            }}
-          >
-            <MergePanel
-              ref={dom => (this.panel = dom)}
-              confirmMerge={this.confirmMerge}
-              demergeGroup={this.demergeGroup}
-              hideMenu={this.hideMenu}
-              position={{ x, y }}
-              current={current}
-              groups={groups}
-            />
-          </ContextMenu>
-          <ContextMenuTrigger
-            id="merge-panel-menu"
-            ref={dom => (this.trigger = dom)}
-          >
-            <div />
-          </ContextMenuTrigger>
+            ))}
+            <ContextMenu
+              id="merge-panel-menu"
+              onShow={() => {
+                this.panel && this.panel.resetState();
+              }}
+            >
+              <MergePanel
+                ref={dom => (this.panel = dom)}
+                confirmMerge={this.confirmMerge}
+                demergeGroup={this.demergeGroup}
+                hideMenu={this.hideMenu}
+                position={{ x, y }}
+                current={current}
+                groups={groups}
+              />
+            </ContextMenu>
+            <ContextMenuTrigger
+              id="merge-panel-menu"
+              ref={dom => (this.trigger = dom)}
+            >
+              <div />
+            </ContextMenuTrigger>
+          </div>
+          {flag ? (<Button className="init-left" disabled={null} onClick={this.scrollLeft} icon="left" />) : (null)}
+          {flag ? (<Button className="init-right" disabled={null} onClick={this.scrollRight} icon="right" />) : (null)}
         </div>
       </div>
     );

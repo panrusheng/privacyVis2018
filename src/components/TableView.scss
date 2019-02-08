@@ -17,11 +17,15 @@
     .table-foot {
         display: flex;
         justify-content: space-between;
+        margin-top: 10px;
 
         .table-legend {
             display:flex;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            padding: 7px;
+            text-align: center;
+            // border-radius: 5;
+            // border: 2px #ddd dashed;
+            // height: 40px;
 
             label {
                 margin-right: 5px;
@@ -48,7 +52,7 @@
     }
 
     .table {
-        height: calc(100% - 80px);
+        height: calc(100% - 90px);
         user-select: none;
 
         .wrapper {

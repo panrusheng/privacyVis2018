@@ -245,7 +245,7 @@ export default class Numerical extends React.Component {
       .attr('cx', () => width)
       .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1))
       .attr('stroke', '#333')
-      .attr('fill', 'transparent')
+      .attr('fill', '#fff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
       .on('click', (d, i) => {
