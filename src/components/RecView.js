@@ -17,8 +17,8 @@ export default class RecView extends React.Component {
 
   componentDidMount() {
     let g1 = d3.select('#rec-arrow-row').append('g');
-    let defs1 = g1.append('defs').attr('class', 'rec-arrow');
-    defs1.append('marker')
+    g1.append('defs').attr('class', 'rec-arrow')
+      .append('marker')
       .attr('id', 'arrow-r')
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 8)

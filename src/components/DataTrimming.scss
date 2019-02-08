@@ -8,31 +8,90 @@
     }
   }
   
-  
-  .attr-trim {
-    display: flex;
-    max-width: 1000px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    position: relative;
-    height: 960px;
-    .chart {
-      min-width: 200px;
-      max-width: 380px;
-      height: 950px;
-      flex: 1;
-    }
-  
-    .attr-info {
-      height: 90px;
+  .trim-content {
+    height: 900px;
+    width: 940px;
+
+    .trim-left {
       text-align: center;
-      .title {
-        font-size: 24px;
-      font-weight: 500;
+      width: 30px;
+      height: 60px;
+      position: fixed;
+      top: 530px;
+      left: 5px;
+    }
+
+    .trim-right {
+      text-align: center;
+      width: 30px;
+      height: 60px;
+      position: fixed;
+      top: 530px;
+      left: 925px;
+    }
+    
+    .attr-trim {
+      display: flex;
+      overflow: visible;
+      position: relative;
+      height: 900px;
+      .chart {
+        min-width: 200px;
+        max-width: 380px;
+        height: 900px;
+        flex: 1;
       }
-  
-      .form-block {
-        padding: 5px 0;
+    
+      .attr-info {
+        height: 60px;
+        text-align: center;
+        .title {
+          font-size: 24px;
+        font-weight: 500;
+        }
+    
+        .form-block {
+          padding: 5px 0;
+        }
       }
+    }
+  }
+
+  .trim-legend {
+    display: flex;
+    height: 50px;
+    margin: 5px 170px 5px 170px;
+    padding: 15px;
+    text-align: center;
+    border-radius: 5;
+    border: 2px #ddd dashed;
+    
+    .trim-legend-unit{
+      display: flex;
+      width: 220px;
+      height: 30px;
+      label {
+        margin-left: 5px;
+      }
+    }
+    .trim-original {
+      width: 20px;
+      height: 20px;
+      border: solid 1px #1866BB;
+    }
+    .trim-current {
+      width: 20px;
+      height: 20px;
+      background-color: #d0e0f0;
+    }
+    .trim-trim {
+      width: 20px;
+      height: 20px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #d0e0f0,
+        #d0e0f0 4px,
+        #333 1px,
+        #333 5px);
     }
   }

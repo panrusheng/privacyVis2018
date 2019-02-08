@@ -158,7 +158,7 @@ export default class Numerical extends React.Component {
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
 
     if (d3.selectAll('#biggerArrow'.length == 0)) {
-      let defs = svg.append('defs').attr('class', 'axis-ver')
+      svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')
         .attr('viewBox', '0 -5 10 10')
@@ -245,7 +245,7 @@ export default class Numerical extends React.Component {
       .attr('cx', () => width)
       .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1))
       .attr('stroke', '#333')
-      .attr('fill', 'transparent')
+      .attr('fill', '#fff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
       .on('click', (d, i) => {

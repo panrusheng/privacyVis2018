@@ -11,11 +11,12 @@
     background: #1866bb; }
   .table-view .table-foot {
     display: flex;
-    justify-content: space-between; }
+    justify-content: space-between;
+    margin-top: 10px; }
     .table-view .table-foot .table-legend {
       display: flex;
-      margin-top: 10px;
-      margin-bottom: 10px; }
+      padding: 7px;
+      text-align: center; }
       .table-view .table-foot .table-legend label {
         margin-right: 5px; }
       .table-view .table-foot .table-legend .gradient-color {
@@ -31,7 +32,7 @@
       .table-view .table-foot .operation label {
         margin-right: 5px; }
   .table-view .table {
-    height: calc(100% - 80px);
+    height: calc(100% - 90px);
     user-select: none; }
     .table-view .table .wrapper {
       display: flex; }

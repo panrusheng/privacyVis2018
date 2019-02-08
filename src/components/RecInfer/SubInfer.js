@@ -69,8 +69,9 @@ export default class RecView extends Component {
     g.selectAll("." + name).remove();
 
     if (d3.selectAll('#arrowSub'.length == 0)) {
-      let defs = g.append('defs').attr('class', name);
-      defs.append('marker')
+      g.append('defs')
+        .attr('class', name)
+        .append('marker')
         .attr('id', 'arrowSub')
         .attr('viewBox', '0 -5 10 10')
         .attr('refX', 13)

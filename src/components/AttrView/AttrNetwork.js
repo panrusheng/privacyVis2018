@@ -186,9 +186,8 @@ export default class AttrNetwork extends Component {
 
     }
 
-    let defs = g.append('defs').attr('class', 'n2d');
-
-    defs
+    g.append('defs')
+      .attr('class', 'n2d')
       .append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -5 10 10')

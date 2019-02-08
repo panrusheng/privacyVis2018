@@ -5,33 +5,48 @@
     text-align: left;
     padding-bottom: 10px; }
 
-.attr-init {
-  display: flex;
-  max-width: 1000px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  position: relative;
-  height: 960px; }
-  .attr-init .chart {
-    min-width: 200px;
-    max-width: 380px;
-    height: 950px;
-    flex: 1; }
-  .attr-init .attr-info {
-    height: 90px;
-    text-align: center; }
-    .attr-init .attr-info .title {
-      font-size: 24px;
-      font-weight: 500; }
-    .attr-init .attr-info .form-block {
-      padding: 5px 0; }
-      .attr-init .attr-info .form-block .ant-checkbox-wrapper {
-        margin-right: 5px; }
-      .attr-init .attr-info .form-block input {
-        border: none;
-        outline: none;
-        border-bottom: 1px solid rgba(138, 138, 138, 0.5);
-        text-align: center; }
+.init-content {
+  height: 960px;
+  width: 940px; }
+  .init-content .init-left {
+    text-align: center;
+    width: 30px;
+    height: 60px;
+    position: fixed;
+    top: 530px;
+    left: 5px; }
+  .init-content .init-right {
+    text-align: center;
+    width: 30px;
+    height: 60px;
+    position: fixed;
+    top: 530px;
+    left: 925px; }
+  .init-content .attr-init {
+    display: flex;
+    overflow: visible;
+    position: relative;
+    height: 960px; }
+    .init-content .attr-init .chart {
+      min-width: 200px;
+      max-width: 380px;
+      height: 950px;
+      flex: 1; }
+    .init-content .attr-init .attr-info {
+      height: 90px;
+      text-align: center; }
+      .init-content .attr-init .attr-info .title {
+        font-size: 24px;
+        font-weight: 500; }
+      .init-content .attr-init .attr-info .form-block {
+        padding: 5px 0; }
+        .init-content .attr-init .attr-info .form-block .ant-checkbox-wrapper {
+          margin-right: 5px; }
+        .init-content .attr-init .attr-info .form-block input {
+          border: none;
+          outline: none;
+          border-bottom: 1px solid rgba(138, 138, 138, 0.5);
+          text-align: center; }
 
 .ant-input-number-input {
   padding: 5px; }

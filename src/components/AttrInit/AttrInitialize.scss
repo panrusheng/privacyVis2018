@@ -8,39 +8,59 @@
   }
 }
 
-
-.attr-init {
-  display: flex;
-  max-width: 1000px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  position: relative;
+.init-content {
   height: 960px;
-  .chart {
-    min-width: 200px;
-    max-width: 380px;
-    height: 950px;
-    flex: 1;
+  width: 940px;
+
+  .init-left {
+    text-align: center;
+    width: 30px;
+    height: 60px;
+    position: fixed;
+    top: 530px;
+    left: 5px;
   }
 
-  .attr-info {
-    height: 90px;
+  .init-right {
     text-align: center;
-    .title {
-      font-size: 24px;
-    font-weight: 500;
+    width: 30px;
+    height: 60px;
+    position: fixed;
+    top: 530px;
+    left: 925px;
+  }
+  
+  .attr-init {
+    display: flex;
+    overflow: visible;
+    position: relative;
+    height: 960px;
+    .chart {
+      min-width: 200px;
+      max-width: 380px;
+      height: 950px;
+      flex: 1;
     }
 
-    .form-block {
-      padding: 5px 0;
-      .ant-checkbox-wrapper {
-        margin-right: 5px;
+    .attr-info {
+      height: 90px;
+      text-align: center;
+      .title {
+        font-size: 24px;
+      font-weight: 500;
       }
-      input {
-        border: none;
-        outline: none;
-        border-bottom: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
-        text-align: center;
+
+      .form-block {
+        padding: 5px 0;
+        .ant-checkbox-wrapper {
+          margin-right: 5px;
+        }
+        input {
+          border: none;
+          outline: none;
+          border-bottom: 1px solid rgba($color: #8a8a8a, $alpha: 0.5);
+          text-align: center;
+        }
       }
     }
   }
