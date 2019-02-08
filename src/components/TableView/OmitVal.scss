@@ -3,17 +3,30 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    user-select: none;
 
     .header {
-        display: flex;
         height: 40px;
+        display: flex;
 
         .header-item {
             flex: 1;
-            transform: rotateZ(-60deg);
-            display: flex;
-            align-items: center;
-            padding: 5px;
+            height: 40px;
+            line-height: 40px;
+            position: relative;
+
+            &.rotate {
+                transform: rotateZ(-60deg);
+                div {
+                    text-align: left;
+                }
+            }
+
+            div {
+                width: 100%;
+                position: absolute;
+                text-align: center;
+            }
         }
     }
 

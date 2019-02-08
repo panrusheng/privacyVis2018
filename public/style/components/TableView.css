@@ -32,7 +32,7 @@
       .table-view .table-foot .operation label {
         margin-right: 5px; }
   .table-view .table {
-    height: calc(100% - 90px);
+    height: calc(100% - 80px);
     user-select: none; }
     .table-view .table .wrapper {
       display: flex; }

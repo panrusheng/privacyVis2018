@@ -5,6 +5,46 @@ import './OmitVal.scss';
 
 @inject(['store'])
 export default class OmitVal extends React.Component {
+    prevOverflowed = undefined;
+    headerOverflowed = false;
+    headerHeight = 40;
+
+    componentDidMount() {
+        this.adjustHeader();
+    }
+
+    componentDidUpdate() {
+        this.adjustHeader();
+    }
+
+    adjustHeader() {
+        if (!this.header) return;
+
+        const items = [...this.header.querySelectorAll(".header-item")];
+        let maxWidth = -1;
+        this.prevOverflowed = this.headerOverflowed;
+
+        items.forEach(item => {
+            if (item.clientWidth < item.scrollWidth) {
+                this.headerOverflowed = true;
+            }
+            if (item.scrollWidth > maxWidth) {
+                maxWidth = item.scrollWidth;
+            }
+        });
+        
+        const height = Math.ceil(maxWidth * 2 / 1.71);
+        if (this.headerOverflowed && height > 40) {
+            this.headerHeight = height;
+        } else {
+            this.headerHeight = 40;
+        }
+
+        if (this.headerOverflowed != this.prevOverflowed) {
+            this.forceUpdate();
+        }
+    }
+
     formatData() {
         /**
          *       dataGroup.groups.forEach(group => {
@@ -47,10 +87,11 @@ export default class OmitVal extends React.Component {
 
     render() {
         const { columns, rows } = this.formatData();
+        
         return (
             <div className="omit-value">
-                <div className="header">
-                    { columns.map(col => <div className="header-item"><span>{col}</span></div>) }
+                <div className="header" style={{ height: this.headerHeight }} ref={dom => this.header = dom}>
+                    { columns.map(col => <div className={`header-item ${this.headerOverflowed ? 'rotate' : ''}`}> <div><span>{col}</span></div></div>) }
                 </div>
                 <div className="body">                        
                     { rows.map(row => {
