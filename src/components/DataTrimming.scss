@@ -9,7 +9,7 @@
   }
   
   .trim-content {
-    height: 900px;
+    height: 890px;
     width: 940px;
 
     .trim-left {
@@ -34,11 +34,11 @@
       display: flex;
       overflow: visible;
       position: relative;
-      height: 900px;
+      height: 890px;
       .chart {
         min-width: 200px;
         max-width: 380px;
-        height: 900px;
+        height: 880px;
         flex: 1;
       }
     
@@ -61,7 +61,7 @@
     display: flex;
     height: 50px;
     margin: 5px 170px 5px 170px;
-    padding: 15px;
+    padding: 13px;
     text-align: center;
     border-radius: 5;
     border: 2px #ddd dashed;
@@ -72,6 +72,8 @@
       height: 30px;
       label {
         margin-left: 5px;
+        vertical-align: middle;
+        color: #333;
       }
     }
     .trim-original {

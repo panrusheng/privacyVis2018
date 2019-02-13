@@ -40,7 +40,8 @@ export default class ModelView extends React.Component {
       arcData.push({startAngle: a, endAngle: a+angle, type: data[i].type});
       a += angle;
     }
-    g.selectAll('arc-path').data(arcData).enter().append('path').attr('d', d => arcPath(r, d.startAngle, d.endAngle)).style('fill', d=>colorList[d.type]).style('stroke', '#ffffff');
+    g.selectAll('arc-path').data(arcData).enter().append('path').attr('d', d => arcPath(r, d.startAngle, d.endAngle))
+    .style('fill', d=>colorList[d.type]).style('stroke', '#ffffff').style('opacity', 0.8);
 
     function arcPath(r, startAngle, endAngle) {
         let x1 = r*Math.cos(startAngle), x2 = r*Math.cos(endAngle), y1 = r*Math.sin(startAngle), y2 = r*Math.sin(endAngle);
@@ -62,7 +63,7 @@ legend(g, colorList){
     .style('stroke', '#ccc').style('stroke-dasharray', '5 5');
     g.selectAll('legend-text').data(legendList).enter().append('text').attr('x', (d, i) => 40 + i * 180).attr('y', 30).style('fill', '#333').text(d => d.type);
     g.selectAll('legend-text').data(legendList).enter().append('rect').attr('x', (d, i) => 15 + i * 180).attr('y', 15)
-    .attr('width', 20).attr('height', 20).attr('rx', 5).attr('ry',5).style('fill', d => d.color);
+    .attr('width', 20).attr('height', 20).attr('rx', 5).attr('ry',5).style('fill', d => d.color).style('opacity', 0.8);
 }
 
   modelSelected(e) {

@@ -41,7 +41,7 @@ export default class CateTrim extends React.Component {
       .data(data)
       .enter();
     rect.append('rect')
-      .style('fill', '#fff')
+      .style('fill', 'none')
       .style('stroke', '#1866BB')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
@@ -91,7 +91,6 @@ export default class CateTrim extends React.Component {
 
     rect.append('rect')
       .style('fill', 'url(#trim-stripe)')
-      .style('stroke', 'none')
       .style('stroke', 'none')
       .attr('x', (d, i) => {
         return (width + xScale(d.triV)) / 2;

@@ -38,7 +38,7 @@ export default class TableView extends React.Component {
     order: DESC,
     omitValue: false,
     mode: 2, // 1: all records, 2: grouped rec,
-    unfoldedGroups: [1],
+    // unfoldedGroups: [1],
     rowSelection: [], // selected rows id
   };
 
@@ -216,18 +216,18 @@ export default class TableView extends React.Component {
     });
   }
 
-  toggleGroup(groupId) {
-    const unfoldedGroups = [...this.state.unfoldedGroups];
+  // toggleGroup(groupId) {
+  //   const unfoldedGroups = [...this.state.unfoldedGroups];
 
-    let index = unfoldedGroups.findIndex(id => id === groupId);
-    if (index >= 0) {
-      unfoldedGroups.splice(index, 1);
-    } else {
-      unfoldedGroups.push(groupId);
-    }
+  //   let index = unfoldedGroups.findIndex(id => id === groupId);
+  //   if (index >= 0) {
+  //     unfoldedGroups.splice(index, 1);
+  //   } else {
+  //     unfoldedGroups.push(groupId);
+  //   }
 
-    this.setState({ unfoldedGroups });
-  }
+  //   this.setState({ unfoldedGroups });
+  // }
 
   setOrder(orderCol) {
     this.setState({
@@ -354,7 +354,7 @@ export default class TableView extends React.Component {
   }
 
   renderTableHeaderLeft(rows) {
-    const { mode, unfoldedGroups, rowSelection } = this.state;
+    const { mode, rowSelection } = this.state;
 
     return (
       <div
@@ -364,8 +364,8 @@ export default class TableView extends React.Component {
         {
           rows.map(({ id, extended }) => {
             if (mode === 1) return (<div className="table-cell" key={id}>{id}</div>);
-            const unfold = unfoldedGroups.findIndex(gid => gid === id) >= 0;
-            if (!unfold || !extended) return (<div className="table-cell em group" onClick={() => this.toggleGroup(id)} key={id}>G{id}</div>);
+            // const unfold = unfoldedGroups.findIndex(gid => gid === id) >= 0;
+            // if (!unfold || !extended) return (<div className="table-cell em group" onClick={() => this.toggleGroup(id)} key={id}>G{id}</div>);
             
             return [
               <div className="table-cell em group" key={id} onClick={() => this.toggleGroup(id)}>G{id}</div>,
@@ -444,10 +444,10 @@ export default class TableView extends React.Component {
             if (mode === 1) return this.renderRow(row, columns);
             const groupedRows = [];
             groupedRows.push(this.renderRow(row, columns, true));
-            const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
+            // const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
             
 
-            if (unfolded) {
+            // if (unfolded) {
               const eRows = [];
               row.extended.forEach((eRow) => {
                 eRows.push(this.renderRow(eRow, columns));
@@ -459,7 +459,7 @@ export default class TableView extends React.Component {
                   <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end - start }} />
                 )) }  
               </div>)
-            }
+            // }
 
             return groupedRows;
           })

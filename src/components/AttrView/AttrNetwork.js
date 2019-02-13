@@ -8,7 +8,6 @@ import {
 import {
   inject
 } from 'mobx-react';
-import { Row } from 'antd';
 @inject(['store'])
 export default class AttrNetwork extends Component {
   constructor(props) {

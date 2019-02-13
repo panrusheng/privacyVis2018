@@ -54,7 +54,7 @@ export default class DistTrimming extends React.Component {
 
     width -= 15; //for margin
 
-    const height = Math.ceil(h - 100);
+    const height = Math.ceil(h - 90);
 
     if (
       height === this.state.attrSize.height &&
