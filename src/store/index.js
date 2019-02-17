@@ -203,7 +203,7 @@ class AppStore {
       attributes,
     }, {
       params: {
-        attributes: JSON.stringify(attributes),
+        attributes: JSON.stringify(attributes.map(({attrName}) => attrName))
       }
     }).then((data) => {
       data.attributes.forEach(attr => {
@@ -211,7 +211,7 @@ class AppStore {
         attr.data = JSON.parse(attr.data);
         
         if (attr.type === 'numerical') {
-          attr.breakPoints = [0.5];
+          attr.breakPoints = [];
           attr.data.sort((a, b) => a.label - b.label);
         } else {
           attr.groups = [];

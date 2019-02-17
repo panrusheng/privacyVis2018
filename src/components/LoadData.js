@@ -22,6 +22,7 @@ export default class LoadData extends React.Component {
         super(props);
 
         this.uploadDataset = this.uploadDataset.bind(this);
+        this.handleConfirm = this.handleConfirm.bind(this);
 
         this.inputElem = document.createElement('input');
         this.inputElem.setAttribute('type', 'file');
@@ -47,6 +48,19 @@ export default class LoadData extends React.Component {
         this.inputElem.click();
     }
 
+    handleConfirm() {
+        if (!this.state.currentDataset) return;
+        const attributes = [];
+        const li = this.state.datasets.find(item => item.dataset === this.state.currentDataset).attrList;
+        
+        li.forEach((attr, index) => {
+            if (this.state.currentSelected[index] === 0) return;
+            attributes.push({ attrName: attr.attrName, sensitive: this.state.currentSelected[index] === 2 });
+        });
+
+        this.props.store.setAttributes(attributes);
+    }
+
     toggleCheck(index) {
         // let checkedIndex = [...this.state.checkedIndex];
         
@@ -58,8 +72,7 @@ export default class LoadData extends React.Component {
 
         // this.setState({ checkedIndex });
         let currentSelected = [...this.state.currentSelected];
-        currentSelected[index] += 1;
-        currentSelected[index] > 2 ? 0:currentSelected[index];
+        currentSelected[index] = (currentSelected[index] + 1) % 3;
         this.setState({ currentSelected });
     }
 
@@ -91,7 +104,7 @@ export default class LoadData extends React.Component {
             <Modal
                 visible
                 closable={false}
-                footer={<div className="footer-button">Confirm</div>}
+                footer={<div className="footer-button" onClick={this.handleConfirm}>Confirm</div>}
                 wrapClassName="attr-select-panel"
             >
                 <div className="load-data">
@@ -121,7 +134,6 @@ export default class LoadData extends React.Component {
                         </div>
                     </div>
                 </div>
-
             </Modal>
 
         )

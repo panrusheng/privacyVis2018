@@ -21,7 +21,7 @@ class App extends React.Component {
     // this.props.store.fetchAttributes();
 
     // test
-    this.props.store.setAttributes(['wei', 'gen', 'cat', 'res', 'sch', 'fue', 'gcs']);
+    this.props.store.setAttributes([{attrName: "res", sensitive: false}, {attrName: "tra", sensitive: false}, {attrName: "jol", sensitive: true}, {attrName: "fmp", sensitive: true}, {attrName: "emp", sensitive: true}, {attrName: "gen", sensitive: false}, {attrName: "gcs", sensitive: false}, {attrName: "cat", sensitive: false}, {attrName: "fue", sensitive: true}, {attrName: "sch", sensitive: false}, {attrName: "lvb", sensitive: false}]);
     this.props.store.getGBN();
     this.props.store.getAllRecords();
   }
