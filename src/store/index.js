@@ -199,6 +199,7 @@ class AppStore {
 
   @action
   setAttributes(attributes) {
+    const selectedAttributes = [];
     axios.post('/get_attribute_distribution', {
       attributes,
     }, {
@@ -209,6 +210,8 @@ class AppStore {
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
         attr.data = JSON.parse(attr.data);
+        attr.utility = 1;
+        attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
         
         if (attr.type === 'numerical') {
           attr.breakPoints = [];
@@ -224,11 +227,10 @@ class AppStore {
           });
         }
 
-        attr.sensitive = false;
-        attr.utility = undefined;
-        this.selectedAttributes.push(attr);
+        selectedAttributes.push(attr);
         this.trimList.push(false);
-      })
+      });
+      this.selectedAttributes = selectedAttributes;
     });
   }
 

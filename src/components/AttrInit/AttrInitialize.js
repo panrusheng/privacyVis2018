@@ -8,6 +8,7 @@ import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
 import { InputNumber, Button } from 'antd';
 import * as d3 from 'd3';
+import { toJS } from 'mobx';
 
 @inject(['store'])
 @observer
@@ -273,7 +274,7 @@ export default class AttrInitialize extends React.Component {
                 </div>
                 */}
                     <p style={{ margin: 1 }}>Utility value</p>
-                    <InputNumber min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                    <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                       this.handleUtilityChange(attr.attrName, e)
                     } />
                   </div>
