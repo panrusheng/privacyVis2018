@@ -21,13 +21,7 @@ class App extends React.Component {
     // this.props.store.fetchAttributes();
 
     // test
-    this.props.store.addAttribute('wei');
-    this.props.store.addAttribute('res');
-    this.props.store.addAttribute('fue');
-    this.props.store.addAttribute('sch');
-    this.props.store.addAttribute('tra');
-    this.props.store.addAttribute('emp');
-    this.props.store.addAttribute('ascc');
+    this.props.store.setAttributes(['wei', 'gen', 'cat', 'res', 'sch', 'fue', 'gcs']);
     this.props.store.getGBN();
     this.props.store.getAllRecords();
   }

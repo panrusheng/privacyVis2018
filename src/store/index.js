@@ -198,76 +198,38 @@ class AppStore {
   }
 
   @action
-  addAttribute(attrName) {
-    axios
-      .post(
-        '/get_attribute_distribution', {}, {
-          params: {
-            attributes: JSON.stringify([attrName])
-          }
-        }
-      )
-      .then(data => {
-        const attributes = data.attributes;
-        if (attributes.length > 0) {
-          const attr = attributes[0];
-          attr.attrName = attr.attributeName;
-          if (attr.type === 'numerical') {
-            attr.breakPoints = [];
-            // TEST: 
-            if (!attr.data) {
-              attr.data = [
-                {
-                  label: 0.3,
-                  value: 34,
-                },
-                {
-                  label: 0.4,
-                  value: 2,
-                },
-                {
-                  label: 0.9,
-                  value: 10,
-                }
-              ]
-            }
-
-            attr.data.sort((a, b) => a.label - b.label);
-          } else {
-            attr.groups = [];
-
-            // TEST
-            if (!attr.data) {
-              attr.data = [{
-                category: 'Western', 
-                value: 21,
-              }, {
-                category: 'S.Eastern',
-                value: 12
-              }, {
-                category: 'N.Eastern',
-                value: 34
-              }, {
-                category: 'Belfast',
-                value: 4
-              }]
-            }
-
-            attr.data.forEach(d => {
-              attr.groups.push({
-                name: d.category,
-                categories: [d],
-                value: d.value
-              });
+  setAttributes(attributes) {
+    axios.post('/get_attribute_distribution', {
+      attributes,
+    }, {
+      params: {
+        attributes: JSON.stringify(attributes),
+      }
+    }).then((data) => {
+      data.attributes.forEach(attr => {
+        attr.attrName = attr.attributeName;
+        attr.data = JSON.parse(attr.data);
+        
+        if (attr.type === 'numerical') {
+          attr.breakPoints = [0.5];
+          attr.data.sort((a, b) => a.label - b.label);
+        } else {
+          attr.groups = [];
+          attr.data.forEach(d => {
+            attr.groups.push({
+              name: d.category,
+              categories: [d],
+              value: d.value
             });
-          }
-
-          attr.sensitive = false;
-          attr.utility = undefined;
-          this.selectedAttributes.push(attr);
-          this.trimList.push(false);
+          });
         }
-      });
+
+        attr.sensitive = false;
+        attr.utility = undefined;
+        this.selectedAttributes.push(attr);
+        this.trimList.push(false);
+      })
+    });
   }
 
   @action
