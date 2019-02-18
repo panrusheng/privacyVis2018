@@ -3,8 +3,6 @@ import {
   action,
   toJS,
 } from 'mobx';
-import Numerical from '../components/AttrInit/Numerical.js';
-import Categorical from '../components/AttrInit/Categorical.js';
 import axios from '../utils/axios.js';
 
 class AppStore {
@@ -64,8 +62,10 @@ class AppStore {
   @observable
   GBN = {
     nodes: [],
-    links: []
+    links: [],
+    nullNodes: []
   };
+
   nodeList4links = [];
   @observable
   recList = {
@@ -146,9 +146,19 @@ class AppStore {
   @action
   getGBN() {
     axios.get('/get_gbn').then(data => {
-      // const eventNos = new Set(data.nodes.map(item => item.eventNo));
-      // data.links = data.links.filter(item => eventNos.has(item.source) && eventNos.has(item.target));
       data.links.forEach(item => item.value = parseFloat(item.value));
+
+      const unselAttrEveentNo = new Set();
+      data.nodes.forEach(node => {
+        const a = this.selectedAttributes.find(item => item.attrName === node.attrName);
+        if (!a) {
+          unselAttrEveentNo.add(node.eventNo);
+          return;
+        }
+        node.value = a.sensitive ? -1 : a.utility;
+      });
+
+
       let dataGBN = {};
       dataGBN.nodes = [];
       dataGBN.links = [];
@@ -181,7 +191,10 @@ class AppStore {
         }
         dataGBN.links.push({source:source, target:target, value:data.links[i].value,cpt:data.links[i].cpt})
       }
+
+      
       this.GBN = dataGBN;
+      console.log(dataGBN);
       this.nodeList4links = nodeList4links;
       // this.GBN = data;
     });
@@ -199,14 +212,14 @@ class AppStore {
 
   @action
   setAttributes(attributes) {
-    const selectedAttributes = [];
-    axios.post('/get_attribute_distribution', {
+    return axios.post('/get_attribute_distribution', {
       attributes,
     }, {
       params: {
         attributes: JSON.stringify(attributes.map(({attrName}) => attrName))
       }
     }).then((data) => {
+      const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
         attr.data = JSON.parse(attr.data);
@@ -319,9 +332,6 @@ class AppStore {
       categories: gCategories,
       value: gVal,
     });
-
-    console.log(newGroups);
-
     attr.groups = newGroups;
     this.selectedAttributes[index] = attr;
   }
@@ -345,7 +355,6 @@ class AppStore {
     })
     attr.groups = newGroups;
 
-    console.log(newGroups);
     this.selectedAttributes[index] = attr;
   }
 
@@ -385,13 +394,20 @@ class AppStore {
   }
 
   @action
-  updateAttr(attrName, value) {
-    const index = this.selectedAttributes.findIndex(
+  updateUtility(attrName, value) {
+    let index = this.selectedAttributes.findIndex(
       item => item.attrName === attrName
     );
     if (index < 0) return;
-    const attr = Object.assign({}, this.selectedAttributes[index], value);
+    const attr = Object.assign({}, this.selectedAttributes[index], { utility: value });
     this.selectedAttributes.splice(index, 1, attr);
+    
+    index = this.GBN.nodes.find(item => item.attrName === attrName);
+    if (index < 0) return;
+    
+    const newNodes = [...this.GBN.nodes];
+    newNodes.splice(index, 1, Object.assign({}, this.GBN.nodes[index], { value }));
+    this.GBN.nodes = newNodes;
   }
 
   @action

@@ -145,32 +145,16 @@ export default class AttrInitialize extends React.Component {
     this.props.store.updateBreakPoint(attrName, index, value);
   }
 
-  toggleAttrSensitive(attrName) {
-    const attr = this.props.store.selectedAttributes.find(
-      item => item.attrName === attrName
-    );
-    this.props.store.updateAttr(attrName, { sensitive: !attr.sensitive });
-  }
-
-  toggleUtility(attrName) {
-    const attr = this.props.store.selectedAttributes.find(
-      item => item.attrName === attrName
-    );
-    this.props.store.updateAttr(attrName, {
-      utility: attr.utility === undefined ? 0 : undefined
-    });
-  }
-
   updateUtility(attrName, value) {
     let utility = parseFloat(value);
     if (isNaN(utility)) utility = 0;
     if (utility > 1) utility = 1;
     if (utility < 0) utility = 0;
-    this.props.store.updateAttr(attrName, { utility });
+    this.props.store.updateUtility(attrName, utility);
   }
 
   handleUtilityChange(attrName, value) {
-    this.props.store.updateAttr(attrName, { utility: value });
+    this.props.store.updateUtility(attrName, value);
   }
 
   scrollRight() {
@@ -245,34 +229,6 @@ export default class AttrInitialize extends React.Component {
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
                   <div className="form-block">
-                    {/* <div className="form-block">
-                  <Checkbox
-                    onChange={() => this.toggleAttrSensitive(attr.attrName)}
-                    checked={attr.sensitive}
-                  />
-                  Sensitive
-                </div> 
-                <div className="form-block">
-                  <Checkbox
-                    checked={attr.utility !== undefined}
-                    onChange={() => this.toggleUtility(attr.attrName)}
-                  />
-                  Utility {attr.utility !== undefined && ':'}
-                  {attr.utility !== undefined && (
-                    <input
-                      type="text"
-                      size={new String(attr.utility).length + 1}
-                      value={attr.utility}
-                      onChange={e =>
-                        this.handleUtilityChange(attr.attrName, e.target.value)
-                      }
-                      onBlur={e =>
-                        this.updateUtility(attr.attrName, e.target.value)
-                      }
-                    />
-                  )}
-                </div>
-                */}
                     <p style={{ margin: 1 }}>Utility value</p>
                     <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                       this.handleUtilityChange(attr.attrName, e)
