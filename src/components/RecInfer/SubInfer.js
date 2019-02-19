@@ -22,7 +22,6 @@ export default class RecView extends Component {
   }
 
   renderGraph(gDOM) {
-    const that = this;
     const {
       sch,
       rec,

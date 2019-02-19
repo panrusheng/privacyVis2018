@@ -116,6 +116,7 @@ export default class Categorical extends React.Component {
   }
 
   render() {
+    if (this.props.height == 0) return (<div />);
     return (
       <div className="categorical-view">
         <svg

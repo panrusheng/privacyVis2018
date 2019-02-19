@@ -317,7 +317,7 @@ export default class TableView extends React.Component {
 
   renderTable() {
     const { columns, rows } = this.formatData();
-    const { orderCol, order, mode } = this.state;
+    // const { orderCol, order, mode } = this.state;
 
     if (rows.length === 0) return this.renderEmpty();
 

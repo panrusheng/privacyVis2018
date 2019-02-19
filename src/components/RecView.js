@@ -64,7 +64,8 @@ export default class RecView extends React.Component {
   componentDidUpdate() {
   }
 
-  componentWillUnmount() {
+  componentWillMount() {
+    this.props.store.getRecList()
   }
 
   forceDirected(n, l) {

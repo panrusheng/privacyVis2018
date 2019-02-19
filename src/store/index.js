@@ -145,7 +145,7 @@ class AppStore {
 
   @action
   getGBN() {
-    axios.get('/get_gbn').then(data => {
+    axios.post('/get_gbn').then(data => {
       data.links.forEach(item => item.value = parseFloat(item.value));
 
       const unselAttrEveentNo = new Set();
@@ -194,7 +194,6 @@ class AppStore {
 
       
       this.GBN = dataGBN;
-      console.log(dataGBN);
       this.nodeList4links = nodeList4links;
       // this.GBN = data;
     });
@@ -222,7 +221,8 @@ class AppStore {
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
-        attr.data = JSON.parse(attr.data);
+        // console.log(attr);
+        // attr.data = JSON.parse(attr.data);
         attr.utility = 1;
         attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
         
@@ -447,9 +447,9 @@ class AppStore {
   @action
   getRecList() {
     const { GBN } = this;
-    axios.get('/', {
+    axios.post('/get_local_gbn', {
       params: {
-        currentGBN: GBN,
+        // currentGBN: GBN,
       }
     }).then(data => {
       this.recList = data;
