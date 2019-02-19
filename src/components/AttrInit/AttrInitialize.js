@@ -8,7 +8,7 @@ import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
 import { InputNumber, Button } from 'antd';
 import * as d3 from 'd3';
-import { toJS } from 'mobx';
+// import { toJS } from 'mobx';
 
 @inject(['store'])
 @observer
@@ -169,7 +169,7 @@ export default class AttrInitialize extends React.Component {
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.init-left').attr('disabled', null);
-    if (moveLeft == maxDistance) d3.select('.init-right').attr('disabled', true);
+    if (moveLeft === maxDistance) d3.select('.init-right').attr('disabled', true);
   }
 
   scrollLeft() {
@@ -182,7 +182,7 @@ export default class AttrInitialize extends React.Component {
     const moveLeft = (x + w >= 0) ? 0 : (x + w);
     d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.init-right').attr('disabled', null);
-    if (moveLeft == 0) d3.select('.init-left').attr('disabled', true);
+    if (moveLeft === 0) d3.select('.init-left').attr('disabled', true);
   }
 
   renderAttr(attr) {

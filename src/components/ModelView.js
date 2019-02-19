@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import './ModelView.scss';
 import * as d3 from 'd3';
 import { Select, Button, Menu } from 'antd';
-import { toJS } from 'mobx';
+// import { toJS } from 'mobx';
 const Option = Select.Option;
 @inject(['store'])
 @observer
@@ -11,9 +11,9 @@ export default class ModelView extends React.Component {
   state = {
 
   };
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount() {
     const { original, processed } = this.props.store.piechart;
@@ -54,12 +54,12 @@ legend(g, colorList){
     let legendList = [];
     for (let i in colorList) {
         let j = 'True positive';
-        if (i == 'TN') j = 'True Negative';
-        if (i == 'FN') j = 'False Negative';
-        if (i == 'FP') j = 'False Positive';
+        if (i === 'TN') j = 'True Negative';
+        if (i === 'FN') j = 'False Negative';
+        if (i === 'FP') j = 'False Positive';
         legendList.push({type: j, color: colorList[i]});
     }
-    g.append('rect').attr('x', 0). attr('y', 0).attr('width', 750).attr('height', 50).attr('rx', 5).attr('ry',5).style('fill', 'none')
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', 750).attr('height', 50).attr('rx', 5).attr('ry',5).style('fill', 'none')
     .style('stroke', '#ccc').style('stroke-dasharray', '5 5');
     g.selectAll('legend-text').data(legendList).enter().append('text').attr('x', (d, i) => 40 + i * 180).attr('y', 30).style('fill', '#333').text(d => d.type);
     g.selectAll('legend-text').data(legendList).enter().append('rect').attr('x', (d, i) => 15 + i * 180).attr('y', 15)

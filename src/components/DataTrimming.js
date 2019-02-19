@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import './DataTrimming.scss';
 import { inject, observer } from 'mobx-react';
-import { toJS } from 'mobx';
+// import { toJS } from 'mobx';
 import * as d3 from 'd3';
 import NumeTrim from './DataTrim/NumeTrim';
 import CateTrim from './DataTrim/CateTrim';
@@ -86,7 +86,7 @@ export default class DistTrimming extends React.Component {
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.trim-left').attr('disabled', null);
-    if (moveLeft == maxDistance) d3.select('.trim-right').attr('disabled', true);
+    if (moveLeft === maxDistance) d3.select('.trim-right').attr('disabled', true);
   }
 
   scrollLeft() {
@@ -99,7 +99,7 @@ export default class DistTrimming extends React.Component {
     const moveLeft = (x + w >= 0) ? 0 : (x + w);
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.trim-right').attr('disabled', null);
-    if (moveLeft == 0) d3.select('.trim-left').attr('disabled', true);
+    if (moveLeft === 0) d3.select('.trim-left').attr('disabled', true);
   }
 
   renderAttr(attr) {

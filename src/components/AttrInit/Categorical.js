@@ -10,7 +10,7 @@ export default class Categorical extends React.Component {
     const openMenu = this.props.openMenu;
     dom.innerHTML = '';
     const dataValue = data.map(item => item.value);
-    const n = dataValue.length + 1;
+    // const n = dataValue.length + 1;
     const xScale = d3
       .scaleLinear()
       .domain([0, Math.max(...dataValue)])
@@ -65,7 +65,7 @@ export default class Categorical extends React.Component {
 
     // axisElem.selectAll('text').remove();
     // axisElem.selectAll('.tick').remove();
-    if (d3.selectAll('#biggerArrow'.length == 0)) {
+    if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')
@@ -116,7 +116,7 @@ export default class Categorical extends React.Component {
   }
 
   render() {
-    if (this.props.height == 0) return (<div />);
+    if (this.props.height === 0) return (<div />);
     return (
       <div className="categorical-view">
         <svg

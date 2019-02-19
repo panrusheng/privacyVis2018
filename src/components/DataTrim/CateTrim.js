@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import { toJS } from 'mobx';
+// import { toJS } from 'mobx';
 
 export default class CateTrim extends React.Component {
   draw(dom, data, width, height, margin) {
@@ -19,7 +19,7 @@ export default class CateTrim extends React.Component {
       .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
     const rectWidth = (height - 20) / data.length;
 
-    if (d3.selectAll('#trim-stripe'.length == 0)) {
+    if (d3.selectAll('#trim-stripe'.length === 0)) {
       let pattern = svg.append('pattern')
         .attr('id', 'trim-stripe')
         .attr('width', 4)
@@ -101,7 +101,7 @@ export default class CateTrim extends React.Component {
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.curV - d.triV) / 2);
 
-    if (d3.selectAll('#biggerArrow'.length == 0)) {
+    if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')

@@ -97,7 +97,7 @@ export default class Numerical extends React.Component {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
 
-    const lineGraph = svg
+    svg
       .append('path')
       .datum(data)
       .attr('class', 'line')
@@ -127,10 +127,10 @@ export default class Numerical extends React.Component {
       .append('circle')
       .attr('cx', d => xScale(-d))
       .attr('cy', (d, i) => yScale(i))
-      .attr('r', 5)
-      .style('stroke', '#1866BB')
-      .style('stroke-width', 2)
-      .style('fill', '#fff')
+      .attr('r', d => { return d === 0 ? 0 : 2 })
+      // .style('stroke', '#1866BB')
+      // .style('stroke-width', 2)
+      .style('fill', '#1866BB')
       .on('mouseover', (d, i) => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
@@ -157,7 +157,7 @@ export default class Numerical extends React.Component {
       .attr('transform', `translate(${width / 2 + 2}, 0)`);
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
 
-    if (d3.selectAll('#biggerArrow'.length == 0)) {
+    if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
         .attr('id', 'biggerArrow')

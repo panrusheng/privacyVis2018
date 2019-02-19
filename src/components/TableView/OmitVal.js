@@ -40,7 +40,7 @@ export default class OmitVal extends React.Component {
             this.headerHeight = 40;
         }
 
-        if (this.headerOverflowed != this.prevOverflowed) {
+        if (this.headerOverflowed !== this.prevOverflowed) {
             this.forceUpdate();
         }
     }

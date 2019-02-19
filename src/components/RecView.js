@@ -11,9 +11,9 @@ export default class RecView extends React.Component {
   state = {
 
   };
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount() {
     let g1 = d3.select('#rec-arrow-row').append('g');

@@ -1,18 +1,12 @@
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 import * as d3 from 'd3';
-import {
-  toJS
-} from 'mobx';
-import {
-  inject
-} from 'mobx-react';
+// import { toJS } from 'mobx';
+import { inject } from 'mobx-react';
 @inject(['store'])
 export default class AttrNetwork extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
   componentDidMount() {
     this.renderGraph(this.g, this.props);
   }

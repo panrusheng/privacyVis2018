@@ -84,7 +84,7 @@ export default class Attribute extends React.Component {
     for (let i = 0; i < l.length; i++) {
       const sA = nodeDic[l[i].source];
       const tA = nodeDic[l[i].target];
-      if (sA.id == tA.id) continue;
+      if (sA.id === tA.id) continue;
       const label = sA.id + ',' + tA.id;
       if (!(label in linkDic)) {
         linkDic[label] = { no: attrL.length, child: [], value: 0 };

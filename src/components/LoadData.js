@@ -119,10 +119,10 @@ export default class LoadData extends React.Component {
                             <div className="attr-list-item">
                                 <div onClick={() => this.toggleCheck(index)}>{
                                     //checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
-                                    currentSelected[index] == 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] == 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
+                                    currentSelected[index] === 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] === 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
                                 }</div>
                                 <div style={{ width: '90px' }}>{attr.attrName}</div>
-                                <div style={{ width: '100px' }}>{attr.type == 'numerical'? 'yes':'no'}</div>
+                                <div style={{ width: '100px' }}>{attr.type === 'numerical'? 'yes':'no'}</div>
                                 <div style={{ width: '450px' }} className="desc">{attr.description}</div>
                             </div>
                         )) }

@@ -1,18 +1,12 @@
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 import * as d3 from 'd3';
-import {
-  toJS
-} from 'mobx';
-import {
-  inject
-} from 'mobx-react';
+// import { toJS } from 'mobx';
+import { inject } from 'mobx-react';
 @inject(['store'])
 export default class RecView extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
   componentDidMount() {
     this.renderGraph(this.g, this.props);
   }
@@ -38,7 +32,7 @@ export default class RecView extends Component {
       num
     } = data;
     const del = sch.dL;
-    const r = 4;
+    // const r = 4;
     const ScaleX = d3
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.x))
@@ -67,7 +61,7 @@ export default class RecView extends Component {
 
     g.selectAll("." + name).remove();
 
-    if (d3.selectAll('#arrowSub'.length == 0)) {
+    if (d3.selectAll('#arrowSub'.length === 0)) {
       g.append('defs')
         .attr('class', name)
         .append('marker')
