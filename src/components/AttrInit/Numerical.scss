@@ -1,7 +1,9 @@
 .numerical-view {
+  margin: 20px;
   text-align: center;
   svg {
     user-select: none;
+    overflow: visible;
   }
   .line {
     fill: none;

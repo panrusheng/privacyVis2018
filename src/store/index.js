@@ -19,7 +19,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = 0; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = -1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   records = [];
@@ -211,9 +211,7 @@ class AppStore {
 
   @action
   setAttributes(attributes) {
-    return axios.post('/get_attribute_distribution', {
-      attributes,
-    }, {
+    return axios.post('/get_attribute_distribution', null, {
       params: {
         attributes: JSON.stringify(attributes.map(({attrName}) => attrName))
       }
@@ -221,8 +219,6 @@ class AppStore {
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
-        // console.log(attr);
-        // attr.data = JSON.parse(attr.data);
         attr.utility = 1;
         attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
         

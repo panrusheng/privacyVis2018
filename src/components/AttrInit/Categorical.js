@@ -4,7 +4,7 @@ import { toJS } from 'mobx';
 import './Categorical.scss';
 
 export default class Categorical extends React.Component {
-  draw(dom, attr, width, height, margin) {
+  draw(dom, attr, width, height) {
     const data = toJS(attr.groups);
     const attrName = attr.attrName;
     const openMenu = this.props.openMenu;
@@ -18,10 +18,9 @@ export default class Categorical extends React.Component {
 
     const svg = d3
       .select(dom)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
+      .attr('width', width)
+      .attr('height', height)
+      .append('g');
     const rectWidth = (height - 20) / data.length;
 
     svg
@@ -46,8 +45,8 @@ export default class Categorical extends React.Component {
         openMenu && openMenu(data[i], attrName, d3.event);
       })
       .on('mouseover', d => {
-        const x = d3.event.x + 15 - margin.left,
-          y = d3.event.y - 35 - margin.top;
+        const x = d3.event.x + 15,
+          y = d3.event.y - 35;
         d3.select('.tooltip').html(d.name + ': ' + d.value)
           .style('left', (x) + 'px')
           .style('display', 'block')
@@ -104,15 +103,15 @@ export default class Categorical extends React.Component {
   }
 
   componentDidMount() {
-    const { attr, width, height, margin } = this.props;
+    const { attr, width, height } = this.props;
     if (!attr || !this.chartDom) return;
 
-    this.draw(this.chartDom, attr, width, height, margin);
+    this.draw(this.chartDom, attr, width, height );
   }
 
   componentDidUpdate() {
-    const { attr, width, height, margin } = this.props;
-    this.draw(this.chartDom, attr, width, height, margin);
+    const { attr, width, height } = this.props;
+    this.draw(this.chartDom, attr, width, height );
   }
 
   render() {
@@ -132,5 +131,4 @@ export default class Categorical extends React.Component {
 Categorical.defaultProps = {
   width: 300,
   height: 900,
-  margin: { top: 10, right: 10, bottom: 10, left: 10 }
 };

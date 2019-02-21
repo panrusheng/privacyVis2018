@@ -1,4 +1,5 @@
 .categorical-view {
-  text-align: center; }
+  text-align: center;
+  margin: 20px; }
   .categorical-view .axis-ver text {
     fill: #333; }

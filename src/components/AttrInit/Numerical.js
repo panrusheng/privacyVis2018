@@ -2,6 +2,64 @@ import React from 'react';
 import * as d3 from 'd3';
 import './Numerical.scss';
 
+function decimalPrecision(numbers) {
+  let res = 0;
+  
+  for (let number of numbers) {
+    let n = number.toString().split('.')[1];
+    if (!n) continue;
+    if (n.length > res) res = n.length;
+  }
+
+  return res;
+}
+
+
+function dataPreprocess(data) {
+  data.sort((a, b) => a.label - b.label);
+  const labels = data.map(item => item.label);
+  const [labelMin, labelMax] = d3.extent(labels);
+
+  let minInterval = -1;
+  for (let i = 1; i < labels.length; ++i) {
+    if (minInterval < 0 || labels[i] - labels[i - 1] < minInterval) minInterval = labels[i] - labels[i - 1];
+  }
+
+  let binNum = Math.ceil((labelMax - labelMin) / minInterval);
+  let interval = minInterval;
+  
+  if (binNum > 50) {
+    binNum = 50;
+    interval = (labelMax - labelMin) / binNum;
+  }
+
+  const newData = [{ label: labelMin, value: 0 }];
+  const numD = decimalPrecision(labels);
+
+  let index = 0;
+  for (let i = 0; i < binNum; ++i) {
+    // [start, end) if i < binNum - 1
+    // [start, end] if i == binNum - 1
+    let start = i * interval + labelMin;
+    let end = (i + 1) * interval + labelMin;
+    let label = ((start + end) / 2).toFixed(numD);
+    let value = 0;
+    while (index < data.length &&
+      ((i < binNum - 1 && data[index].label >= start && data[index].label < end) ||
+      (i === binNum - 1 && data[index].label >= start && data[index].label <= end ))) {
+        value += data[index].value;
+        index++;
+    }
+
+    newData.push({ label, value });
+  }
+
+  newData.push({ label: labelMax, value: 0 });
+
+  console.log(interval, newData);
+  return newData;
+}
+
 export default class Numerical extends React.Component {
   static defaultProps = {
     data: []
@@ -20,11 +78,10 @@ export default class Numerical extends React.Component {
       attr,
       width,
       height,
-      margin
     } = this.props;
     if (!attr || !this.chartDom) return;
-
-    this.draw(this.chartDom, attr, width, height, margin);
+    
+    this.draw(this.chartDom, attr, width, height);
   }
 
   componentDidUpdate() {
@@ -32,26 +89,31 @@ export default class Numerical extends React.Component {
       attr,
       width,
       height,
-      margin
     } = this.props;
     if (!attr || !this.chartDom) return;
 
-    this.draw(this.chartDom, attr, width, height, margin);
+    this.draw(this.chartDom, attr, width, height);
   }
 
-  draw(dom, attr, width, height, margin) {
-    const data = attr.data.map(item => item.value);
-    const labels = attr.data.map(item => item.label);
+  draw(dom, attr, width, height) {
+    let data = attr.data;
+    data = dataPreprocess(data);
+
+    const values = data.map(item => item.value);
+    const labels = data.map(item => item.label);
     const breakPoints = attr.breakPoints; // break points range from 0 to 1
+    const [valueMin, valueMax] = d3.extent(values);
+    const [labelMin, labelMax] = d3.extent(labels);
+
     dom.innerHTML = '';
     const xScale = d3
       .scaleLinear()
-      .domain([-Math.max(...data), Math.max(...data)])
+      .domain([-valueMax, valueMax])
       .range([width, 0]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, data.length - 1])
+      .domain([0, values.length - 1])
       .range([0, height - 20]);
 
     const line = d3
@@ -92,37 +154,36 @@ export default class Numerical extends React.Component {
 
     const svg = d3
       .select(dom)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
+      .attr('width', width)
+      .attr('height', height)
+      .append('g');
 
     svg
       .append('path')
-      .datum(data)
+      .datum(values)
       .attr('class', 'line')
       .attr('d', line);
 
     svg
       .append('path')
-      .datum(data)
+      .datum(values)
       .attr('class', 'line')
       .attr('d', lineNeg);
 
     svg
       .append('path')
-      .data([data])
+      .data([values])
       .attr('class', 'area')
       .attr('d', area);
     svg
       .append('path')
-      .data([data])
+      .data([values])
       .attr('class', 'area')
       .attr('d', areaNeg);
 
     svg
       .selectAll('circle')
-      .data(data)
+      .data(values)
       .enter()
       .append('circle')
       .attr('cx', d => xScale(-d))
@@ -132,9 +193,9 @@ export default class Numerical extends React.Component {
       // .style('stroke-width', 2)
       .style('fill', '#1866BB')
       .on('mouseover', (d, i) => {
-        const x = d3.event.x + 15 - margin.left,
-          y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + attr.data[i].label + '): ' + d)
+        const x = d3.event.x + 15,
+          y = d3.event.y - 35;
+        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + data[i].label + '): ' + d)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -191,8 +252,8 @@ export default class Numerical extends React.Component {
       .append('line')
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
-      .attr('y2', d => (d * ((height - 2) / height) * yScale(data.length - 1)) + 1)
+      .attr('y1', d => (d * ((height - 2) / height) * yScale(values.length - 1)) + 1)
+      .attr('y2', d => (d * ((height - 2) / height) * yScale(values.length - 1)) + 1)
       .style('stroke', '#333')
       .style('stroke-dasharray', '10 5')
       .attr('class', 'breakpoint')
@@ -207,7 +268,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [, y] = d3.mouse(dom);
-            let value = (y - margin.top) / (height - margin.top);
+            let value = y / height;
             if (value < 0) value = 0;
             if (value > 1) value = 1;
 
@@ -219,8 +280,6 @@ export default class Numerical extends React.Component {
           })
       );
 
-    const [labelMin, labelMax] = d3.extent(labels);
-
     svg
       .append('g')
       .selectAll('text')
@@ -229,7 +288,7 @@ export default class Numerical extends React.Component {
       .append('text')
       .attr('x', () => width - 6)
       .attr('y', d => {
-        return d * ((height - 2) / height) * yScale(data.length - 1) - 2;
+        return d * ((height - 2) / height) * yScale(values.length - 1) - 2;
       })
       .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
       .style('text-anchor', 'end')
@@ -243,7 +302,7 @@ export default class Numerical extends React.Component {
       .append('circle')
       .attr('r', () => 5)
       .attr('cx', () => width)
-      .attr('cy', d => d * ((height - 2) / height) * yScale(data.length - 1))
+      .attr('cy', d => d * ((height - 2) / height) * yScale(values.length - 1))
       .attr('stroke', '#333')
       .attr('fill', '#fff')
       .attr('stroke-width', 2)
@@ -258,7 +317,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [, y] = d3.mouse(dom);
-            let value = (y - margin.top) / (height - margin.top);
+            let value = y / height;
             if (value < 0) value = 0;
             if (value > 1) value = 1;
 
@@ -293,12 +352,9 @@ export default class Numerical extends React.Component {
         {
           const {
             height,
-            margin: {
-              top
-            }
           } = this.props;
           const y = e.clientY - e.target.getBoundingClientRect().top;
-          point = (y - top) / height;
+          point = y / height;
           break;
         }
       default:
@@ -332,11 +388,5 @@ export default class Numerical extends React.Component {
 Numerical.defaultProps = {
   width: 300,
   height: 900,
-  margin: {
-    top: 10,
-    right: 10,
-    bottom: 10,
-    left: 10
-  },
   breakPoints: [],
 };

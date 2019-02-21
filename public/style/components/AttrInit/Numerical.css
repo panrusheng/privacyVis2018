@@ -1,8 +1,10 @@
 .numerical-view {
+  margin: 20px;
   text-align: center;
   /* Style the dots by assigning a fill and stroke */ }
   .numerical-view svg {
-    user-select: none; }
+    user-select: none;
+    overflow: visible; }
   .numerical-view .line {
     fill: none;
     stroke: #fff;
