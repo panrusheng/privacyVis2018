@@ -4,6 +4,7 @@ import {
   toJS,
 } from 'mobx';
 import axios from '../utils/axios.js';
+import { dataPreprocess } from '../utils/preprocess.js';
 
 class AppStore {
   @observable
@@ -224,6 +225,7 @@ class AppStore {
         
         if (attr.type === 'numerical') {
           attr.breakPoints = [];
+          attr.data = dataPreprocess(attr.data);
           attr.data.sort((a, b) => a.label - b.label);
         } else {
           attr.groups = [];

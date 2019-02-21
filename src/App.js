@@ -8,6 +8,7 @@ import AttrInitialize from './components/AttrInit/AttrInitialize.js';
 import ModelView from './components/ModelView';
 import DataTrimming from './components/DataTrimming';
 import LoadData from './components/LoadData';
+import axios from './utils/axios';
 
 const stages = [
   'Inference Initialization',
@@ -23,6 +24,8 @@ class App extends React.Component {
 
     // test
     this.props.store.getAllRecords();
+
+    axios.post('/recommendation')
   }
 
   render() {
