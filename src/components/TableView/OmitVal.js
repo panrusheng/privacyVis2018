@@ -46,35 +46,17 @@ export default class OmitVal extends React.Component {
     }
 
     formatData() {
-        /**
-         *       dataGroup.groups.forEach(group => {
-        group.records.forEach(rec => {
-          const r = {};
-          r.id = rec.id;
-          r.values = {};
-          for (let a in rec) {
-            if (a === 'id') continue;
-            r.values[a] = {
-              value: rec[a],
-              name: a,
-              privacy: undefined,
-              utility: Math.random(),
-            };
-          }
-         */
         const rows = [];
         const columns = [];
         let flag = false;
-        this.props.store.dataGroup.groups.forEach(group => {
+        this.props.store.dataGroups.forEach(group => {
             group.records.forEach(rec => {
                 const r = {};
                 
-                for (let a in rec) {
-                    if (a === 'id') continue;
-                    if (!flag) columns.push(a);
-                    r[a] = {
-                        privacy: undefined,
-                        utility: Math.random(),
+                for (let a of rec.data) {
+                    if (!flag) columns.push(a.attName);
+                    r[a.attName] = {
+                        utility: a.utility,
                     };
                 }
                 if (!flag) flag = true;

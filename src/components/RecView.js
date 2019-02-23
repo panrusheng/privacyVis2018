@@ -16,6 +16,7 @@ export default class RecView extends React.Component {
   // }
 
   componentDidMount() {
+    this.props.store.getRecList()
     let g1 = d3.select('#rec-arrow-row').append('g');
     g1.append('defs').attr('class', 'rec-arrow')
       .append('marker')
@@ -65,7 +66,7 @@ export default class RecView extends React.Component {
   }
 
   componentWillMount() {
-    this.props.store.getRecList()
+
   }
 
   forceDirected(n, l) {
@@ -78,6 +79,7 @@ export default class RecView extends React.Component {
         'link',
         d3
           .forceLink(links)
+          .id(d => d.eventNo)
           .distance(10)
           .strength(1)
           .iterations(1)
@@ -113,6 +115,7 @@ export default class RecView extends React.Component {
 
   render() {
     const { recList, recSelectedList } = toJS(this.props.store);
+
     const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
     const recData = this.setPosition(recList.group);
     const ww = 218, hh = 198;
@@ -138,7 +141,7 @@ export default class RecView extends React.Component {
                             <SubInfer data={d} sch={{dL:[]}} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i} />
                           </svg>
                         </td>
-                        {recList.rec[i].map((dd, ii) => (
+                        {recList.rec[i] && recList.rec[i].map((dd, ii) => (
                           <td className="rec-td" key={"rec-graph" + i + "-" + ii}>
                             <svg width={ww} height={hh}>
                               <SubInfer data={d} sch={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii} />

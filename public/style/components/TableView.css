@@ -43,7 +43,8 @@
       background-color: #bbb;
       color: white;
       font-size: 18px;
-      height: 40px; }
+      height: 40px;
+      flex: 1; }
       .table-view .table .table-header.top::-webkit-scrollbar {
         height: 0px;
         width: 0px;
@@ -70,8 +71,8 @@
         /* optional: just make scrollbar invisible */ }
       .table-view .table .table-header.left .scroll-wrapper {
         overflow: hidden;
-        width: fit-content;
-        width: -moz-fit-content;
+        min-width: fit-content;
+        min-width: -moz-fit-content;
         max-height: 168px; }
         .table-view .table .table-header.left .scroll-wrapper::-webkit-scrollbar {
           height: 0px;
@@ -116,8 +117,8 @@
         border-radius: 4px; }
       .table-view .table .table-body .scroll-wrapper.extent-rows {
         overflow-y: auto;
-        width: fit-content;
-        width: -moz-fit-content;
+        min-width: fit-content;
+        min-width: -moz-fit-content;
         max-height: 168px; }
         .table-view .table .table-body .scroll-wrapper.extent-rows::-webkit-scrollbar {
           height: 0px;
@@ -130,8 +131,8 @@
         border-left: none; }
     .table-view .table .table-row {
       display: flex;
-      width: fit-content;
-      width: -moz-fit-content; }
+      min-width: fit-content;
+      min-width: -moz-fit-content; }
       .table-view .table .table-row.group {
         box-shadow: 0 2 2px #999;
         cursor: pointer; }

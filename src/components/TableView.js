@@ -10,18 +10,6 @@ import OmitVal from './TableView/OmitVal.js';
 const DESC = -1;
 const ASC = 1;
 
-/**
- * table data format
- * columns: ['col1', 'col2', 'col3', ...],
- * rows: [{
- *  value: { id: 323, col1: 0.3, col2: 0.4, ... },
- *  extended: [ // for grouped records, only rendered when this group is unfolded
- *              // case record mode, extended will be null
- *    { id: 24, col1: 232, ...}
- *  ]
- * }]
- */
-
 const cmp = function (a, b) {
   if (a > b) return 1;
   if (a < b) return -1;
@@ -237,23 +225,21 @@ export default class TableView extends React.Component {
   }
 
   formatData() {
-    const dataGroup = toJS(this.props.store.dataGroup);
+    const dataGroups = toJS(this.props.store.dataGroups);
     const { mode, order, orderCol } = this.state;
     const rows = [], columns = [];
 
     if (mode === 1) {
-      dataGroup.groups.forEach(group => {
+      dataGroups.forEach(group => {
         group.records.forEach(rec => {
           const r = {};
           r.id = rec.id;
-          r.values = {};
-          for (let a in rec) {
-            if (a === 'id') continue;
-            r.values[a] = {
-              value: rec[a],
-              name: a,
-              privacy: undefined,
-              utility: Math.random(),
+          r.data = {};
+          
+          for (let a of rec.data) {
+            r.data[a.attName] = {
+              value: a.value,
+              utility: a.utility,
             };
           }
 
@@ -261,22 +247,20 @@ export default class TableView extends React.Component {
         })
       });
     } else {
-      dataGroup.groups.forEach(group => {
+      dataGroups.forEach(group => {
         const r = {};
         r.id = group.id;
         r.extended = [];
-        r.values = group.value;
+        r.data = group.data;
+
         group.records.forEach(rec => {
           const er = {};
           er.id = rec.id;
-          er.values = {};
-          for (let a in rec) {
-            if (a === 'id') continue;
-            er.values[a] = {
-              value: rec[a],
-              name: a,
-              privacy: undefined,
-              utility: Math.random(),
+          er.data = {};
+          for (let a of rec.data) {
+            er.data[a.attName] = {
+              value: a.value,
+              utility: a.utility,
             }
           }
 
@@ -288,19 +272,19 @@ export default class TableView extends React.Component {
     }
 
     if (rows.length > 0) {
-      for (let a in rows[0].values) columns.push(a);
+      for (let a in rows[0].data) columns.push(a);
     }
 
 
     if (orderCol) {
       if (mode === 1) {
         rows.sort((a, b) => {
-          return order * cmp(a.values[orderCol].value, b.values[orderCol].value);
+          return order * cmp(a.data[orderCol].value, b.data[orderCol].value);
         });
       } else {
         rows.forEach((row) => {
           row.extended.sort((a, b) => {
-            return order * cmp(a.values[orderCol].value, b.values[orderCol].value)
+            return order * cmp(a.data[orderCol].value, b.data[orderCol].value)
           });
         });
       }
@@ -319,6 +303,8 @@ export default class TableView extends React.Component {
   renderTable() {
     const { columns, rows } = this.formatData();
     // const { orderCol, order, mode } = this.state;
+
+    console.log(columns, rows);
 
     if (rows.length === 0) return this.renderEmpty();
 
@@ -403,29 +389,19 @@ export default class TableView extends React.Component {
   renderRow(row, columns, isGroup = false) {
     return (<div className={`table-row ${isGroup ? 'group' : ''}`} key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? () => this.toggleGroup(row.id) : undefined}>
       {columns.map(col => {
-        const { values } = row;
+        const { data } = row;
         if (!isGroup) {
-          const { privacy, utility, value } = values[col] || {};
+          const { utility, value } = data[col] || {};
           return (
             <div key={col} className="table-cell" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               {value}
-              {privacy === undefined ?
-                (
-                  <div className="bg" style={{ background: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})` }} />
-                ) :
-                (
-                  <div className="bg">
-                    <div className="privacy" style={{ opacity: privacy }} />
-                    <div className="utility" style={{ opacity: utility }} />
-                  </div>
-                )
-              }
+              <div className="bg" style={{ background: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})` }} />
             </div>
           )
         }
         return (
           <div className="table-cell em" key={col}>
-            {values[col]}
+            {data[col]}
           </div>
         );
       })}

@@ -24,8 +24,6 @@ class App extends React.Component {
 
     // test
     this.props.store.getAllRecords();
-
-    axios.post('/recommendation')
   }
 
   render() {

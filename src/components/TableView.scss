@@ -67,6 +67,7 @@
             color: white;
             font-size: 18px;
             height: 40px;
+            flex: 1;
 
             &::-webkit-scrollbar {
                 height: 0px;
@@ -98,8 +99,8 @@
 
             .scroll-wrapper {
                 overflow: hidden;
-                width: fit-content;
-                width: -moz-fit-content;
+                min-width: fit-content;
+                min-width: -moz-fit-content;
                 max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
@@ -162,8 +163,8 @@
 
             .scroll-wrapper.extent-rows {
                 overflow-y: auto;
-                width: fit-content;
-                width: -moz-fit-content;
+                min-width: fit-content;
+                min-width: -moz-fit-content;
                 max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
@@ -180,8 +181,8 @@
 
         .table-row {
             display: flex;
-            width: fit-content;
-            width: -moz-fit-content;
+            min-width: fit-content;
+            min-width: -moz-fit-content;
 
             &.group {
                 box-shadow: 0 2 2px #999;

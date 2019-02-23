@@ -81,8 +81,8 @@ export default class LoadData extends React.Component {
         axis.post('/load_data')
             .then(data => {
                 const attrList = [], selectedList = [];
-                for (const attrName in data.attrList) {
-                    attrList.push({ attrName, ...data.attrList[attrName] });
+                for (const attrName in data.attList) {
+                    attrList.push({ attrName, ...data.attList[attrName] });
                     selectedList.push(0);
                 }
 
