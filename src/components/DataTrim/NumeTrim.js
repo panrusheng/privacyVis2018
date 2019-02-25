@@ -80,7 +80,7 @@ export default class NumeTrim extends React.Component {
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 1.5) + ')');
 
     if (d3.selectAll('#trim-stripe'.length === 0)) {
       let pattern = svg.append('pattern')

@@ -16,7 +16,7 @@ export default class CateTrim extends React.Component {
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 1.5) + ')');
     const rectWidth = (height - 20) / data.length;
 
     if (d3.selectAll('#trim-stripe'.length === 0)) {
