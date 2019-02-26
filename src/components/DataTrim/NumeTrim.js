@@ -13,11 +13,13 @@ export default class NumeTrim extends React.Component {
       data,
       width,
       height,
-      margin
+      margin,
+      trimmed,
+      attrName
     } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin);
+    this.draw(this.chartDom, data, width, height, margin, attrName, trimmed);
   }
 
   componentDidUpdate() {
@@ -26,16 +28,16 @@ export default class NumeTrim extends React.Component {
       width,
       height,
       margin,
-      attrName
+      attrName,
+      trimmed
     } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin, attrName);
+    this.draw(this.chartDom, data, width, height, margin, attrName, trimmed);
   }
 
-  draw(dom, data, width, height, margin, attrName) {
+  draw(dom, data, width, height, margin, attrName, trimmed) {
     const oriV = data.map(item => item.oriV);
-    const triV = data.map(item => item.triV);
     const curV = data.map(item => item.curV);
     const labels = data.map(item => item.label);
     dom.innerHTML = '';
@@ -102,18 +104,20 @@ export default class NumeTrim extends React.Component {
       .append('path')
       .attr('d', area(curV))
       .style('stroke', 'none')
-      .style('fill', 'url(#trim-stripe)');
+      .style('fill', trimmed? '#d0e0f0':'url(#trim-stripe)');
     // svg
     //   .append('path')
     //   .attr('d', areaNeg(curV))
     //   .style('stroke', 'none')
     //   .style('fill', 'url(#trim-stripe)');
-
-    svg.append('path')
-      .attr('d', area(triV))
-      .style('stroke', 'none')
-      .style('fill', '#d0e0f0');
-
+    if (!trimmed) {
+      const triV = data.map(item => item.triV);
+      svg.append('path')
+        .attr('d', area(triV))
+        .style('stroke', 'none')
+        .style('fill', '#d0e0f0');
+    }
+    
     // svg.append('path')
     //   .attr('d', areaNeg(triV))
     //   .style('stroke', 'none')
@@ -149,7 +153,7 @@ export default class NumeTrim extends React.Component {
       .on('mouseover', (d) => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + + d.oriV + '/' + d.curV + '/' + d.triV)
+        d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -194,6 +198,16 @@ export default class NumeTrim extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
+
+    if (trimmed) {
+      svg.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', '#333')
+      .style('opacity', 0.1);
+    }
   }
 
   render() {

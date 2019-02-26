@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import './DataTrimming.scss';
+import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 // import { toJS } from 'mobx';
 import * as d3 from 'd3';
@@ -111,7 +112,7 @@ export default class DistTrimming extends React.Component {
         { label: 0.4, curV: 2, oriV: 2, triV: 2 },
         { label: 0.9, curV: 9, oriV: 10, triV: 7 }];
         return (
-          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} />
+          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} trimmed={attr.trimmed}/>
         );
       }
       case 'categorical': {
@@ -121,7 +122,7 @@ export default class DistTrimming extends React.Component {
         { name: 'N.Eastern', curV: 28, oriV: 34, triV: 20 },
         { name: 'Belfast', curV: 3, oriV: 4, triV: 3 }];
         return (
-          <CateTrim {...attrSize} data={data} attrName={attr.attrName} />
+          <CateTrim {...attrSize} data={data} attrName={attr.attrName} trimmed={attr.trimmed}/>
         );
       }
       default:
@@ -130,8 +131,11 @@ export default class DistTrimming extends React.Component {
   }
 
   render() {
-    const { selectedAttributes } = this.props.store;
+    const selectedAttributes = toJS(this.props.store.selectedAttributes);
     const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 15) > 940;
+    for (let i = 0; i < selectedAttributes.length; i++) {
+      selectedAttributes[i].trimmed = true;
+    }
     return (
       <div className="data-trim-view">
         <div className="view-title">Data Trimming View</div>
@@ -144,7 +148,7 @@ export default class DistTrimming extends React.Component {
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
                   <div className="form-block">
-                    <Button onClick={this.trim(attr.attrName)}>Trim</Button>
+                    <Button onClick={this.trim(attr.attrName) } disabled={attr.trimmed}>Trim</Button>
                   </div>
                 </div>
                 {this.renderAttr(attr)}

@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 // import { toJS } from 'mobx';
 
 export default class CateTrim extends React.Component {
-  draw(dom, data, width, height, margin) {
+  draw(dom, data, width, height, margin, trimmed) {
     dom.innerHTML = '';
     const dataValue = data.map(item => item.oriV);
     const xScale = d3
@@ -45,15 +45,13 @@ export default class CateTrim extends React.Component {
       .style('stroke', '#1866BB')
       .style('stroke-width', 1)
       .attr('x', 0)
-      .attr('y', (d, i) => {
-        return i * rectWidth;
-      })
+      .attr('y', (d, i) => i * rectWidth)
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.oriV))
       .on('mouseover', d => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(d.name + ': ' + d.oriV + '/' + d.curV + '/' + d.triV)
+        d3.select('.tooltip').html(d.name + ': ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -72,8 +70,8 @@ export default class CateTrim extends React.Component {
       })
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.curV));
-
-    rect.append('rect')
+    if (!trimmed)
+      rect.append('rect')
       .style('fill', 'url(#trim-stripe)')
       .style('stroke', 'none')
       .attr('x', (d, i) => xScale(d.triV))
@@ -131,29 +129,49 @@ export default class CateTrim extends React.Component {
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
       .style('text-anchor', 'end')
       .text(d => d.name);
+
+    if (trimmed) {
+      svg.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', '#333')
+      .style('opacity', 0.1);
+    }
   }
 
   componentDidMount() {
-    const { data, width, height, margin } = this.props;
+    const {
+      data,
+      width,
+      height,
+      margin,
+      trimmed
+    } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin);
+    this.draw(this.chartDom, data, width, height, margin, trimmed);
   }
 
   componentDidUpdate() {
-    const { data, width, height, margin } = this.props;
-    this.draw(this.chartDom, data, width, height, margin);
+    const {
+      data,
+      width,
+      height,
+      margin,
+      trimmed
+    } = this.props;
+    this.draw(this.chartDom, data, width, height, margin, trimmed);
   }
 
   render() {
-    return (
-      <div className="categorical-view">
-        <svg
-          ref={dom => {
-            this.chartDom = dom;
-          }}
-        />
-      </div>
+    return ( <div className = "categorical-view" >
+      <svg ref = {
+        dom => {
+          this.chartDom = dom;
+        }
+      } /> </div>
     );
   }
 }
@@ -161,5 +179,10 @@ export default class CateTrim extends React.Component {
 CateTrim.defaultProps = {
   width: 300,
   height: 900,
-  margin: { top: 10, right: 10, bottom: 10, left: 10 }
+  margin: {
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10
+  }
 };
