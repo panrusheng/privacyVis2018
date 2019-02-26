@@ -7,6 +7,8 @@ import { inject, observer } from 'mobx-react';
 import * as d3 from 'd3';
 import NumeTrim from './DataTrim/NumeTrim';
 import CateTrim from './DataTrim/CateTrim';
+import leftIcon from '../assets/image/left-arrow.svg';
+import rightIcon from '../assets/image/right-arrow.svg';
 @inject(['store'])
 @observer
 export default class DistTrimming extends React.Component {
@@ -86,8 +88,8 @@ export default class DistTrimming extends React.Component {
     const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 15);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-left').attr('disabled', null);
-    if (moveLeft === maxDistance) d3.select('.trim-right').attr('disabled', true);
+    d3.select('.trim-left').attr('class', 'trim-left');
+    if (moveLeft === maxDistance) d3.select('.trim-right').attr('class', 'trim-right trim-stop');
   }
 
   scrollLeft() {
@@ -99,8 +101,8 @@ export default class DistTrimming extends React.Component {
     const w = this.state.attrSize.width;
     const moveLeft = (x + w >= 0) ? 0 : (x + w);
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-right').attr('disabled', null);
-    if (moveLeft === 0) d3.select('.trim-left').attr('disabled', true);
+    d3.select('.trim-right').attr('class', 'trim-right');
+    if (moveLeft === 0) d3.select('.trim-left').attr('class', 'trim-left trim-stop');
   }
 
   renderAttr(attr) {
@@ -155,8 +157,8 @@ export default class DistTrimming extends React.Component {
               </div>
             ))}
           </div>
-          {flag ? (<Button className="trim-left" disabled={null} onClick={this.scrollLeft} icon="left" />) : (null)}
-          {flag ? (<Button className="trim-right" disabled={null} onClick={this.scrollRight} icon="right" />) : (null)}
+          {flag ? (<input className="trim-left" onClick={this.scrollLeft} type="image" src={leftIcon}/>) : (null)}
+          {flag ? (<input className="trim-right" onClick={this.scrollRight} type="image" src={rightIcon} />) : (null)}
         </div>
         <div className="trim-legend">
           <div className='trim-legend-unit'>

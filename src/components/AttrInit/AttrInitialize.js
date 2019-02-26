@@ -8,6 +8,8 @@ import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
 import { InputNumber, Button } from 'antd';
 import * as d3 from 'd3';
+import leftIcon from '../../assets/image/left-arrow.svg';
+import rightIcon from '../../assets/image/right-arrow.svg';
 // import { toJS } from 'mobx';
 
 @inject(['store'])
@@ -168,8 +170,8 @@ export default class AttrInitialize extends React.Component {
     const maxDistance = parseInt(d3.select('.init-content').style('width')) - count * (w + 15);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.init-left').attr('disabled', null);
-    if (moveLeft === maxDistance) d3.select('.init-right').attr('disabled', true);
+    d3.select('.init-left').attr('class', 'init-left');
+    if (moveLeft === maxDistance) d3.select('.init-right').attr('class', 'init-right init-stop');
   }
 
   scrollLeft() {
@@ -181,8 +183,8 @@ export default class AttrInitialize extends React.Component {
     const w = this.state.attrSize.width;
     const moveLeft = (x + w >= 0) ? 0 : (x + w);
     d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.init-right').attr('disabled', null);
-    if (moveLeft === 0) d3.select('.init-left').attr('disabled', true);
+    d3.select('.init-right').attr('class', 'init-right');
+    if (moveLeft === 0) d3.select('.init-left').attr('class', 'init-left init-stop');
   }
 
   renderAttr(attr) {
@@ -261,8 +263,8 @@ export default class AttrInitialize extends React.Component {
               <div />
             </ContextMenuTrigger>
           </div>
-          {flag ? (<Button className="init-left" disabled={null} onClick={this.scrollLeft} icon="left" />) : (null)}
-          {flag ? (<Button className="init-right" disabled={null} onClick={this.scrollRight} icon="right" />) : (null)}
+          {flag ? (<input className="init-left" onClick={this.scrollLeft} type="image" src={leftIcon}/>) : (null)}
+          {flag ? (<input className="init-right" onClick={this.scrollRight} type="image" src={rightIcon} />) : (null)}
         </div>
       </div>
     );
