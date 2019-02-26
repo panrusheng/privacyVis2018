@@ -9,12 +9,14 @@ import { toJS } from 'mobx';
 @observer
 export default class RecView extends React.Component {
   state = {
+
   };
   // constructor(props) {
   //   super(props);
   // }
 
   componentDidMount() {
+    this.props.store.getRecList()
     let g1 = d3.select('#rec-arrow-row').append('g');
     g1.append('defs').attr('class', 'rec-arrow')
       .append('marker')
@@ -64,7 +66,7 @@ export default class RecView extends React.Component {
   }
 
   componentWillMount() {
-    this.props.store.getRecList()
+
   }
 
   forceDirected(n, l) {
@@ -78,8 +80,8 @@ export default class RecView extends React.Component {
         d3
           .forceLink(links)
           .id(d => d.eventNo)
-          .distance(15)
-          .strength(2)
+          .distance(10)
+          .strength(1)
           .iterations(1)
       )
       .force('x', d3.forceX())
@@ -101,38 +103,59 @@ export default class RecView extends React.Component {
     return { nodes: nodes, links: links };
   }
 
-  setPosition(data) {
-    let layout = this.forceDirected(data.nodes, data.links);
-    layout.num = data.num;
-    return layout;
+  setPosition(groupList) {
+    let data = [];
+    for (let i = 0; i < groupList.length; i++) {
+      let e = this.forceDirected(groupList[i].nodes, groupList[i].links);
+      e.num = groupList[i].num;
+      data.push(e);
+    }
+    return data;
   }
 
   render() {
-    const { recList, recSelectedList, recNum } = toJS(this.props.store);
+    const { recList, recSelectedList } = toJS(this.props.store);
 
-    // const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
-    if (recList.group. length === 0) return (<div />);
-    const recData = this.setPosition(recList.group[recNum]);
-    const ww = 218, hh = 198, width = 900, height = 680;
+    const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
+    const recData = this.setPosition(recList.group);
+    const ww = 218, hh = 198;
 
     return (
       <div className="rec-view">
         <div>
           <div className="view-title">Solution Recommendation View</div>
           <div className="operation">
-            <div className="rec-overview">
-              <svg width={width} height={height}>
-                <SubInfer data={recData} sch={{dL:[]}} rec={-1} ww={width} hh={height} name={"rec-tr" + recNum} />
-              </svg>
-            </div>
-            <div className="rec-solution">
-              {recList.rec[recNum] && recList.rec[recNum].map((dd, ii) => (
-                <div className="rec-td" key={"rec-graph" + recNum + "-" + ii}>
-                  <svg width={ww} height={hh}>
-                    <SubInfer data={recData[recNum]} sch={dd} rec={recSelectedList[recNum][ii]} ww={ww} hh={hh} name={"rec-graph" + recNum + "-" + ii} />
-                  </svg>
-                </div>
+            <div className="rec-title">
+              {title.map((d, i) => (
+                <div className="rec-th" key={"rec-title" + i} style={{ minWidth: 220 }}>{d}</div>
               ))}
+            </div>
+            <div className="rec-main">
+              <div className="rec-scorll" >
+                <table className="rec-table">
+                  <tbody>
+                    {recData.map((d, i) => (
+                      <tr className="rec-tr" key={"rec-tr" + i}>
+                        <td className="rec-td">
+                          <svg width={ww} height={hh}>
+                            <SubInfer data={d} sch={{dL:[]}} rec={-1} ww={ww} hh={hh} name={"rec-tr" + i} />
+                          </svg>
+                        </td>
+                        {recList.rec[i] && recList.rec[i].map((dd, ii) => (
+                          <td className="rec-td" key={"rec-graph" + i + "-" + ii}>
+                            <svg width={ww} height={hh}>
+                              <SubInfer data={d} sch={dd} rec={recSelectedList[i][ii]} ww={ww} hh={hh} name={"rec-graph" + i + "-" + ii} />
+                            </svg>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="rec-row-arrow" style={{ width: 60, height: 880, marginRight: -7}}>
+                <svg width="100%" height="100%" id="rec-arrow-row" />
+              </div>
             </div>
             <div className="rec-col-arrow" style={{ width: 880, height: 60 }}>
               <svg width="100%" height="100%" id="rec-arrow-col" />

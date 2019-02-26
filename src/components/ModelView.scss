@@ -16,6 +16,7 @@
         justify-content: flex-end;
         margin-right: 8px;
         margin-bottom: 10px;
+        width: 100%;
         flex-direction: column;
         .mod-panel {
             display: flex;
@@ -25,17 +26,28 @@
                 margin-left: 50px;
             }
         }
+        .mod-mainContent {
+            height: 720px;
+            overflow-y: auto;
+        }
+        .single-event {
+            height: 300px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
         .mod-chart {
             display: flex;
-            height: 550px;
+            height: 300px;
+            width: 500px;
         }
         .mod-report {
             display: flex;
-            height:205px;
-            width:900px;
+            height:280px;
+            margin: 10px;
+            width:380px;
             // border: solid 1px #ccc;
             background-color: #efefef;
-            margin: 20px;
             flex-direction: column;
             .report-title {
                 width: 100%;
@@ -45,7 +57,7 @@
             }
             .report-h {
                 color: #1866bb;
-                white-space:nowrap;
+                white-space: nowrap;
             }
             .report-list {
                 white-space:nowrap;
@@ -54,4 +66,39 @@
         }
         
     }
+    .model-legend {
+        display: flex;
+        height: 50px;
+        margin: 5px 120px 0px 120px;
+        padding: 13px;
+        text-align: center;
+        border-radius: 5;
+        border: 2px #ddd dashed;
+        
+        .model-legend-unit{
+          display: flex;
+          width: 220px;
+          height: 30px;
+          label {
+            margin-left: 5px;
+            vertical-align: middle;
+            color: #333;
+          }
+        }
+        .model-dis {
+          width: 20px;
+          height: 20px;
+          background-color: #d0e0f0;
+        }
+        .model-pos {
+          width: 20px;
+          height: 20px;
+          background-color: #dedede;
+        }
+        .model-tp {
+          width: 20px;
+          height: 20px;
+          background-color: rgba(254,41,1, 0.3);
+        }
+      }
 }

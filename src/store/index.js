@@ -35,19 +35,24 @@ class AppStore {
   nodeList4links = [];
   @observable
   recList = { group: [], rec: [] }
-  
+
   @observable
   recSelectedList = [];
 
   @observable
-  piechart = {original: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}], 
-  processed: [{type: "TP", freq: 0.2}, {type: "FP", freq: 0.3}, {type: "TN", freq: 0.1}, {type: "FN", freq: 0.4}]};
+  comparison = [
+    {eventName : 'sen: true', oriD: 0.7, oriC: 0.65, oriT: 0.8, proC: 0.65, proT: 0.3},
+    {eventName : 'sen: false', oriD: 0.3, oriC: 0.35, oriT: 0.8, proC: 0.35, proT: 0.1},
+  ];
 
   @observable
   trimPlan = {};
 
   @observable
   trimList = [];
+
+  @observable
+  recNum = 0;
 
   @action
   getDataSetList() {
@@ -77,11 +82,11 @@ class AppStore {
       for (let i = 0; i < data.nodes.length; i++) {
         nullList.push(false);
       }
-      for (let i=0; i < data.links.length; i++) {
+      for (let i = 0; i < data.links.length; i++) {
         nullList[data.links[i].source] = true;
         nullList[data.links[i].target] = true;
       }
-      
+
       for (let i = 0; i < data.nodes.length; i++) {
         if (nullList[i]) {
           dataGBN.nodes.push(data.nodes[i]);
@@ -91,17 +96,17 @@ class AppStore {
         }
       }
       for (let i = 0; i < data.links.length; i++) {
-        
+
         let source = data.links[i].source, target = data.links[i].target;
-        for (let j = source; j >= 0 ; j--) {
-          source = nullList[j]?source:source-1;
+        for (let j = source; j >= 0; j--) {
+          source = nullList[j] ? source : source - 1;
         }
-        for (let j = target; j >= 0 ; j--) {
-          target = nullList[j]?target:target-1;
+        for (let j = target; j >= 0; j--) {
+          target = nullList[j] ? target : target - 1;
         }
-        dataGBN.links.push({source:source, target:target, value:data.links[i].value,cpt:data.links[i].cpt})
+        dataGBN.links.push({ source: source, target: target, value: data.links[i].value, cpt: data.links[i].cpt })
       }
-      
+
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
       // this.GBN = data;
@@ -122,7 +127,7 @@ class AppStore {
   setAttributes(attributes) {
     return axios.post('/get_attribute_distribution', null, {
       params: {
-        attributes: JSON.stringify(attributes.map(({attrName}) => attrName))
+        attributes: JSON.stringify(attributes.map(({ attrName }) => attrName))
       }
     }).then((data) => {
       const selectedAttributes = [];
@@ -130,7 +135,7 @@ class AppStore {
         attr.attrName = attr.attributeName;
         attr.utility = 1;
         attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
-        
+
         if (attr.type === 'numerical') {
           attr.breakPoints = [];
           attr.data = dataPreprocess(attr.data);
@@ -222,14 +227,14 @@ class AppStore {
     const attr = toJS(this.selectedAttributes[index]);
     const currentGroups = attr.groups;
     const newGroups = currentGroups.filter(item => selectedGroups.findIndex(s => s.name === item.name) < 0);
-    
+
     const gCategories = [];
     let gVal = 0;
 
     for (let i = 0; i < selectedGroups.length; ++i) {
       const cats = selectedGroups[i].categories;
       gCategories.push(...cats);
-      
+
       gVal += cats.reduce((pv, cv) => pv + cv.value, 0);
     }
 
@@ -307,10 +312,10 @@ class AppStore {
     if (index < 0) return;
     const attr = Object.assign({}, this.selectedAttributes[index], { utility: value });
     this.selectedAttributes.splice(index, 1, attr);
-    
+
     index = this.GBN.nodes.find(item => item.attrName === attrName);
     if (index < 0) return;
-    
+
     const newNodes = [...this.GBN.nodes];
     newNodes.splice(index, 1, Object.assign({}, this.GBN.nodes[index], { value }));
     this.GBN.nodes = newNodes;
@@ -384,7 +389,7 @@ class AppStore {
 
           for (const a of attributes) {
             rec.data.push({
-              attName: a, 
+              attName: a,
               value: a + Math.random().toFixed(4),
               utility: Math.random().toFixed(3),
             });

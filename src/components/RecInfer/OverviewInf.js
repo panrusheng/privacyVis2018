@@ -1,11 +1,7 @@
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 import * as d3 from 'd3';
 // import { toJS } from 'mobx';
-import {
-  inject
-} from 'mobx-react';
+import { inject } from 'mobx-react';
 @inject(['store'])
 export default class RecView extends Component {
   // constructor(props) {
@@ -107,9 +103,9 @@ export default class RecView extends Component {
         if (d.del) return "#ccc";
         return d.value < 0 ? '#FE2901' : '#7bbc88'
       })
-      .style('stroke-width', 3) //d => d.del ? 2 : 3)
+      .style('stroke-width', 3)//d => d.del ? 2 : 3)
       // .style('stroke-dasharray', d => d.del ? "2 2" : "1 0")
-      .style('stoke', d => d.del ? '#ccc' : 'none')
+      .style('stoke', d => d.del ? '#ccc' : '#none')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y);
 
@@ -125,7 +121,13 @@ export default class RecView extends Component {
       .style('fill', '#fff')
       .style('font-family', 'Arial')
       .style('font-weight', 600);
-
+    if (del.length === 0)
+      g.append('text')
+        .attr('class', name)
+        .attr('x', 13)
+        .attr('y', 25)
+        .text('Amount:' + num)
+        .style('fill', '#333');
     if (rec > 0) {
       g.append('path')
         .attr('class', name)
@@ -143,12 +145,14 @@ export default class RecView extends Component {
         .style('fill', '#fff');
     }
 
-    g.append('text')
-      .attr('class', name)
-      .attr('x', ww - 13)
-      .attr('y', hh - 15)
-      .style('text-anchor', 'end')
-      .text('Utility loss: ' + sch.uL);
+    if (del.length > 0) {
+      g.append('text')
+        .attr('class', name)
+        .attr('x', ww - 13)
+        .attr('y', hh - 15)
+        .style('text-anchor', 'end')
+        .text('Utility loss: ' + sch.uL);
+    }
 
     g.append('rect')
       .attr('class', name)
@@ -166,19 +170,19 @@ export default class RecView extends Component {
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.ww
       }
-      height = {
+      height={
         this.props.hh
       }
-      />
+    />
     );
   }
 }

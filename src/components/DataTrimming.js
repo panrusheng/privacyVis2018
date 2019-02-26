@@ -1,11 +1,14 @@
 import React from 'react';
 import { Button } from 'antd';
 import './DataTrimming.scss';
+import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 // import { toJS } from 'mobx';
 import * as d3 from 'd3';
 import NumeTrim from './DataTrim/NumeTrim';
 import CateTrim from './DataTrim/CateTrim';
+import leftIcon from '../assets/image/left-arrow.svg';
+import rightIcon from '../assets/image/right-arrow.svg';
 @inject(['store'])
 @observer
 export default class DistTrimming extends React.Component {
@@ -85,8 +88,8 @@ export default class DistTrimming extends React.Component {
     const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 15);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-left').attr('disabled', null);
-    if (moveLeft === maxDistance) d3.select('.trim-right').attr('disabled', true);
+    d3.select('.trim-left').attr('class', 'trim-left');
+    if (moveLeft === maxDistance) d3.select('.trim-right').attr('class', 'trim-right trim-stop');
   }
 
   scrollLeft() {
@@ -98,8 +101,8 @@ export default class DistTrimming extends React.Component {
     const w = this.state.attrSize.width;
     const moveLeft = (x + w >= 0) ? 0 : (x + w);
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-right').attr('disabled', null);
-    if (moveLeft === 0) d3.select('.trim-left').attr('disabled', true);
+    d3.select('.trim-right').attr('class', 'trim-right');
+    if (moveLeft === 0) d3.select('.trim-left').attr('class', 'trim-left trim-stop');
   }
 
   renderAttr(attr) {
@@ -111,7 +114,7 @@ export default class DistTrimming extends React.Component {
         { label: 0.4, curV: 2, oriV: 2, triV: 2 },
         { label: 0.9, curV: 9, oriV: 10, triV: 7 }];
         return (
-          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} />
+          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} trimmed={attr.trimmed}/>
         );
       }
       case 'categorical': {
@@ -121,7 +124,7 @@ export default class DistTrimming extends React.Component {
         { name: 'N.Eastern', curV: 28, oriV: 34, triV: 20 },
         { name: 'Belfast', curV: 3, oriV: 4, triV: 3 }];
         return (
-          <CateTrim {...attrSize} data={data} attrName={attr.attrName} />
+          <CateTrim {...attrSize} data={data} attrName={attr.attrName} trimmed={attr.trimmed}/>
         );
       }
       default:
@@ -130,8 +133,11 @@ export default class DistTrimming extends React.Component {
   }
 
   render() {
-    const { selectedAttributes } = this.props.store;
+    const selectedAttributes = toJS(this.props.store.selectedAttributes);
     const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 15) > 940;
+    for (let i = 0; i < selectedAttributes.length; i++) {
+      selectedAttributes[i].trimmed = true;
+    }
     return (
       <div className="data-trim-view">
         <div className="view-title">Data Trimming View</div>
@@ -144,15 +150,15 @@ export default class DistTrimming extends React.Component {
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
                   <div className="form-block">
-                    <Button onClick={this.trim(attr.attrName)}>Trim</Button>
+                    <Button onClick={this.trim(attr.attrName) } disabled={attr.trimmed}>Trim</Button>
                   </div>
                 </div>
                 {this.renderAttr(attr)}
               </div>
             ))}
           </div>
-          {flag ? (<Button className="trim-left" disabled={null} onClick={this.scrollLeft} icon="left" />) : (null)}
-          {flag ? (<Button className="trim-right" disabled={null} onClick={this.scrollRight} icon="right" />) : (null)}
+          {flag ? (<input className="trim-left" onClick={this.scrollLeft} type="image" src={leftIcon}/>) : (null)}
+          {flag ? (<input className="trim-right" onClick={this.scrollRight} type="image" src={rightIcon} />) : (null)}
         </div>
         <div className="trim-legend">
           <div className='trim-legend-unit'>

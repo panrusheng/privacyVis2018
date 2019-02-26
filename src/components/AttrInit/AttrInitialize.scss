@@ -14,20 +14,23 @@
 
   .init-left {
     text-align: center;
-    width: 30px;
+    width: 50px;
     height: 60px;
     position: fixed;
     top: 530px;
     left: 5px;
   }
-
+  .init-stop {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
   .init-right {
     text-align: center;
-    width: 30px;
+    width: 50px;
     height: 60px;
     position: fixed;
     top: 530px;
-    left: 925px;
+    left: 905px;
   }
   
   .attr-init {
