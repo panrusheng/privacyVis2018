@@ -143,13 +143,6 @@ export default class RecView extends Component {
         .style('fill', '#fff');
     }
 
-    g.append('text')
-      .attr('class', name)
-      .attr('x', ww - 13)
-      .attr('y', hh - 15)
-      .style('text-anchor', 'end')
-      .text('Utility loss: ' + sch.uL);
-
     g.append('rect')
       .attr('class', name)
       .attr('x', 2)
@@ -159,10 +152,7 @@ export default class RecView extends Component {
       .style('stroke', rec > 0 ? 'rgba(24,102,187,0.9)' : 'none')
       .style('stroke-width', 3)
       .style('fill', '#000')
-      .style('fill-opacity', 0)
-      .on('click', () => {
-        //change selection
-      });
+      .style('fill-opacity', 0);
   }
 
   render() {

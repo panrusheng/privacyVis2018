@@ -31,8 +31,24 @@
         height: 880px;
     }
     .rec-solution {
-        height: 200px;
+        height: 220px;
+        width: 890px;
+        .rec-list {
+            height: 200px;
+            width: 880px;
+            flex-direction: row;
+            display: flex;
+            justify-content: space-around;
+        }
+        .rec-selection {
+            width: 890px;
+            .ant-radio-wrapper {
+                margin-left: 82px;
+                margin-right: 82px;
+            }
+        }
     }
+    
     .rec-scorll {
         position: relative;
         max-height: 880px;
@@ -72,18 +88,19 @@
         padding-top:5px;
         font-size: 18px;
     }
-    .rec-tr{
-        height: 198px;
-        padding: 0;
+    .rec-overview{
+        height: 705px;
+        padding-left: 20px;
     }
     .rec-td{
         width: 218px;
         border: 1px solid #ccc;
         padding: 0;  
         line-height: 10px;
+        display: flex;
 
-        &:first-child {
-            border-left: 1px solid #ececec;
-          }
+        // &:first-child {
+        //     border-left: 1px solid #ececec;
+        //   }
     }
 }
