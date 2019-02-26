@@ -27,11 +27,14 @@
     overflow: visible;
     position: relative;
     height: 960px; }
+    .init-content .attr-init svg {
+      overflow: visible; }
     .init-content .attr-init .chart {
       min-width: 200px;
       max-width: 380px;
       height: 950px;
-      flex: 1; }
+      flex: 1;
+      margin: 0 10px; }
     .init-content .attr-init .attr-info {
       height: 90px;
       text-align: center; }

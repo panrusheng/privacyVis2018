@@ -26,7 +26,7 @@ export default class TableView extends React.Component {
     order: DESC,
     omitValue: false,
     mode: 2, // 1: all records, 2: grouped rec,
-    // unfoldedGroups: [1],
+    unfoldedGroups: [],
     rowSelection: [], // selected rows id
   };
 
@@ -204,18 +204,18 @@ export default class TableView extends React.Component {
     });
   }
 
-  // toggleGroup(groupId) {
-  //   const unfoldedGroups = [...this.state.unfoldedGroups];
+  toggleGroup(groupId) {
+    const unfoldedGroups = [...this.state.unfoldedGroups];
 
-  //   let index = unfoldedGroups.findIndex(id => id === groupId);
-  //   if (index >= 0) {
-  //     unfoldedGroups.splice(index, 1);
-  //   } else {
-  //     unfoldedGroups.push(groupId);
-  //   }
+    let index = unfoldedGroups.findIndex(id => id === groupId);
+    if (index >= 0) {
+      unfoldedGroups.splice(index, 1);
+    } else {
+      unfoldedGroups.push(groupId);
+    }
 
-  //   this.setState({ unfoldedGroups });
-  // }
+    this.setState({ unfoldedGroups });
+  }
 
   setOrder(orderCol) {
     this.setState({

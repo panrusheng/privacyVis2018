@@ -116,7 +116,9 @@ export default class Attribute extends React.Component {
     if (this.state.mergeAttribute) {
       data = this.mergeGraph(data.nodes, data.links);
     }
+
     let layout = this.forceDirected(data.nodes, data.links);
+
     return (
       <div className="attribute-view">
         <div className="title">Inference Simulation View</div>

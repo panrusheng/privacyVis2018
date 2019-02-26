@@ -207,6 +207,9 @@
                 left: 0;
                 bottom: 0;
                 z-index: -1;
+                &.dl {
+                    background: linear-gradient(to right bottom, #ffffff,#ffffff 48%,red 50%,red 52%,#ffffff 51.1%,#ffffff 100%);
+                }
             }
             width: 60px;
             height: 30px;
