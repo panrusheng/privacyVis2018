@@ -332,7 +332,7 @@ export default class TableView extends React.Component {
     if (rows.length === 0) return this.renderEmpty();
 
     return (
-      <div className="table" onMouseOver={this.handleRowSelMouseOver}>
+      <div className={'table' + (this.state.mode === 1 ? ' all-record' : '')} onMouseOver={this.handleRowSelMouseOver}>
         <div className="wrapper">
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
@@ -373,7 +373,7 @@ export default class TableView extends React.Component {
         ref={dom => this.leftHeader = dom}>
         {
           rows.map(({ id, extended }) => {
-            if (mode === 1) return (<div className="table-cell h-10" key={"r" + id}>{id}</div>);
+            if (mode === 1) return (<div className="table-cell" key={"r" + id}>{id}</div>);
 
             return [
               <div className="table-cell em group" key={"r" + id} onClick={() => this.props.store.recNum = id}>G{id + 1}</div>,
@@ -428,7 +428,7 @@ export default class TableView extends React.Component {
 
     return (
       <div
-        className="table-body"
+        className={'table-body'}
         ref={dom => this.tableBody = dom}
         onScroll={e => this.syncScroll(e, 'body')}
         onMouseOver={this.handleTooltip}

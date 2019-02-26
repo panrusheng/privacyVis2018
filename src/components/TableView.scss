@@ -54,7 +54,16 @@
     .table {
         height: calc(100% - 80px);
         user-select: none;
-
+        &.all-record {
+            .table-body {.table-cell {
+                height: 20px;
+            }}
+            
+            .table-header.left {.table-cell {
+                height: 20px;
+                line-height: 20px;
+            }}
+        }
         .wrapper {
             display: flex;
         }

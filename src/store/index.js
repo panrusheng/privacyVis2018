@@ -391,7 +391,7 @@ class AppStore {
           for (const a of attributes) {
             rec.data.push({
               attName: a,
-              value: a + Math.random().toFixed(4),
+              value: Math.random().toFixed(4),
               utility: Math.random().toFixed(3),
             });
           }
