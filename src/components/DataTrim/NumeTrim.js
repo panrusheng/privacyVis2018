@@ -41,8 +41,8 @@ export default class NumeTrim extends React.Component {
     dom.innerHTML = '';
     const xScale = d3
       .scaleLinear()
-      .domain([-Math.max(...oriV), Math.max(...oriV)])
-      .range([width, 0]);
+      .domain([0, Math.max(...oriV)])
+      .range([0, width - 25]);
 
     const yScale = d3
       .scaleLinear()
@@ -57,30 +57,30 @@ export default class NumeTrim extends React.Component {
 
     const area = d3
       .area()
-      .x0(width / 2)
+      .x0(0)
       .x1(d => xScale(d))
       .y((d, i) => yScale(i))
       .curve(d3.curveMonotoneY);
 
-    const lineNeg = d3
-      .line()
-      .x(d => xScale(-d))
-      .y((d, i) => yScale(i))
-      .curve(d3.curveMonotoneY);
+    // const lineNeg = d3
+    //   .line()
+    //   .x(d => xScale(-d))
+    //   .y((d, i) => yScale(i))
+    //   .curve(d3.curveMonotoneY);
 
-    const areaNeg = d3
-      .area()
-      .x0(width / 2)
-      .x1(d => xScale(-d))
-      .y((d, i) => yScale(i))
-      .curve(d3.curveMonotoneY);
+    // const areaNeg = d3
+    //   .area()
+    //   .x0(width / 2)
+    //   .x1(d => xScale(-d))
+    //   .y((d, i) => yScale(i))
+    //   .curve(d3.curveMonotoneY);
 
     const svg = d3
       .select(dom)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 1.5) + ')');
+      .attr('transform', 'translate(' + (margin.left + 25) + ',' + (margin.top * 1.5) + ')');
 
     if (d3.selectAll('#trim-stripe'.length === 0)) {
       let pattern = svg.append('pattern')
@@ -103,21 +103,21 @@ export default class NumeTrim extends React.Component {
       .attr('d', area(curV))
       .style('stroke', 'none')
       .style('fill', 'url(#trim-stripe)');
-    svg
-      .append('path')
-      .attr('d', areaNeg(curV))
-      .style('stroke', 'none')
-      .style('fill', 'url(#trim-stripe)');
+    // svg
+    //   .append('path')
+    //   .attr('d', areaNeg(curV))
+    //   .style('stroke', 'none')
+    //   .style('fill', 'url(#trim-stripe)');
 
     svg.append('path')
       .attr('d', area(triV))
       .style('stroke', 'none')
       .style('fill', '#d0e0f0');
 
-    svg.append('path')
-      .attr('d', areaNeg(triV))
-      .style('stroke', 'none')
-      .style('fill', '#d0e0f0');
+    // svg.append('path')
+    //   .attr('d', areaNeg(triV))
+    //   .style('stroke', 'none')
+    //   .style('fill', '#d0e0f0');
 
     svg
       .append('path')
@@ -127,20 +127,20 @@ export default class NumeTrim extends React.Component {
       .style('fill', 'none')
       .style('stroke-width', 1);
 
-    svg
-      .append('path')
-      .attr('class', 'line')
-      .attr('d', lineNeg(oriV))
-      .style('stroke', '#1866BB')
-      .style('fill', 'none')
-      .style('stroke-width', 1);
+    // svg
+    //   .append('path')
+    //   .attr('class', 'line')
+    //   .attr('d', lineNeg(oriV))
+    //   .style('stroke', '#1866BB')
+    //   .style('fill', 'none')
+    //   .style('stroke-width', 1);
 
     svg
       .selectAll('circle')
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', d => xScale(-d.oriV))
+      .attr('cx', d => xScale(d.oriV))
       .attr('cy', (d, i) => yScale(i))
       .attr('r', d => {return d.oriV === 0 ? 0: 2})
       // .style('stroke', '#1866BB')
@@ -169,7 +169,7 @@ export default class NumeTrim extends React.Component {
             .domain([Math.min(...labels), Math.max(...labels)])
         )
       )
-      .attr('transform', `translate(${width / 2 + 2}, 0)`);
+      .attr('transform', `translate(0, 0)`);
     axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
 
     if (d3.selectAll('#biggerArrow'.length === 0)) {
@@ -187,8 +187,8 @@ export default class NumeTrim extends React.Component {
         .style('fill', '#333');
     }
     svg.append('line')
-      .attr('x1', width / 2)
-      .attr('x2', width / 2)
+      .attr('x1', 0)
+      .attr('x2', 0)
       .attr('y1', 0)
       .attr('y2', height - 2)
       .attr('marker-end', 'url(#biggerArrow)')

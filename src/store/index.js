@@ -51,6 +51,9 @@ class AppStore {
   @observable
   trimList = [];
 
+  @observable
+  recNum = 0;
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets

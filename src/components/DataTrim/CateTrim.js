@@ -44,9 +44,7 @@ export default class CateTrim extends React.Component {
       .style('fill', 'none')
       .style('stroke', '#1866BB')
       .style('stroke-width', 1)
-      .attr('x', (d, i) => {
-        return (width - xScale(d.oriV)) / 2;
-      })
+      .attr('x', 0)
       .attr('y', (d, i) => {
         return i * rectWidth;
       })
@@ -68,9 +66,7 @@ export default class CateTrim extends React.Component {
       .style('fill', '#d0e0f0')
       .style('stroke', '#fff')
       .style('stroke-width', 1)
-      .attr('x', (d, i) => {
-        return (width - xScale(d.curV)) / 2;
-      })
+      .attr('x', 0)
       .attr('y', (d, i) => {
         return i * rectWidth;
       })
@@ -80,26 +76,24 @@ export default class CateTrim extends React.Component {
     rect.append('rect')
       .style('fill', 'url(#trim-stripe)')
       .style('stroke', 'none')
-      .attr('x', (d, i) => {
-        return (width - xScale(d.curV)) / 2;
-      })
+      .attr('x', (d, i) => xScale(d.triV))
       .attr('y', (d, i) => {
         return i * rectWidth;
       })
       .attr('height', rectWidth)
-      .attr('width', d => xScale(d.curV - d.triV) / 2);
+      .attr('width', d => xScale(d.curV - d.triV));
 
-    rect.append('rect')
-      .style('fill', 'url(#trim-stripe)')
-      .style('stroke', 'none')
-      .attr('x', (d, i) => {
-        return (width + xScale(d.triV)) / 2;
-      })
-      .attr('y', (d, i) => {
-        return i * rectWidth;
-      })
-      .attr('height', rectWidth)
-      .attr('width', d => xScale(d.curV - d.triV) / 2);
+    // rect.append('rect')
+    //   .style('fill', 'url(#trim-stripe)')
+    //   .style('stroke', 'none')
+    //   .attr('x', (d, i) => {
+    //     return (width + xScale(d.triV)) / 2;
+    //   })
+    //   .attr('y', (d, i) => {
+    //     return i * rectWidth;
+    //   })
+    //   .attr('height', rectWidth)
+    //   .attr('width', d => xScale(d.curV - d.triV) / 2);
 
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
@@ -116,8 +110,8 @@ export default class CateTrim extends React.Component {
         .style('fill', '#333');
     }
     svg.append('line')
-      .attr('x1', width / 2)
-      .attr('x2', width / 2)
+      .attr('x1', 0)
+      .attr('x2', 0)
       .attr('y1', 0)
       .attr('y2', height - 2)
       .attr('marker-end', 'url(#biggerArrow)')

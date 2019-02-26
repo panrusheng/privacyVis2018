@@ -30,6 +30,9 @@
         flex-direction: row;
         height: 880px;
     }
+    .rec-solution {
+        height: 200px;
+    }
     .rec-scorll {
         position: relative;
         max-height: 880px;
@@ -75,8 +78,7 @@
     }
     .rec-td{
         width: 218px;
-        border-right: 1px solid #ececec;
-        border-bottom: 1px solid #ececec;
+        border: 1px solid #ccc;
         padding: 0;  
         line-height: 10px;
 
