@@ -20,7 +20,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = -1; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = 1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   dataGroups = [];
@@ -371,16 +371,17 @@ class AppStore {
       // TEST
       const groups = [];
       const attributes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
-      let id = 1;
+      let id = 0;
       let recId = 1;
       data.group.forEach(({ num }) => {
+        num = 20;
         let g = {
           id: id++,
           data: {},
           records: [],
         };
 
-        for (const a of attributes) g.data[a] = a + Math.random().toFixed(4);
+        for (const a of attributes) g.data[a] = Math.random().toFixed(4);
         for (let i = 0; i < num; ++i) {
           let rec = {
             id: recId++,

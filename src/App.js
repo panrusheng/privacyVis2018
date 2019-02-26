@@ -19,25 +19,11 @@ const stages = [
 @inject(['store'])
 @observer
 class App extends React.Component {
-  state = {
-    currentGroup: 0,
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.selGroup = this.selGroup.bind(this);
-  }
-
   componentDidMount() {
     // this.props.store.fetchAttributes();
 
     // test
     this.props.store.getAllRecords();
-  }
-
-  selGroup(group) {
-    this.setState({ currentGroup: group });
   }
 
   render() {
@@ -64,7 +50,7 @@ class App extends React.Component {
         <div className="row">
           <div className="col">
             { systemStage === 0 && <AttrInitialize /> }
-            { systemStage === 1 && <TableView selGroup={this.selGroup} /> }
+            { systemStage === 1 && <TableView selGroup={this.props.store.selGroup} /> }
             { systemStage === 2 && <DataTrimming /> }
           </div>
           <div className="col">

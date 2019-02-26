@@ -63,7 +63,7 @@ export default class RecView extends Component {
       .attr('width', ww)
       .attr('height', hh);
 
-    g.selectAll("." + name).remove();
+    g.selectAll("*").remove();
 
     if (d3.selectAll('#arrowSub'.length === 0)) {
       g.append('defs')
