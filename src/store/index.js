@@ -51,6 +51,9 @@ class AppStore {
   @observable
   trimList = [];
 
+  @observable
+  recNum = 0;
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets
@@ -368,16 +371,17 @@ class AppStore {
       // TEST
       const groups = [];
       const attributes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
-      let id = 1;
+      let id = 0;
       let recId = 1;
       data.group.forEach(({ num }) => {
+        num = 20;
         let g = {
           id: id++,
           data: {},
           records: [],
         };
 
-        for (const a of attributes) g.data[a] = a + Math.random().toFixed(4);
+        for (const a of attributes) g.data[a] = Math.random().toFixed(4);
         for (let i = 0; i < num; ++i) {
           let rec = {
             id: recId++,
@@ -387,7 +391,7 @@ class AppStore {
           for (const a of attributes) {
             rec.data.push({
               attName: a,
-              value: a + Math.random().toFixed(4),
+              value: Math.random().toFixed(4),
               utility: Math.random().toFixed(3),
             });
           }

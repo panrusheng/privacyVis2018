@@ -4,8 +4,9 @@ import AscIcon from '../assets/image/asc.svg';
 import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
-import { toJS } from 'mobx';
+import { toJS, values } from 'mobx';
 import OmitVal from './TableView/OmitVal.js';
+import * as d3 from 'd3';
 
 const DESC = -1;
 const ASC = 1;
@@ -26,14 +27,18 @@ export default class TableView extends React.Component {
     order: DESC,
     omitValue: false,
     mode: 2, // 1: all records, 2: grouped rec,
-    // unfoldedGroups: [1],
-    rowSelection: [], // selected rows id
+    unfoldedGroups: [],
+    rowSelection: [], // selected rows id,
   };
 
   rowSelecting = false;
   selectionStaying = false;
   selectionGroup = null;
   lastY = 0;
+  bodyClientBoundingRec = null;
+  tooltipX = 0;
+  tooltipY = 0;
+  tooltipData = null;
 
   constructor(props) {
     super(props);
@@ -46,6 +51,8 @@ export default class TableView extends React.Component {
     this.handleRowSelMouseUp = this.handleRowSelMouseUp.bind(this);
     this.handleRowSelMouseOver = this.handleRowSelMouseOver.bind(this);
     this.removeSelection = this.removeSelection.bind(this);
+
+    this.handleTooltip = this.handleTooltip.bind(this);
   }
 
   componentDidMount() {
@@ -59,6 +66,7 @@ export default class TableView extends React.Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('mouseup', this.handleRowSelMouseUp);
   }
 
   handleRowSelMouseDown(e, group) {
@@ -92,7 +100,7 @@ export default class TableView extends React.Component {
   }
 
   handleRowSelMouseOver(e) {
-    if (!this.rowSelecting || !e.target.classList.contains('table-cell')) return;
+    if (!this.rowSelecting) return;
     e.stopPropagation();
     e.preventDefault();
 
@@ -204,18 +212,18 @@ export default class TableView extends React.Component {
     });
   }
 
-  // toggleGroup(groupId) {
-  //   const unfoldedGroups = [...this.state.unfoldedGroups];
+  toggleGroup(groupId) {
+    const unfoldedGroups = [...this.state.unfoldedGroups];
 
-  //   let index = unfoldedGroups.findIndex(id => id === groupId);
-  //   if (index >= 0) {
-  //     unfoldedGroups.splice(index, 1);
-  //   } else {
-  //     unfoldedGroups.push(groupId);
-  //   }
+    let index = unfoldedGroups.findIndex(id => id === groupId);
+    if (index >= 0) {
+      unfoldedGroups.splice(index, 1);
+    } else {
+      unfoldedGroups.push(groupId);
+    }
 
-  //   this.setState({ unfoldedGroups });
-  // }
+    this.setState({ unfoldedGroups });
+  }
 
   setOrder(orderCol) {
     this.setState({
@@ -296,20 +304,35 @@ export default class TableView extends React.Component {
     }
   }
 
+  handleTooltip(e) {
+    let elem = e.target;
+    let d = elem.getAttribute('data');
+    if (!elem.classList.contains('tooltip-data') || !d) {
+      d3.select('.tooltip').style('display', 'none');
+      return;
+    }
+
+    d3.select('.tooltip').html(d)
+    .style('left', (e.clientX) + 'px')
+    .style('display', 'block')
+    .style('top', (e.clientY) + 'px');
+  }
+
+  handleRemoveTooltip() {
+    d3.select('.tooltip').style('display', 'none');
+  }
+
   renderEmpty() {
     return <div>No Attribute</div>;
   }
 
   renderTable() {
     const { columns, rows } = this.formatData();
-    // const { orderCol, order, mode } = this.state;
-
-    console.log(columns, rows);
 
     if (rows.length === 0) return this.renderEmpty();
 
     return (
-      <div className="table" onMouseOver={this.handleRowSelMouseOver}>
+      <div className={'table' + (this.state.mode === 1 ? ' all-record' : '')} onMouseOver={this.handleRowSelMouseOver}>
         <div className="wrapper">
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
@@ -351,23 +374,14 @@ export default class TableView extends React.Component {
         {
           rows.map(({ id, extended }) => {
             if (mode === 1) return (<div className="table-cell" key={"r" + id}>{id}</div>);
-            // const unfold = unfoldedGroups.findIndex(gid => gid === id) >= 0;
-            // if (!unfold || !extended) return (<div className="table-cell em group" onClick={() => this.toggleGroup(id)} key={id}>G{id}</div>);
 
             return [
-              <div className="table-cell em group" key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id}</div>,
+              <div className="table-cell em group" key={"r" + id} onClick={() => this.props.store.recNum = id}>G{id + 1}</div>,
               <div className="scroll-wrapper" data={id} onScroll={e => this.syncScrollWrapper(e, id)}>
-                {extended.map(erow => (
-                  <div
-                    key={`er-${erow.id}`}
-                    className="table-cell select-row"
-                    onMouseDown={e => this.handleRowSelMouseDown(e, id)}
-                  >
-                    {erow.id}
-                  </div>))}
-                {rowSelection.filter(item => item.group === id).map(({ start, end, id }, index) => (
+                <div className="table-cell"  style={{ height: extended.length * 10 }}/>
+                {/* {rowSelection.filter(item => item.group === id).map(({ start, end, id }, index) => (
                   <div onContextMenu={e => this.removeSelection(e, id)} key={"r-s"+index} className="selection-mask" style={{ top: start, height: end - start }} />
-                ))}
+                ))} */}
               </div>
             ]
           })
@@ -386,15 +400,16 @@ export default class TableView extends React.Component {
     )
   }
 
-  renderRow(row, columns, isGroup = false) {
-    return (<div className={`table-row ${isGroup ? 'group' : ''}`} key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? () => this.toggleGroup(row.id) : undefined}>
+  renderRow(row, columns, isGroup = false, selectableRow = false, groupId) {
+    return (<div className={`table-row ${isGroup ? 'group' : ''}`} key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? (() => this.props.store.recNum = row.id) : undefined}>
       {columns.map(col => {
         const { data } = row;
         if (!isGroup) {
           const { utility, value } = data[col] || {};
           return (
-            <div key={col} className="table-cell" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
-              {value}
+            <div
+              onMouseDown={selectableRow ? e => this.handleRowSelMouseDown(e, groupId, row.id) : undefined}
+              key={col} data={value} className="table-cell tooltip-data" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               <div className="bg" style={{ background: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})` }} />
             </div>
           )
@@ -410,12 +425,15 @@ export default class TableView extends React.Component {
 
   renderTableBody(rows, columns) {
     const { mode, unfoldedGroups, rowSelection } = this.state;
+
     return (
       <div
-        className="table-body"
+        className={'table-body'}
         ref={dom => this.tableBody = dom}
         onScroll={e => this.syncScroll(e, 'body')}
-      >
+        onMouseOver={this.handleTooltip}
+        onMouseLeave={this.handleRemoveTooltip}
+      > 
         {
           rows.map((row) => {
             if (mode === 1) return this.renderRow(row, columns);
@@ -423,17 +441,18 @@ export default class TableView extends React.Component {
             groupedRows.push(this.renderRow(row, columns, true));
             // const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
 
-
             // if (unfolded) {
             const eRows = [];
             row.extended.forEach((eRow) => {
-              eRows.push(this.renderRow(eRow, columns));
+              eRows.push(this.renderRow(eRow, columns, false, true, row.id));
             });
+
+            let maxHeight = eRows.length * 10;
 
             groupedRows.push(<div className="scroll-wrapper extent-rows" data={row.id} onScroll={e => this.syncScrollWrapper(e, row.id)}>
               {eRows}
               {rowSelection.filter(item => item.group === row.id).map(({ start, end, id }, index) => (
-                <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end - start }} />
+                <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end > maxHeight ? maxHeight - start : end - start }} />
               ))}
             </div>)
             // }
@@ -454,7 +473,6 @@ export default class TableView extends React.Component {
       <div className="table-view">
         <div>
           <div className="view-title">Data Table View</div>
-
         </div>
         {this.state.omitValue ? this.renderOmitValView() : this.renderTable()}
         <div className="table-foot">

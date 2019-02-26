@@ -34,7 +34,7 @@ export default class Categorical extends React.Component {
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
-        return (width - xScale(d.value)) / 2;
+        return 0;
       })
       .attr('y', (d, i) => {
         return i * rectWidth;
@@ -79,8 +79,8 @@ export default class Categorical extends React.Component {
         .style('fill', '#333');
     }
     svg.append('line')
-      .attr('x1', width / 2)
-      .attr('x2', width / 2)
+      .attr('x1', 0)
+      .attr('x2', 0)
       .attr('y1', 0)
       .attr('y2', height - 2)
       .attr('marker-end', 'url(#biggerArrow)')

@@ -50,7 +50,7 @@ class App extends React.Component {
         <div className="row">
           <div className="col">
             { systemStage === 0 && <AttrInitialize /> }
-            { systemStage === 1 && <TableView /> }
+            { systemStage === 1 && <TableView selGroup={this.props.store.selGroup} /> }
             { systemStage === 2 && <DataTrimming /> }
           </div>
           <div className="col">

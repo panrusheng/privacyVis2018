@@ -39,7 +39,7 @@ export default class Attribute extends React.Component {
         'link',
         d3
           .forceLink(links)
-          .distance(5)
+          .distance(15)
           .strength(2)
           .iterations(1)
       )
@@ -61,51 +61,102 @@ export default class Attribute extends React.Component {
 
     return { nodes: nodes, links: links };
   }
-  mergeGraph(n, l) {
+  mergeGraph (layout, n, l) {
     let attrN = [],
-      attrL = [],
-      attrDic = {},
-      linkDic = {},
-      nodeDic = [];
-    for (let i = 0; i < n.length; i++) {
-      if (!(n[i].attrName in attrDic)) {
-        attrDic[n[i].attrName] = { no: attrN.length, child: [] };
-        attrN.push({ id: n[i].attrName, value: n[i].value });
-      }
-      nodeDic.push({
-        id: attrDic[n[i].attrName].no,
-        no: attrDic[n[i].attrName].child.length
-      });
-      attrDic[n[i].attrName].child.push(n[i].id);
+    attrL = [],
+    attrDic = {},
+    linkDic = {},
+    nodeDic = [];
+  for (let i = 0; i < n.length; i++) {
+    if (!(n[i].attrName in attrDic)) {
+      attrDic[n[i].attrName] = { no: attrN.length, child: [] };
+      attrN.push({ id: n[i].attrName, value: n[i].value, x: 0, y:0 });
+      attrN[attrN.length - 1].x = 0;
+      attrN[attrN.length - 1].y = 0;
     }
-    for (let i = 0; i < attrN.length; i++) {
-      attrN[i].child = attrDic[attrN[i].id].child;
-    }
-    for (let i = 0; i < l.length; i++) {
-      const sA = nodeDic[l[i].source];
-      const tA = nodeDic[l[i].target];
-      if (sA.id === tA.id) continue;
-      const label = sA.id + ',' + tA.id;
-      if (!(label in linkDic)) {
-        linkDic[label] = { no: attrL.length, child: [], value: 0 };
-        attrL.push({ source: sA.id, target: tA.id });
-      }
-      linkDic[label].child.push({
-        source: sA.no,
-        target: tA.no,
-        value: l[i].value,
-        cpt: l[i].cpt,
-      });
-      linkDic[label].value =
-        linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
-    }
-    for (let i = 0; i < attrL.length; i++) {
-      const label = attrL[i].source + ',' + attrL[i].target;
-      attrL[i].value = linkDic[label].value;
-      attrL[i].child = linkDic[label].child;
-    }
-    return { nodes: attrN, links: attrL };
+    nodeDic.push({
+      id: attrDic[n[i].attrName].no,
+      no: attrDic[n[i].attrName].child.length
+    });
+    attrN[attrDic[n[i].attrName].no].x += layout.nodes[i].x;
+    attrN[attrDic[n[i].attrName].no].y += layout.nodes[i].y;
+    attrDic[n[i].attrName].child.push(n[i].id);
   }
+  for (let i = 0; i < attrN.length; i++) {
+    attrN[i].child = attrDic[attrN[i].id].child;
+    attrN[i].x /= attrN[i].child.length; 
+    attrN[i].y /= attrN[i].child.length; 
+  }
+  for (let i = 0; i < l.length; i++) {
+    const sA = nodeDic[l[i].source.index];
+    const tA = nodeDic[l[i].target.index];
+    if (sA.id === tA.id) continue;
+    const label = sA.id + ',' + tA.id;
+    if (!(label in linkDic)) {
+      linkDic[label] = { no: attrL.length, child: [], value: 0 };
+      attrL.push({ source: {index: sA.id}, target: {index: tA.id} });
+    }
+    linkDic[label].child.push({
+      source: sA.no,
+      target: tA.no,
+      value: l[i].value,
+      cpt: l[i].cpt,
+    });
+    linkDic[label].value =
+      linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
+  }
+  for (let i = 0; i < attrL.length; i++) {
+    const label = attrL[i].source.index + ',' + attrL[i].target.index;
+    attrL[i].value = linkDic[label].value;
+    attrL[i].child = linkDic[label].child;
+  }
+  return { nodes: attrN, links: attrL };
+}
+  // mergeGraph(n, l) {
+  //   let attrN = [],
+  //     attrL = [],
+  //     attrDic = {},
+  //     linkDic = {},
+  //     nodeDic = [];
+  //   for (let i = 0; i < n.length; i++) {
+  //     if (!(n[i].attrName in attrDic)) {
+  //       attrDic[n[i].attrName] = { no: attrN.length, child: [] };
+  //       attrN.push({ id: n[i].attrName, value: n[i].value });
+  //     }
+  //     nodeDic.push({
+  //       id: attrDic[n[i].attrName].no,
+  //       no: attrDic[n[i].attrName].child.length
+  //     });
+  //     attrDic[n[i].attrName].child.push(n[i].id);
+  //   }
+  //   for (let i = 0; i < attrN.length; i++) {
+  //     attrN[i].child = attrDic[attrN[i].id].child;
+  //   }
+  //   for (let i = 0; i < l.length; i++) {
+  //     const sA = nodeDic[l[i].source];
+  //     const tA = nodeDic[l[i].target];
+  //     if (sA.id === tA.id) continue;
+  //     const label = sA.id + ',' + tA.id;
+  //     if (!(label in linkDic)) {
+  //       linkDic[label] = { no: attrL.length, child: [], value: 0 };
+  //       attrL.push({ source: sA.id, target: tA.id });
+  //     }
+  //     linkDic[label].child.push({
+  //       source: sA.no,
+  //       target: tA.no,
+  //       value: l[i].value,
+  //       cpt: l[i].cpt,
+  //     });
+  //     linkDic[label].value =
+  //       linkDic[label].value < l[i].value ? l[i].value : linkDic[label].value;
+  //   }
+  //   for (let i = 0; i < attrL.length; i++) {
+  //     const label = attrL[i].source + ',' + attrL[i].target;
+  //     attrL[i].value = linkDic[label].value;
+  //     attrL[i].child = linkDic[label].child;
+  //   }
+  //   return { nodes: attrN, links: attrL };
+  // }
 
   render() {
     // this.props.store.getGBN();
@@ -113,10 +164,10 @@ export default class Attribute extends React.Component {
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);
     canvas = { ww: 940, hh: 920 };
-    if (this.state.mergeAttribute) {
-      data = this.mergeGraph(data.nodes, data.links);
-    }
     let layout = this.forceDirected(data.nodes, data.links);
+    if (this.state.mergeAttribute) {
+      layout = this.mergeGraph(layout, data.nodes, data.links);
+    }
     return (
       <div className="attribute-view">
         <div className="title">Inference Simulation View</div>

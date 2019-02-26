@@ -14,20 +14,23 @@
 
   .init-left {
     text-align: center;
-    width: 30px;
+    width: 50px;
     height: 60px;
     position: fixed;
     top: 530px;
     left: 5px;
   }
-
+  .init-stop {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
   .init-right {
     text-align: center;
-    width: 30px;
+    width: 50px;
     height: 60px;
     position: fixed;
     top: 530px;
-    left: 925px;
+    left: 905px;
   }
   
   .attr-init {
@@ -35,11 +38,15 @@
     overflow: visible;
     position: relative;
     height: 960px;
+    svg {
+      overflow: visible;
+    }
     .chart {
       min-width: 200px;
       max-width: 380px;
       height: 950px;
       flex: 1;
+      margin: 0 10px;
     }
 
     .attr-info {

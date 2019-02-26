@@ -54,7 +54,16 @@
     .table {
         height: calc(100% - 80px);
         user-select: none;
-
+        &.all-record {
+            .table-body {.table-cell {
+                height: 20px;
+            }}
+            
+            .table-header.left {.table-cell {
+                height: 20px;
+                line-height: 20px;
+            }}
+        }
         .wrapper {
             display: flex;
         }
@@ -101,7 +110,6 @@
                 overflow: hidden;
                 min-width: fit-content;
                 min-width: -moz-fit-content;
-                max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
                     width: 0px;  /* remove scrollbar space */
@@ -109,10 +117,10 @@
                 }
             }
 
-            .selection-mask {
-                border: 1px solid #999;
-                border-right: none;
+            .table-cell.h-10 {
+                height: 10px;
             }
+
 
             .table-cell.group {
                 cursor: pointer;
@@ -135,10 +143,23 @@
             flex: 1;
             overflow: auto;
             position: relative;
-            .table-cell {
-                box-shadow: 1px 1px 0px rgba($color: #999999, $alpha: 0.2);
+            .tooltip {
+                position: absolute;
+                width: auto;
+                z-index: 99;
+                pointer-events: none;
             }
 
+            .table-cell {
+                box-shadow: 1px 1px 0px rgba($color: #999999, $alpha: 0.2);
+                height: 10px;
+            }
+
+            .table-row.group {
+                .table-cell {
+                    height: 30px;
+                }
+            }
             &::-webkit-scrollbar {
                 width: 8px;
                 border-radius: 4px;
@@ -165,7 +186,6 @@
                 overflow-y: auto;
                 min-width: fit-content;
                 min-width: -moz-fit-content;
-                max-height: 168px;
                 &::-webkit-scrollbar {
                     height: 0px;
                     width: 0px;  /* remove scrollbar space */
@@ -174,8 +194,7 @@
             }
 
             .selection-mask {
-                border: 1px solid #999;
-                border-left: none;
+                border: 1px solid rgb(20, 80, 150);
             }
         }
 
@@ -207,6 +226,9 @@
                 left: 0;
                 bottom: 0;
                 z-index: -1;
+                &.dl {
+                    background: linear-gradient(to right bottom, #ffffff,#ffffff 48%,red 50%,red 52%,#ffffff 51.1%,#ffffff 100%);
+                }
             }
             width: 60px;
             height: 30px;
@@ -214,6 +236,7 @@
 
             &.select-row {
                 cursor: crosshair;
+                height: 10px;
             }
             &.em {
                 font-weight: 500;
@@ -223,8 +246,8 @@
         .selection-mask {
             position: absolute;
             width: 100%;
-            background: rgba(0, 0, 0, 0.1);
-            // pointer-events: none;
+            
+            background: rgba(20, 80, 150, 0.2);
         }
     }
 
