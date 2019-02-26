@@ -73,7 +73,7 @@ export default class AttrInitialize extends React.Component {
       width = 320;
     }
 
-    width -= 15; //for margin
+    width -= 35; //for margin
 
     const height = Math.ceil(h - 130);
 
