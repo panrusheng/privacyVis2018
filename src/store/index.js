@@ -55,6 +55,7 @@ class AppStore {
    * ]
    */
   
+  @observable
   currentSubgroup = null;
   // currentSubgroup = {
   //   group: 0,
@@ -388,7 +389,26 @@ class AppStore {
       }
     }).then(data => {
       data.rec = [];
-      data.group.splice(10);
+      data.group.splice(10); 
+      data.group.map(g => {
+        let id = 0;
+        g.nodes.map(node => {
+          let newId = id++;
+          let oldId = node.eventNo;
+
+          g.links.forEach(link => {
+            if (link.source === oldId) {
+              link.source = newId;
+            }
+            if (link.target === oldId) {
+              link.target = newId;
+            }
+          });
+
+          node.eventNo = newId;
+        })
+      });
+
       data.rec = data.group.map((g) => {
         let top3rec = new Array(3);
         for (let i = 0; i < 3; ++i) {
