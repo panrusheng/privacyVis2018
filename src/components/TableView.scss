@@ -195,6 +195,7 @@
 
             .selection-mask {
                 border: 1px solid rgb(20, 80, 150);
+                pointer-events: none;
             }
         }
 
@@ -246,7 +247,6 @@
         .selection-mask {
             position: absolute;
             width: 100%;
-            
             background: rgba(20, 80, 150, 0.2);
         }
     }
