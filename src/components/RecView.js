@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import './RecView.scss';
 import * as d3 from 'd3';
-import { Radio } from 'antd';
+import { Radio, Button } from 'antd';
 import OverviewInf from './RecInfer/OverviewInf'
 import SubInfer from './RecInfer/SubInfer'
 import { toJS } from 'mobx';
@@ -12,10 +12,12 @@ const RadioGroup = Radio.Group;
 @observer
 export default class RecView extends React.Component {
   state = {
+    select: null
   };
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.reset = this.reset.bind(this);
+  }
 
   componentDidMount() {
   }
@@ -25,9 +27,14 @@ export default class RecView extends React.Component {
 
   componentWillMount() {
     this.props.store.getRecList()
+    // this.setState({select: this.props.store.recSelectedList[this.props.store.recNum]})
   }
 
-  onChange() {
+  reset() {
+    this.setState({ select: null });
+  }
+
+  submit() {
 
   }
 
@@ -78,12 +85,18 @@ export default class RecView extends React.Component {
     if (recList.group.length === 0) return (<div />);
     const recData = this.setPosition(recList.group[recNum]);
     let deleteList = recList.rec[recNum];
-    let select = recSelectedList[recNum];
+    let select = [];
+    if (this.state.select === null) select = [1, 0, 0];//select = recSelectedList[recNum];
+    else {
+      for (let i = 0; i < 3; i++) {
+        if (i === this.state.select) select.push(1);
+        else select.push(0);
+      }
+    }
     if (!deleteList || deleteList === []) {
       deleteList = [{ dL: [0, 1, 4], uL: 0.5 }, { dL: [0, 2, 3], uL: 0.8 }, { dL: [0, 2, 5], uL: 1 }];
-      select = [1, 0, 0];
     }
-    const ww = 218, hh = 198, width = 900, height = 700;
+    const ww = 218, hh = 198, width = 900, height = 670;
 
     return (
       <div className="rec-view">
@@ -92,21 +105,26 @@ export default class RecView extends React.Component {
           <div className="operation">
             <div className="rec-overview">
               <svg width={width} height={height}>
-                <OverviewInf data={recData} sch={deleteList} ww={width} hh={height} name={"rec-big"} />
+                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} ww={width} hh={height} name={"rec-big"} />
               </svg>
+              <div className="rec-panel">
+                <p>Amount: {recData.num}</p>
+                <Button className="rec-button" onClick={this.reset} disabled={(this.state.select === null)}>Reset</Button>
+                <Button className="rec-button" onClick={this.submit} disabled={(this.state.select === null)}>Submit</Button>
+              </div>
             </div>
             <div className="rec-solution">
-            <div className="rec-list">
-              {deleteList.map((d, i) => (
-                <div className="rec-td" key={"rec-graph-" + i}>
-                  <svg width={ww} height={hh}>
-                    <SubInfer data={recData} sch={d} rec={select[i]} ww={ww} hh={hh} name={"rec-small-" + i} />
-                  </svg>
-                </div>
-              ))}
+              <div className="rec-list">
+                {deleteList.map((d, i) => (
+                  <div className="rec-td" key={"rec-graph-" + i}>
+                    <svg width={ww} height={hh}>
+                      <SubInfer data={recData} sch={d} rec={select[i]} ww={ww} hh={hh} name={"rec-small-" + i} />
+                    </svg>
+                  </div>
+                ))}
               </div>
               <div className='rec-selection'>
-                <RadioGroup onChange={this.onChange} value={0}>
+                <RadioGroup onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
                   <Radio value={0}>{"Utility loss: " + deleteList[0].uL.toFixed(2)}</Radio>
                   <Radio value={1}>{"Utility loss: " + deleteList[1].uL.toFixed(2)}</Radio>
                   <Radio value={2}>{"Utility loss: " + deleteList[2].uL.toFixed(2)}</Radio>

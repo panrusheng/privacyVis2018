@@ -92,6 +92,16 @@
         height: 705px;
         padding-left: 20px;
     }
+    .rec-panel {
+        height: 30px;
+        flex-direction: row;
+        width: 300px;
+        display: flex;
+        .rec-button {
+            height: 25px;
+            margin-left: 10px;
+        }
+    }
     .rec-td{
         width: 218px;
         border: 1px solid #ccc;

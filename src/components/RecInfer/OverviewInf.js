@@ -21,14 +21,14 @@ export default class RecView extends Component {
       ww,
       hh,
       data,
-      name
+      name,
+      selected
     } = this.props;
     if (data.nodes.length === 0) return;
     const marginX = 100, marginY = 50;
     const {
       nodes,
       links,
-      num
     } = data;
     const del = [];
 
@@ -49,11 +49,18 @@ export default class RecView extends Component {
       nodes[i].del = false;
       del.push([]);
     }
-    for (let i = 0; i < sch.length; i++) {
-      for (let j = 0; j < sch[i].dL.length; j++) {
-        del[sch[i].dL[j]].push(i);
+    if (selected === null || selected === undefined) {
+      for (let i = 0; i < sch.length; i++) {
+        for (let j = 0; j < sch[i].dL.length; j++) {
+          del[sch[i].dL[j]].push(i);
+        }
+      }
+    } else {
+      for (let j = 0; j < sch[selected].dL.length; j++) {
+        del[sch[selected].dL[j]].push(selected);
       }
     }
+    
 
     for (let i = 0; i < del.length; i++) {
       if (del[i].length > 0) {
@@ -63,8 +70,8 @@ export default class RecView extends Component {
           let x = nodes[i].x, y = nodes[i].y;
           let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
             "L" + 2 * r + "," + 2 * 1.732 * r;
-          let a = j * 2 / 3 + 1;
-          triangleList.push({ x: x, y: y, d: d, a: a, t: "S" + (j + 1) });
+          let a = del[i][j] * 2 / 3 + 1;
+          triangleList.push({ x: x, y: y, d: d, a: a, t: "S" + (del[i][j] + 1) });
         }
       }
     }
@@ -172,12 +179,12 @@ export default class RecView extends Component {
       .style('fill', '#333')
       .style('font-size', 15);
 
-    g.append('text')
-      .attr('class', name)
-      .attr('x', 13)
-      .attr('y', 25)
-      .text('Amount:' + num)
-      .style('fill', '#333');
+    // g.append('text')
+    //   .attr('class', name)
+    //   .attr('x', 13)
+    //   .attr('y', 25)
+    //   .text('Amount:' + num)
+    //   .style('fill', '#333');
   }
 
   render() {
