@@ -90,7 +90,7 @@ export default class DistTrimming extends React.Component {
     }
     const w = this.state.attrSize.width;
     const count = (this.props.store.selectedAttributes || []).length;
-    const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 35);
+    const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 40);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.trim-left').attr('class', 'trim-left');
