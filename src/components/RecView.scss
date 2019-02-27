@@ -95,11 +95,20 @@
     .rec-panel {
         height: 30px;
         flex-direction: row;
-        width: 300px;
+        width: 100%;
         display: flex;
+        p {
+            margin-left: 220px;
+        }
         .rec-button {
             height: 25px;
-            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .rec-switch {
+            margin-left: 220px;
+            label {
+                margin: 5px;
+            }
         }
     }
     .rec-td{

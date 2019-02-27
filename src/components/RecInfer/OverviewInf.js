@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
 import * as d3 from 'd3';
 // import { toJS } from 'mobx';
-import { inject } from 'mobx-react';
+import {
+  inject
+} from 'mobx-react';
 @inject(['store'])
 export default class RecView extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.renderGraph = this.renderGraph.bind(this);
+  }
   componentDidMount() {
     this.renderGraph(this.g, this.props);
   }
@@ -22,14 +27,19 @@ export default class RecView extends Component {
       hh,
       data,
       name,
-      selected
+      selected,
+      show
     } = this.props;
+    const that = this;
     if (data.nodes.length === 0) return;
-    const marginX = 100, marginY = 50;
+    const marginX = 100,
+      marginY = 50;
     const {
       nodes,
       links,
     } = data;
+    const maxRec = 2,
+      angle = 2 / (maxRec + 1);
     const del = [];
 
     const r = 10;
@@ -42,13 +52,17 @@ export default class RecView extends Component {
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + marginY, hh - marginY]);
     let delList = [];
-    let triangleList = [];
+    let triangleList,
+      removeTri = [],
+      preserveTri = [];
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
       nodes[i].del = false;
       del.push([]);
     }
+    let start = 0,
+      end = maxRec;
     if (selected === null || selected === undefined) {
       for (let i = 0; i < sch.length; i++) {
         for (let j = 0; j < sch[i].dL.length; j++) {
@@ -56,25 +70,70 @@ export default class RecView extends Component {
         }
       }
     } else {
+      start = selected;
+      end = selected;
       for (let j = 0; j < sch[selected].dL.length; j++) {
         del[sch[selected].dL[j]].push(selected);
       }
     }
-    
 
-    for (let i = 0; i < del.length; i++) {
-      if (del[i].length > 0) {
-        nodes[i].del = true;
-        delList.push(nodes[i]);
-        for (let j = 0; j < del[i].length; j++) {
-          let x = nodes[i].x, y = nodes[i].y;
-          let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
-            "L" + 2 * r + "," + 2 * 1.732 * r;
-          let a = del[i][j] * 2 / 3 + 1;
-          triangleList.push({ x: x, y: y, d: d, a: a, t: "S" + (del[i][j] + 1) });
+    for (let i = 0; i < nodes.length; i++) {
+      let flag = false;
+      let x = nodes[i].x,
+        y = nodes[i].y;
+      let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
+        "L" + 2 * r + "," + 2 * 1.732 * r;
+      for (let j = start; j <= end; j++) {
+        let a = j * angle + 1;
+        let tri = {
+          x: x,
+          y: y,
+          d: d,
+          a: a,
+          n: j
+        };
+        if (ifaInb(j, del[i])) {
+          flag = true;
+          removeTri.push(tri);
+        } else {
+          preserveTri.push(tri);
         }
       }
+      if (flag) {
+        nodes[i].del = true;
+        delList.push(nodes[i]);
+      }
     }
+
+    function ifaInb(a, b) {
+      for (let i = 0; i < b.length; i++) {
+        if (a === b[i]) return true;
+      }
+      return false;
+    }
+    // for (let i = 0; i < del.length; i++) {
+    //   if (del[i].length > 0) {
+    //     nodes[i].del = true;
+    //     delList.push(nodes[i]);
+    //     for (let j = 0; j < del[i].length; j++) {
+    //       let x = nodes[i].x,
+    //         y = nodes[i].y;
+    //       let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
+    //         "L" + 2 * r + "," + 2 * 1.732 * r;
+    //       let a = del[i][j] * 2 / 3 + 1;
+    //       removeTri.push({
+    //         x: x,
+    //         y: y,
+    //         d: d,
+    //         a: a,
+    //         n: del[i][j]
+    //       });
+    //     }
+    //   }
+    // }
+
+    triangleList = show ? preserveTri : removeTri;
+
     const g = d3
       .select(gDOM)
       .attr('width', ww)
@@ -122,8 +181,20 @@ export default class RecView extends Component {
       .enter();
     triangleCanvas.append('path')
       .attr('d', d => d.d)
+      .attr('class', d => 'tri-' + d.n)
       .attr('transform', d => 'translate(' + d.x + ',' + d.y + ') rotate(' + d.a * 180 + ')')
-      .style('fill', '#1866BB');
+      .style('fill', show ? '#3987db' : '#999')
+      .style('stroke', '#fff')
+      .style('cursor', 'pointer')
+      .on('mouseover', d => {
+        d3.selectAll('.tri-' + d.n).style('stroke', show ? '1866bb' : '#666')
+      })
+      .on('mouseout', d => {
+        d3.selectAll('.tri-' + d.n).style('stroke', '#fff')
+      })
+      .on('click', d => {
+        that.props.change(d.n);
+      });
 
     triangleCanvas.append('text')
       .attr('x', d => d.x + 2.5 * r * Math.cos((d.a + 0.5) * Math.PI))
@@ -131,7 +202,8 @@ export default class RecView extends Component {
       .attr('dy', r / 2)
       .style('text-anchor', 'middle')
       .style('fill', '#fff')
-      .text(d => d.t);
+      .style('pointer-events', 'none')
+      .text(d => "S" + (d.n + 1));
 
     g.append('g')
       .attr('class', name)
@@ -170,7 +242,7 @@ export default class RecView extends Component {
       .data(nodes)
       .enter()
       .append('text')
-      .attr('dy', - r)
+      .attr('dy', -r)
       .attr('dx', d => (d.x < ww - 60 ? r + 4 : -(r + 4)))
       .attr('x', d => d.x)
       .attr('y', d => d.y)
@@ -188,19 +260,19 @@ export default class RecView extends Component {
   }
 
   render() {
-    return (<
-      g ref={
+    return ( <
+      g ref = {
         g => {
           this.g = g;
         }
       }
-      width={
+      width = {
         this.props.ww
       }
-      height={
+      height = {
         this.props.hh
       }
-    />
+      />
     );
   }
 }

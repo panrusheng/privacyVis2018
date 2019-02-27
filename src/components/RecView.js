@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import './RecView.scss';
 import * as d3 from 'd3';
-import { Radio, Button } from 'antd';
+import { Radio, Button, Switch } from 'antd';
 import OverviewInf from './RecInfer/OverviewInf'
 import SubInfer from './RecInfer/SubInfer'
 import { toJS } from 'mobx';
@@ -12,18 +12,18 @@ const RadioGroup = Radio.Group;
 @observer
 export default class RecView extends React.Component {
   state = {
-    select: null
+    select: null,
+    show: false
   };
   constructor(props) {
     super(props);
     this.reset = this.reset.bind(this);
+    this.changeState = this.changeState.bind(this);
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
-  componentDidUpdate() {
-  }
+  componentDidUpdate() {}
 
   componentWillMount() {
     this.props.store.getRecList()
@@ -31,11 +31,19 @@ export default class RecView extends React.Component {
   }
 
   reset() {
-    this.setState({ select: null });
+    this.setState({
+      select: null
+    });
   }
 
   submit() {
 
+  }
+
+  changeState(value) {
+    this.setState({
+      select: value
+    });
   }
 
   forceDirected(n, l) {
@@ -105,12 +113,18 @@ export default class RecView extends React.Component {
           <div className="operation">
             <div className="rec-overview">
               <svg width={width} height={height}>
-                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} ww={width} hh={height} name={"rec-big"} />
+                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} change={this.changeState} 
+                  show={this.state.show} ww={width}z hh={height} name={"rec-big"} />
               </svg>
               <div className="rec-panel">
-                <p>Amount: {recData.num}</p>
                 <Button className="rec-button" onClick={this.reset} disabled={(this.state.select === null)}>Reset</Button>
                 <Button className="rec-button" onClick={this.submit} disabled={(this.state.select === null)}>Submit</Button>
+                <p>Amount: {recData.num}</p>
+                <div className="rec-switch">
+                  <label>Remove</label>
+                  <Switch checked={this.state.show} onChange={checked => this.setState({ show: checked })} />
+                  <label>Preserve</label>
+                </div>
               </div>
             </div>
             <div className="rec-solution">
