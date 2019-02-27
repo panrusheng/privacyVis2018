@@ -315,29 +315,27 @@ export default class TableView extends React.Component {
           rows.push(r);
         })
       } else {
-        dataGroups.forEach(group => {
-          const r = {};
-          r.id = group.id;
-          r.extended = [];
-          r.data = group.data;
-  
-          group.records.forEach(rec => {
-            const er = {};
-            er.id = rec.id;
-            er.data = {};
-            for (let a of rec.data) {
-              er.data[a.attName] = {
-                value: a.value,
-                utility: a.utility,
-                del: deleteAttr.has(a.attName),
-              }
+        const r = {};
+        r.id = group.id;
+        r.extended = [];
+        r.data = group.data;
+
+        group.records.forEach(rec => {
+          const er = {};
+          er.id = rec.id;
+          er.data = {};
+          for (let a of rec.data) {
+            er.data[a.attName] = {
+              value: a.value,
+              utility: a.utility,
+              del: deleteAttr.has(a.attName),
             }
-            
-            r.extended.push(er);
-          });
-  
-          rows.push(r);
-        })
+          }
+          
+          r.extended.push(er);
+        });
+
+        rows.push(r);
       }
     });
 
@@ -391,7 +389,6 @@ export default class TableView extends React.Component {
 
   renderTable() {
     const { columns, rows } = this.formatData();
-
     if (rows.length === 0) return this.renderEmpty();
 
     return (
