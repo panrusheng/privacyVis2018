@@ -46,9 +46,6 @@ class AppStore {
   ];
 
   @observable
-  trimPlan = {};
-
-  @observable
   trimList = [];
 
   @observable
@@ -122,7 +119,7 @@ class AppStore {
       this.selectedAttributes.splice(index, 1);
     }
   }
-
+  
   @action
   setAttributes(attributes) {
     return axios.post('/get_attribute_distribution', null, {
@@ -152,7 +149,6 @@ class AppStore {
         }
 
         selectedAttributes.push(attr);
-        this.trimList.push(false);
       });
       this.selectedAttributes = selectedAttributes;
     });
@@ -408,6 +404,27 @@ class AppStore {
   @action
   editRecList() {
 
+  }
+
+  @action
+  getTrimList() {
+    let trimList = [...this.selectedAttributes];
+    for (let i = 0; i < trimList.length; i++) {
+      trimList[i].trimmed = false;
+    }
+    this.trimList = trimList;
+  }
+
+  @action
+  trim(attrName) {
+    let trimList = [...this.trimList];
+    for (let i = 0; i < trimList.length; i++) {
+      if (trimList[i].attrName === attrName) {
+        trimList[i].trimmed = true;
+        break;
+      }
+    }
+    this.trimList = trimList;
   }
 }
 

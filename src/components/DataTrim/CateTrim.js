@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 
 export default class CateTrim extends React.Component {
   draw(dom, data, width, height, margin, trimmed) {
+    if (height === 0) return;
     dom.innerHTML = '';
     const dataValue = data.map(item => item.oriV);
     const xScale = d3
@@ -125,9 +126,9 @@ export default class CateTrim extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('x', (d, i) => width / 2 - 5)
+      .attr('x', (d, i) => 10)
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
-      .style('text-anchor', 'end')
+      .style('text-anchor', 'start')
       .text(d => d.name);
 
     if (trimmed) {

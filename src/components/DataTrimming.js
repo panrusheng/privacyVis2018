@@ -17,6 +17,7 @@ export default class DistTrimming extends React.Component {
     this.setSize = this.setSize.bind(this);
     this.scrollLeft = this.scrollLeft.bind(this);
     this.scrollRight = this.scrollRight.bind(this);
+    this.trim = this.trim.bind(this);
   }
 
   state = {
@@ -28,7 +29,7 @@ export default class DistTrimming extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.setSize);
-    if (this.props.store.selectedAttributes.length <= 0) return;
+    if (this.props.store.trimList.length <= 0) return;
     if (this.wrapper) {
       this.setSize();
     }
@@ -43,6 +44,10 @@ export default class DistTrimming extends React.Component {
     window.removeEventListener('resize', this.setSize);
   }
 
+  componentWillMount() {
+    this.props.store.getTrimList();
+  }
+
   setSize() {
     const dom = this.wrapper;
     const count = (this.props.store.selectedAttributes || []).length;
@@ -55,7 +60,7 @@ export default class DistTrimming extends React.Component {
       width = 320;
     }
 
-    width -= 40; //for margin
+    width -= 35; //for margin
 
     const height = Math.ceil(h - 90);
 
@@ -74,7 +79,7 @@ export default class DistTrimming extends React.Component {
   }
 
   trim(attrName) {
-
+    this.props.store.trim(attrName);
   }
 
   scrollRight() {
@@ -85,7 +90,7 @@ export default class DistTrimming extends React.Component {
     }
     const w = this.state.attrSize.width;
     const count = (this.props.store.selectedAttributes || []).length;
-    const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 15);
+    const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 35);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.trim-left').attr('class', 'trim-left');
@@ -133,11 +138,8 @@ export default class DistTrimming extends React.Component {
   }
 
   render() {
-    const selectedAttributes = toJS(this.props.store.selectedAttributes);
-    const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 15) > 940;
-    for (let i = 0; i < selectedAttributes.length; i++) {
-      selectedAttributes[i].trimmed = true;
-    }
+    const trimList = toJS(this.props.store.trimList);
+    const flag = (trimList || []).length * (this.state.attrSize.width + 35) > 940;
     return (
       <div className="data-trim-view">
         <div className="view-title">Data Trimming View</div>
@@ -145,12 +147,12 @@ export default class DistTrimming extends React.Component {
           <div className="attr-trim" ref={dom => {
             if (dom) this.wrapper = dom;
           }}>
-            {selectedAttributes.map(attr => (
+            {trimList.map(attr => (
               <div className="chart" key={'trim-' + attr.attrName}>
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
                   <div className="form-block">
-                    <Button onClick={this.trim(attr.attrName) } disabled={attr.trimmed}>Trim</Button>
+                    <Button onClick={() => this.trim(attr.attrName) } disabled={attr.trimmed}>Trim</Button>
                   </div>
                 </div>
                 {this.renderAttr(attr)}

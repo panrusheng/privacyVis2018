@@ -167,7 +167,7 @@ export default class AttrInitialize extends React.Component {
     }
     const w = this.state.attrSize.width;
     const count = (this.props.store.selectedAttributes || []).length;
-    const maxDistance = parseInt(d3.select('.init-content').style('width')) - count * (w + 15);
+    const maxDistance = parseInt(d3.select('.init-content').style('width')) - count * (w + 55);
     const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
     d3.select('.attr-init').transition().style('left', moveLeft + 'px').duration(200);
     d3.select('.init-left').attr('class', 'init-left');
@@ -215,7 +215,7 @@ export default class AttrInitialize extends React.Component {
   render() {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
-    const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 15) > 940;
+    const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 35) > 940;
     return (
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>

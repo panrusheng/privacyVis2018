@@ -319,7 +319,7 @@ export default class AttrNetwork extends Component {
           .on('mouseover', dd => {
             const x = d3.event.x + 5,
               y = d3.event.y - 35;
-            d3.select('.tooltip').html(dd.split('_')[1])
+            d3.select('.tooltip').html(dd.split(': ')[1])
               .style('left', (x) + 'px')
               .style('display', 'block')
               .style('top', (y) + 'px');
@@ -364,7 +364,7 @@ export default class AttrNetwork extends Component {
           .on('mouseover', dd => {
             const x = d3.event.x + 5,
               y = d3.event.y - 35;
-            d3.select('.tooltip').html(dd.split('_')[1])
+            d3.select('.tooltip').html(dd.split(': ')[1])
               .style('left', (x) + 'px')
               .style('display', 'block')
               .style('top', (y) + 'px');

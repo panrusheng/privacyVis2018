@@ -2,62 +2,24 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import './RecView.scss';
 import * as d3 from 'd3';
+import { Radio, Button } from 'antd';
+import OverviewInf from './RecInfer/OverviewInf'
 import SubInfer from './RecInfer/SubInfer'
 import { toJS } from 'mobx';
 
+const RadioGroup = Radio.Group;
 @inject(['store'])
 @observer
 export default class RecView extends React.Component {
   state = {
+    select: null
   };
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.reset = this.reset.bind(this);
+  }
 
   componentDidMount() {
-    let g1 = d3.select('#rec-arrow-row').append('g');
-    g1.append('defs').attr('class', 'rec-arrow')
-      .append('marker')
-      .attr('id', 'arrow-r')
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 8)
-      .attr('refY', 0)
-      .attr('markerWidth', 5)
-      .attr('markerHeight', 5)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-4L10,0L0,4L3,0')
-      .style('fill', '#999');
-    g1.append('line')
-      .attr('class', 'rec-arrow')
-      .attr('x1', 25)
-      .attr('y1', 880)
-      .attr('x2', 25)
-      .attr('y2', 7)
-      .attr('marker-end', 'url(#arrow-r)')
-      .style('stroke', '#ccc')
-      .style('stroke-width', 6);
-    g1.append('text')
-      .attr('transform', 'rotate(90) translate(400, -35)')
-      .style('text-anchor', 'middle')
-      .style('fill', '#999')
-      .text('Number of occurrence');
-    let g2 = d3.select('#rec-arrow-col').append('g');
-    
-    g2.append('line')
-      .attr('class', 'rec-arrow')
-      .attr('x1', 220)
-      .attr('y1', 20)
-      .attr('x2', 873)
-      .attr('y2', 20)
-      .attr('marker-end', 'url(#arrow-r)')
-      .style('stroke', '#ccc')
-      .style('stroke-width', 6);
-    g2.append('text')
-      .attr('transform', 'translate(550, 40)')
-      .style('text-anchor', 'middle')
-      .style('fill', '#999')
-      .text('Utility loss');
   }
 
   componentDidUpdate() {
@@ -65,6 +27,15 @@ export default class RecView extends React.Component {
 
   componentWillMount() {
     this.props.store.getRecList()
+    // this.setState({select: this.props.store.recSelectedList[this.props.store.recNum]})
+  }
+
+  reset() {
+    this.setState({ select: null });
+  }
+
+  submit() {
+
   }
 
   forceDirected(n, l) {
@@ -111,9 +82,21 @@ export default class RecView extends React.Component {
     const { recList, recSelectedList, recNum } = toJS(this.props.store);
 
     // const title = ["Original Data", "Recommendation 1", "Recommendation 2", "Recommendation 3"];
-    if (recList.group. length === 0) return (<div />);
+    if (recList.group.length === 0) return (<div />);
     const recData = this.setPosition(recList.group[recNum]);
-    const ww = 218, hh = 198, width = 900, height = 680;
+    let deleteList = recList.rec[recNum];
+    let select = [];
+    if (this.state.select === null) select = [1, 0, 0];//select = recSelectedList[recNum];
+    else {
+      for (let i = 0; i < 3; i++) {
+        if (i === this.state.select) select.push(1);
+        else select.push(0);
+      }
+    }
+    if (!deleteList || deleteList === []) {
+      deleteList = [{ dL: [0, 1, 4], uL: 0.5 }, { dL: [0, 2, 3], uL: 0.8 }, { dL: [0, 2, 5], uL: 1 }];
+    }
+    const ww = 218, hh = 198, width = 900, height = 670;
 
     return (
       <div className="rec-view">
@@ -122,20 +105,44 @@ export default class RecView extends React.Component {
           <div className="operation">
             <div className="rec-overview">
               <svg width={width} height={height}>
-                <SubInfer data={recData} sch={{dL:[]}} rec={-1} ww={width} hh={height} name={"rec-tr" + recNum} />
+                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} ww={width} hh={height} name={"rec-big"} />
               </svg>
+              <div className="rec-panel">
+                <p>Amount: {recData.num}</p>
+                <Button className="rec-button" onClick={this.reset} disabled={(this.state.select === null)}>Reset</Button>
+                <Button className="rec-button" onClick={this.submit} disabled={(this.state.select === null)}>Submit</Button>
+              </div>
             </div>
             <div className="rec-solution">
-              {recList.rec[recNum] && recList.rec[recNum].map((dd, ii) => (
-                <div className="rec-td" key={"rec-graph" + recNum + "-" + ii}>
-                  <svg width={ww} height={hh}>
-                    <SubInfer data={recData[recNum]} sch={dd} rec={recSelectedList[recNum][ii]} ww={ww} hh={hh} name={"rec-graph" + recNum + "-" + ii} />
-                  </svg>
-                </div>
-              ))}
+              <div className="rec-list">
+                {deleteList.map((d, i) => (
+                  <div className="rec-td" key={"rec-graph-" + i}>
+                    <svg width={ww} height={hh}>
+                      <SubInfer data={recData} sch={d} rec={select[i]} ww={ww} hh={hh} name={"rec-small-" + i} />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+              <div className='rec-selection'>
+                <RadioGroup onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
+                  <Radio value={0}>{"Utility loss: " + deleteList[0].uL.toFixed(2)}</Radio>
+                  <Radio value={1}>{"Utility loss: " + deleteList[1].uL.toFixed(2)}</Radio>
+                  <Radio value={2}>{"Utility loss: " + deleteList[2].uL.toFixed(2)}</Radio>
+                </RadioGroup>
+              </div>
             </div>
             <div className="rec-col-arrow" style={{ width: 880, height: 60 }}>
-              <svg width="100%" height="100%" id="rec-arrow-col" />
+              <svg width={880} height={40} id="utility-arrow" className="arrow-canvas">
+                <g>
+                  <defs>
+                    <marker id="arrow-r" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="5" markerHeight="5" orient="auto">
+                      <path d="M0,-4L10,0L0,4L3,0" style={{ fill: '#999' }} />
+                    </marker>
+                  </defs>
+                  <line x1="40" y1="10" x2="873" y2="10" markerEnd="url(#arrow-r)" style={{ stroke: '#ccc', strokeWidth: 6 }} />
+                  <text transform="translate(460, 30)" style={{ textAnchor: 'middle', fill: '#999' }}>Utility loss </text>
+                </g>
+              </svg>
             </div>
           </div>
         </div>
