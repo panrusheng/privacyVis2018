@@ -202,6 +202,11 @@ export default class TableView extends React.Component {
       }
     }
     
+    this.props.store.currentSubgroup = {
+      group: this.selectionGroup,
+      recordIds: selTupleIds,
+    };
+
     this.rowSelecting = false;
     this.selectionGroup = null;
   }
