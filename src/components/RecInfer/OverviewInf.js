@@ -42,32 +42,39 @@ export default class RecView extends Component {
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + marginY, hh - marginY]);
     let delList = [];
+    let eventNos = [];
     let triangleList = [];
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
       nodes[i].del = false;
       del.push([]);
+      eventNos.push(nodes[i].eventNo);
     }
+
     if (selected === null || selected === undefined) {
       for (let i = 0; i < sch.length; i++) {
         for (let j = 0; j < sch[i].dL.length; j++) {
-          del[sch[i].dL[j]].push(i);
+          let idx = eventNos.findIndex(item => item === sch[i].dL[j]);
+          del[idx].push(i);
         }
       }
     } else {
       for (let j = 0; j < sch[selected].dL.length; j++) {
-        del[sch[selected].dL[j]].push(selected);
+        let idx = eventNos.findIndex(item => item === sch[selected].dL[j]);
+        del[idx].push(selected);
       }
     }
     
 
     for (let i = 0; i < del.length; i++) {
       if (del[i].length > 0) {
-        nodes[i].del = true;
+        let eventNo = eventNos[i];
+        let nIndex = nodes.findIndex(item => item.eventNo === eventNo);
+        nodes[nIndex].del = true;
         delList.push(nodes[i]);
         for (let j = 0; j < del[i].length; j++) {
-          let x = nodes[i].x, y = nodes[i].y;
+          let x = nodes[nIndex].x, y = nodes[nIndex].y;
           let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
             "L" + 2 * r + "," + 2 * 1.732 * r;
           let a = del[i][j] * 2 / 3 + 1;

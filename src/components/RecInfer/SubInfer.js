@@ -54,8 +54,10 @@ export default class RecView extends Component {
     }
 
     for (let i = 0; i < del.length; i++) {
-      nodes[del[i]].del = true;
-      delList.push(nodes[del[i]]);
+      let n = nodes.find(item => item.eventNo === del[i]);
+      if (!n) return;
+      n.del = true;
+      delList.push(n);
     }
 
     const g = d3

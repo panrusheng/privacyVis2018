@@ -40,6 +40,28 @@ class AppStore {
   recSelectedList = [];
 
   @observable
+  subgroupRecSelectedList = [];
+  /**
+   * subgroupRecSelectedList = [
+   *  {
+   *    group: 1,
+   *    selectedList: [
+   *      {
+   *        records: [1, 2, ... ] record ids
+   *        sel: 1, selected recommendation
+   *      }
+   *    ]
+   *  }
+   * ]
+   */
+  
+  currentSubgroup = null;
+  // currentSubgroup = {
+  //   group: 0,
+  //   recordIds: [],
+  // }
+
+  @observable
   comparison = [
     {eventName : 'sen: true', oriD: 0.7, oriC: 0.65, oriT: 0.8, proC: 0.65, proT: 0.3},
     {eventName : 'sen: false', oriD: 0.3, oriC: 0.35, oriT: 0.8, proC: 0.35, proT: 0.1},
@@ -367,12 +389,25 @@ class AppStore {
     }).then(data => {
       data.rec = [];
       data.group.splice(10);
+      data.rec = data.group.map((g) => {
+        let top3rec = new Array(3);
+        for (let i = 0; i < 3; ++i) {
+          top3rec[i] = {
+            dL: [ g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo, g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo, g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo ],
+            uL: 0.3,
+          };
+        }
+
+        return top3rec;
+      });
+
       this.recList = data;
       this.recSelctedList = data.rec.map(d => [1, 0, 0]);
 
+
       // TEST
       const groups = [];
-      const attributes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
+      const attributes = ["wei", "gen", "cat", "res", "sch", "fue", "gcs", "fmp", "tra", "emp", "jol", "fe", "he", "ascc"];
       let id = 0;
       let recId = 1;
       data.group.forEach(({ num }) => {
@@ -432,6 +467,8 @@ class AppStore {
     }
     this.trimList = trimList;
   }
+
+
 }
 
 export default AppStore;

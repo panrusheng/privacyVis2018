@@ -93,11 +93,8 @@ export default class RecView extends React.Component {
         else select.push(0);
       }
     }
-    if (!deleteList || deleteList === []) {
-      deleteList = [{ dL: [0, 1, 4], uL: 0.5 }, { dL: [0, 2, 3], uL: 0.8 }, { dL: [0, 2, 5], uL: 1 }];
-    }
-    const ww = 218, hh = 198, width = 900, height = 670;
 
+    const ww = 218, hh = 198, width = 900, height = 670;
     return (
       <div className="rec-view">
         <div>

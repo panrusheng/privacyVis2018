@@ -164,8 +164,8 @@
         left: 0;
         bottom: 0;
         z-index: -1; }
-        .table-view .table .table-cell .bg.dl {
-          background: linear-gradient(to right bottom, #ffffff, #ffffff 48%, red 50%, red 52%, #ffffff 51.1%, #ffffff 100%); }
+        .table-view .table .table-cell .bg.del {
+          background-size: 100% 100%; }
       .table-view .table .table-cell.select-row {
         cursor: crosshair;
         height: 10px; }
