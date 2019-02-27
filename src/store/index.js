@@ -122,35 +122,41 @@ class AppStore {
   
   @action
   setAttributes(attributes) {
-    return axios.post('/get_attribute_distribution', null, {
+    return axios.post('/set_selected_attribute', null, {
       params: {
-        attributes: JSON.stringify(attributes.map(({ attrName }) => attrName))
+        attributes: JSON.stringify(attributes.map(({ attrName, sensitive }) => ({ attName: attrName, sensitive })))
       }
-    }).then((data) => {
-      const selectedAttributes = [];
-      data.attributes.forEach(attr => {
-        attr.attrName = attr.attributeName;
-        attr.utility = 1;
-        attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
-
-        if (attr.type === 'numerical') {
-          attr.breakPoints = [];
-          attr.data = dataPreprocess(attr.data);
-          attr.data.sort((a, b) => a.label - b.label);
-        } else {
-          attr.groups = [];
-          attr.data.forEach(d => {
-            attr.groups.push({
-              name: d.category,
-              categories: [d],
-              value: d.value
-            });
-          });
+    }).then(() => {
+      axios.post('/get_attribute_distribution', null, {
+        params: {
+          attributes: JSON.stringify(attributes.map(({ attrName }) => attrName))
         }
+      }).then((data) => {
+        const selectedAttributes = [];
+        data.attributes.forEach(attr => {
+          attr.attrName = attr.attributeName;
+          attr.utility = 1;
+          attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
 
-        selectedAttributes.push(attr);
+          if (attr.type === 'numerical') {
+            attr.breakPoints = [];
+            attr.data = dataPreprocess(attr.data);
+            attr.data.sort((a, b) => a.label - b.label);
+          } else {
+            attr.groups = [];
+            attr.data.forEach(d => {
+              attr.groups.push({
+                name: d.category,
+                categories: [d],
+                value: d.value
+              });
+            });
+          }
+
+          selectedAttributes.push(attr);
+        });
+        this.selectedAttributes = selectedAttributes;
       });
-      this.selectedAttributes = selectedAttributes;
     });
   }
 

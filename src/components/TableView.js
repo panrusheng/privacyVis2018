@@ -4,7 +4,7 @@ import AscIcon from '../assets/image/asc.svg';
 import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
-import { toJS, values } from 'mobx';
+import { toJS, values, set } from 'mobx';
 import OmitVal from './TableView/OmitVal.js';
 import * as d3 from 'd3';
 
@@ -49,7 +49,7 @@ export default class TableView extends React.Component {
     // row selection
     this.handleRowSelMouseDown = this.handleRowSelMouseDown.bind(this);
     this.handleRowSelMouseUp = this.handleRowSelMouseUp.bind(this);
-    this.handleRowSelMouseOver = this.handleRowSelMouseOver.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
     this.removeSelection = this.removeSelection.bind(this);
 
     this.handleTooltip = this.handleTooltip.bind(this);
@@ -69,73 +69,83 @@ export default class TableView extends React.Component {
     window.removeEventListener('mouseup', this.handleRowSelMouseUp);
   }
 
-  handleRowSelMouseDown(e, group) {
+  handleRowSelMouseDown(e, group, seqId) {
     e.preventDefault();
     e.stopPropagation();
+    this.props.store.recNum = group;
     this.rowSelecting = true;
-    this.selectionGroup = group;
-
-    const height = e.target.offsetHeight;
-    const offsetTop = e.target.offsetTop;
-    const curY = (e.clientY - e.target.getBoundingClientRect().top) + offsetTop;
-    const rangeY = {
-      start: offsetTop,
-      end: offsetTop + height,
-      group,
-      id: incrId++,
-    };
-
     const rowSelection = [...this.state.rowSelection];
-    const overlapIndex = this.checkOverlap(curY);
 
-    if (overlapIndex >= 0) {
-      rowSelection.splice(overlapIndex, 1);
+    let selIndex = rowSelection.findIndex(item => item.group === group);
+    
+    if ((selIndex >= 0 && this.selectionGroup === group && e.ctrlKey)) {
+      
+    } else if (selIndex >= 0) {
+      rowSelection.splice(selIndex, 1, {
+        group,
+        ranges: [{
+          start: seqId,
+          end: seqId,
+        }],
+      })
+
+    } else {
+      rowSelection.push({
+        group,
+        ranges: [{
+          start: seqId,
+          end: seqId,
+        }],
+      });
     }
-
-    rowSelection.push(rangeY);
-
-    this.lastY = curY;
-
+    
+    this.selectionGroup = group;
+    
+    let relativeY = e.clientY - document.querySelector('#wrapper-' + group).getBoundingClientRect().top;
+    this.lastY = relativeY;
     this.setState({ rowSelection });
   }
 
-  handleRowSelMouseOver(e) {
+  handleMouseMove(e) {
     if (!this.rowSelecting) return;
-    e.stopPropagation();
-    e.preventDefault();
+  
+    let selection = [...this.state.rowSelection];
+    let sel = selection[selection.length - 1];
+    if (!sel) return;
 
-    const rowSelection = [...this.state.rowSelection];
+    sel = Object.assign({}, sel);
 
-    const rangeY = rowSelection[rowSelection.length - 1];
-    if (!rangeY) return;
+    let relativeY = e.clientY - document.querySelector('#wrapper-' + sel.group).getBoundingClientRect().top;
+    let seq = Math.floor(relativeY / 10);
+    console.log(seq);
 
-    const height = e.target.offsetHeight;
-    const offsetTop = e.target.offsetTop;
-    const curY = (e.clientY - e.target.getBoundingClientRect().top) + offsetTop;
-    const utd = curY >= this.lastY; // up to down
+    let { start, end } = sel;
 
-    this.lastY = curY;
-
-    if (utd && curY > rangeY.end) {
-      rangeY.end = offsetTop + height;
-    } else if (utd && curY < rangeY.end) {
-      rangeY.start = offsetTop;
-    } else if (!utd && curY <= rangeY.start) {
-      rangeY.start = offsetTop;
+    if (this.lastY > relativeY) {
+      // up
+      if (seq <= start) {
+        start = seq;
+      } else {
+        end = seq;
+      }
     } else {
-      rangeY.end = offsetTop + height;
+      // down
+      if (seq >= end) {
+        end = seq;
+      }
+      if (seq > start && seq < end) {
+        start = seq;
+      }
     }
 
-    const overlapIndex = this.checkOverlap(curY);
-    if (overlapIndex >= 0 && overlapIndex !== rowSelection.length - 1) rowSelection.splice(overlapIndex, 1);
+    sel.start = start;
+    sel.end = end;
 
-    if (rangeY.start > rangeY.end) {
-      const tmp = rangeY.start;
-      rangeY.start = rangeY.end;
-      rangeY.end = tmp;
-    }
+    selection[selection.length - 1] = sel;
 
-    this.setState({ rowSelection });
+    this.lastY = relativeY;
+
+    this.setState({ rowSelection: selection });
   }
 
   handleRowSelMouseUp(e) {
@@ -151,13 +161,11 @@ export default class TableView extends React.Component {
     this.setState({ rowSelection });
   }
 
-  checkOverlap(pos) {
+  checkOverlap(seq) {
     const { rowSelection } = this.state;
     const { selectionGroup } = this;
 
-    for (let i = 0; i < rowSelection.length; ++i) {
-      if (pos >= rowSelection[i].start && pos <= rowSelection[i].end && rowSelection[i].group === selectionGroup) return i;
-    }
+
 
     return -1;
   }
@@ -196,14 +204,6 @@ export default class TableView extends React.Component {
     }
   }
 
-  syncScrollWrapper(event, groupId) {
-    event.stopPropagation();
-
-    const target = event.target;
-    const syncTargets = document.querySelectorAll(`.scroll-wrapper[data="${groupId}"]`);
-
-    syncTargets.forEach(elem => elem.scrollTop = target.scrollTop);
-  }
 
   switchMode() {
     this.setState({
@@ -307,7 +307,8 @@ export default class TableView extends React.Component {
   handleTooltip(e) {
     let elem = e.target;
     let d = elem.getAttribute('data');
-    if (!elem.classList.contains('tooltip-data') || !d) {
+    console.log(e.target);
+    if (!elem.classList.contains('tooltip-data') || !d || this.rowSelecting) {
       d3.select('.tooltip').style('display', 'none');
       return;
     }
@@ -332,7 +333,11 @@ export default class TableView extends React.Component {
     if (rows.length === 0) return this.renderEmpty();
 
     return (
+<<<<<<< Updated upstream
       <div className={'table' + (this.state.mode === 1 ? ' all-record' : '')} onMouseOver={this.handleRowSelMouseOver}>
+=======
+      <div className="table">
+>>>>>>> Stashed changes
         <div className="wrapper">
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
@@ -377,7 +382,7 @@ export default class TableView extends React.Component {
 
             return [
               <div className="table-cell em group" key={"r" + id} onClick={() => this.props.store.recNum = id}>G{id + 1}</div>,
-              <div className="scroll-wrapper" data={id} onScroll={e => this.syncScrollWrapper(e, id)}>
+              <div className="scroll-wrapper" data={id}>
                 <div className="table-cell"  style={{ height: extended.length * 10 }}/>
                 {/* {rowSelection.filter(item => item.group === id).map(({ start, end, id }, index) => (
                   <div onContextMenu={e => this.removeSelection(e, id)} key={"r-s"+index} className="selection-mask" style={{ top: start, height: end - start }} />
@@ -400,15 +405,20 @@ export default class TableView extends React.Component {
     )
   }
 
-  renderRow(row, columns, isGroup = false, selectableRow = false, groupId) {
-    return (<div className={`table-row ${isGroup ? 'group' : ''}`} key={`${isGroup ? 'g' : 'r'} ${row.id}`} onClick={isGroup ? (() => this.props.store.recNum = row.id) : undefined}>
+  renderRow(row, columns, isGroup = false, groupId, seqId) {
+    return (<div
+      className={`table-row ${isGroup ? 'group' : ''}`}
+      key={`${isGroup ? 'g' : 'r'} ${row.id}`}
+      onMouseDown={e => this.handleRowSelMouseDown(e, groupId, seqId)}
+      onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
+      onClick={isGroup ? (() => this.props.store.recNum = row.id) : undefined}>
+      
       {columns.map(col => {
         const { data } = row;
         if (!isGroup) {
           const { utility, value } = data[col] || {};
           return (
             <div
-              onMouseDown={selectableRow ? e => this.handleRowSelMouseDown(e, groupId, row.id) : undefined}
               key={col} data={value} className="table-cell tooltip-data" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               <div className="bg" style={{ background: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})` }} />
             </div>
@@ -443,16 +453,18 @@ export default class TableView extends React.Component {
 
             // if (unfolded) {
             const eRows = [];
-            row.extended.forEach((eRow) => {
-              eRows.push(this.renderRow(eRow, columns, false, true, row.id));
+            row.extended.forEach((eRow, index) => {
+              eRows.push(this.renderRow(eRow, columns, false, row.id, index));
             });
 
-            let maxHeight = eRows.length * 10;
-
-            groupedRows.push(<div className="scroll-wrapper extent-rows" data={row.id} onScroll={e => this.syncScrollWrapper(e, row.id)}>
+            groupedRows.push(<div onMouseMove={this.handleMouseMove} className="scroll-wrapper extent-rows" id={`wrapper-${row.id}`} onScroll={e => this.syncScrollWrapper(e, row.id)}>
               {eRows}
               {rowSelection.filter(item => item.group === row.id).map(({ start, end, id }, index) => (
-                <div onContextMenu={e => this.removeSelection(e, id)} key={index} className="selection-mask" style={{ top: start, height: end > maxHeight ? maxHeight - start : end - start }} />
+                <div
+                  onContextMenu={e => this.removeSelection(e, id)}
+                  key={index}
+                  className="selection-mask"
+                  style={{ top: start * 10, height: 10 * (end - start + 1)}} />
               ))}
             </div>)
             // }
