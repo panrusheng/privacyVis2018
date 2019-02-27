@@ -392,7 +392,7 @@ export default class TableView extends React.Component {
     if (rows.length === 0) return this.renderEmpty();
 
     return (
-      <div className={'table' + (this.state.mode === 1 ? ' all-record' : '')} onMouseOver={this.handleRowSelMouseOver}>
+      <div className={'table' + (this.state.mode === 1 ? ' all-record' : '')}>
         <div className="wrapper">
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
