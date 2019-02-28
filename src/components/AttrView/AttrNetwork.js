@@ -275,6 +275,19 @@ export default class AttrNetwork extends Component {
       .append('path')
       .attr('d', 'M0,-4L10,0L0,4L3,0')
       .style('fill', '#666');
+    g.append('defs')
+      .attr('class', 'n2d')
+      .append('marker')
+      .attr('id', 'arrow-detail')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 8)
+      .attr('refY', 0)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#666');
 
     const addlink = g
       .append('line')
@@ -319,168 +332,138 @@ export default class AttrNetwork extends Component {
           x2 = nodes[d.target.index].x,
           y1 = nodes[d.source.index].y,
           y2 = nodes[d.target.index].y;
-        let dx1 = x2 - x1,
-          dy1 = y2 - y1,
-          dx2 = 1,
-          dy2 = 0;
+        let dx1 = x2 - x1, dy1 = y2 - y1, dx2 = 1, dy2 = 0;
         let l = Math.sqrt(dx1 * dx1 + dy1 * dy1),
-          w = 30;
+          w = 30, scale = ww / l * 0.7 > 3 ? 3 : ww / l * 0.7;
         let ifFlip = dy1 > 0,
           f = ifFlip ? -1 : 1;
+        let transX = ww / 2//((1 - f) * x1 + (f + 1) * x2) / 2;
+        let transY = hh / 2//((1 - f) * y1 + (f + 1) * y2) / 2;
         if (l === 0) return -1;
         let angle =
           ((f * Math.asin((dx1 * dx2 + dy1 * dy2) / l)) / Math.PI) * 180;
         let edgeDetail = g
           .append('g')
           .attr('class', 'edgeDetail')
-          .attr(
-            'transform',
-            'translate(' +
-            ((1 - f) * x1 + (f + 1) * x2) / 2 +
-            ',' +
-            ((1 - f) * y1 + (f + 1) * y2) / 2 +
-            ') rotate(' +
-            angle +
-            ')'
-          );
+          .attr('transform', 'translate(' + transX + ',' + transY + ') rotate(' + angle + ') scale(' + scale + ')');
         edgeDetail
           .append('rect')
-          .attr('x', -w)
-          .attr('y', r + 3)
-          .attr('width', 2 * w)
-          .attr('height', l - 2 * r - 6)
+          .attr('x', -w - 10)
+          .attr('y', -l / 2 - 30)
+          .attr('width', 2 * w + 20)
+          .attr('height', l + 60)
           .style('fill', '#fff')
-          .style('opacity', 0.9);
+          .style('stroke', '#666')
+          .style('opacity', 1);
         edgeDetail
           .append('rect')
           .attr('x', -w)
-          .attr('y', r + 2)
+          .attr('y', -2 - l / 2)
           .attr('width', 2 * w)
           .attr('height', 4)
           .style('fill', '#666');
         edgeDetail
           .append('rect')
           .attr('x', -w)
-          .attr('y', l - r - 2 - 4)
+          .attr('y', l / 2 - 2)
           .attr('width', 2 * w)
           .attr('height', 4)
           .style('fill', '#666');
         const sourceList = nodes[d.source.index].child;
         const targetList = nodes[d.target.index].child;
         const triH = 10;
-        edgeDetail
-          .append('g')
-          .attr(
-            'transform',
-            'translate(' +
-            f * w +
-            ',' +
-            (ifFlip ? r + 6 : l - r - 6) +
-            ') rotate(' +
-            (f + 1) * 90 +
-            ')'
-          )
-          .selectAll('.triS')
-          .data(sourceList)
-          .enter()
-          .append('path')
-          .attr(
-            'd',
-            (dd, i) =>
-              'M' +
-              (i * 2 * w) / sourceList.length +
-              ', 0 L' +
-              ((i + 1 / 2) * 2 * w) / sourceList.length +
-              ',' +
-              triH +
-              'L' +
-              ((i + 1) * 2 * w) / sourceList.length +
-              ',0'
-          )
-          .style(
-            'fill',
-            nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88'
-          )
-          .on('mouseover', dd => {
-            const x = d3.event.x + 5,
-              y = d3.event.y - 35;
-            d3.select('.tooltip').html(dd.split(': ')[1])
-              .style('left', (x) + 'px')
-              .style('display', 'block')
-              .style('top', (y) + 'px');
-          })
-          .on('mouseout', () => {
-            d3.select('.tooltip').style('display', 'none')
-          });
 
-        edgeDetail
-          .append('g')
-          .attr(
-            'transform',
-            'translate(' +
-            -f * w +
-            ',' +
-            (ifFlip ? l - r - 6 : r + 6) +
-            ') rotate(' +
-            (f - 1) * 90 +
-            ')'
-          )
-          .selectAll('.triT')
-          .data(targetList)
-          .enter()
-          .append('path')
-          .attr(
-            'd',
-            (dd, i) =>
-              'M' +
-              (i * 2 * w) / targetList.length +
-              ', 0 L' +
-              ((i + 1 / 2) * 2 * w) / targetList.length +
-              ',' +
-              triH +
-              'L' +
-              ((i + 1) * 2 * w) / targetList.length +
-              ',0'
-          )
-          .style(
-            'fill',
-            nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88'
-          )
-          .on('mouseover', dd => {
-            const x = d3.event.x + 5,
-              y = d3.event.y - 35;
-            d3.select('.tooltip').html(dd.split(': ')[1])
-              .style('left', (x) + 'px')
-              .style('display', 'block')
-              .style('top', (y) + 'px');
-          })
-          .on('mouseout', () => {
-            d3.select('.tooltip').style('display', 'none')
-          });
         edgeDetail
           .append('g')
           .selectAll('.triE')
           .data(d.child)
           .enter()
           .append('path')
-          .attr('d', function (dd) {
+          .attr('d', dd => {
             let x1 = ((dd.source + 1 / 2) * 2 * w) / sourceList.length,
               x2 = ((dd.target + 1 / 2) * 2 * w) / targetList.length;
-            let y = ifFlip ? r + 6 + triH : l - (r + 6 + triH);
-            return (
-              'M' +
-              (ifFlip ? x1 - w : w - x1) +
-              ',' +
-              y +
-              'L' +
-              (ifFlip ? x2 - w : w - x2) +
-              ',' +
-              (l - y)
-            );
+            let y = ifFlip ? 3 + triH - l / 2 : l / 2 - (3 + triH);
+            return ('M' + (ifFlip ? x1 - w : w - x1) + ',' + y + 'L' + (ifFlip ? x2 - w : w - x2) + ',' + (- y));
           })
           .style('opacity', dd => dd.value)
           .style('stroke', '#666')
+          .attr('marker-end', 'url(#arrow-detail)')
           .style('stroke-width', 2);
+          
+        edgeDetail.append('g')
+          .attr('transform', 'translate(' + f * w + ',' + (ifFlip ? 3 - l / 2 : l / 2 - 3) + ') rotate(' + (f + 1) * 90 + ')')
+          .append('text')
+          .attr('y', -20)
+          .style('fill', '#666')
+          .style('font-size', 18 / scale)
+          .attr('x', w)
+          .style('text-anchor', 'middle')
+          .text(sourceList[0].split(': ')[0]);
+
+        const sourceDetail = edgeDetail
+          .append('g')
+          .attr('transform', 'translate(' + f * w + ',' + (ifFlip ? 3 - l / 2 : l / 2 - 3) + ') rotate(' + (f + 1) * 90 + ')')
+          .selectAll('.triS')
+          .data(sourceList)
+          .enter();
+        sourceDetail
+          .append('path')
+          .attr('d', (dd, i) => 'M' + (i * 2 * w) / sourceList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / sourceList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / sourceList.length + ',0')
+          .style('fill', nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88');
+        // .on('mouseover', dd => {
+        //   const x = d3.event.x + 5,
+        //     y = d3.event.y - 35;
+        //   d3.select('.tooltip').html(dd.split(': ')[1])
+        //     .style('left', (x) + 'px')
+        //     .style('display', 'block')
+        //     .style('top', (y) + 'px');
+        // })
+        // .on('mouseout', () => {
+        //   d3.select('.tooltip').style('display', 'none')
+        // });
+        sourceDetail.append('text')
+          .style('fill', '#666')
+          .style('font-size', 13 / scale)
+          .attr('y', -10)
+          .attr('x', (dd, i) => ((i + 1 / 2) * 2 * w) / sourceList.length)
+          .style('text-anchor', 'middle')
+          .text(dd => dd.split(': ')[1]);
+        edgeDetail.append('g')
+          .attr('transform', 'translate(' + -f * w + ',' + (ifFlip ? l / 2 - 3 : 3 - l / 2) + ') rotate(' + (f - 1) * 90 + ')')
+          .append('text')
+          .attr('y', -20)
+          .style('fill', '#666')
+          .style('font-size', 18 / scale)
+          .attr('x', w)
+          .style('text-anchor', 'middle')
+          .text(targetList[0].split(': ')[0]);
+        const targetDetail = edgeDetail
+          .append('g')
+          .attr('transform', 'translate(' + -f * w + ',' + (ifFlip ? l / 2 - 3 : 3 - l / 2) + ') rotate(' + (f - 1) * 90 + ')')
+          .selectAll('.triT')
+          .data(targetList)
+          .enter();
+        targetDetail.append('path')
+          .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
+          .style('fill', nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');
+        // .on('mouseover', dd => {
+        //   const x = d3.event.x + 5,
+        //     y = d3.event.y - 35;
+        //   d3.select('.tooltip').html(dd.split(': ')[1])
+        //     .style('left', (x) + 'px')
+        //     .style('display', 'block')
+        //     .style('top', (y) + 'px');
+        // })
+        // .on('mouseout', () => {
+        //   d3.select('.tooltip').style('display', 'none')
+        // });
+        targetDetail.append('text')
+          .style('fill', '#666')
+          .attr('x', (dd, i) => ((i + 1 / 2) * 2 * w) / targetList.length)
+          .style('text-anchor', 'middle')
+          .style('font-size', 13 / scale)
+          .attr('y', -10)
+          .text(dd => dd.split(': ')[1]);
       })
       .on('contextmenu', d => {
         if (merge) return;
