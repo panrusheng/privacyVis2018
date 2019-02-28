@@ -45,12 +45,9 @@ class AppStore {
    * subgroupRecSelectedList = [
    *  {
    *    group: 1,
-   *    selectedList: [
-   *      {
-   *        records: [1, 2, ... ] record ids
-   *        sel: 1, selected recommendation
-   *      }
-   *    ]
+        id: id,
+        records: [1, 2, 3, ...],
+        select: 1,
    *  }
    * ]
    */

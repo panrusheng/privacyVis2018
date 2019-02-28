@@ -139,6 +139,12 @@
       .table-view .table .table-body .selection-mask {
         border: 1px solid #145096;
         pointer-events: none; }
+      .table-view .table .table-body .highlight-mask {
+        position: absolute;
+        pointer-events: none;
+        border: 1px solid grey;
+        background-color: rgba(153, 153, 153, 0.2);
+        width: 100%; }
     .table-view .table .table-row {
       display: flex;
       min-width: fit-content;

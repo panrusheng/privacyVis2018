@@ -7,6 +7,7 @@ import { Switch } from 'antd';
 import { toJS, values, set } from 'mobx';
 import OmitVal from './TableView/OmitVal.js';
 import CrossIcon from '../assets/image/cross.png';
+import SlashIcon from '../assets/image/slash.png'
 import * as d3 from 'd3';
 
 const DESC = -1;
@@ -41,6 +42,8 @@ export default class TableView extends React.Component {
   tooltipY = 0;
   tooltipData = null;
 
+  cachedData = null;
+
   constructor(props) {
     super(props);
 
@@ -64,10 +67,25 @@ export default class TableView extends React.Component {
 
   componentDidUpdate() {
     this.adjustTableSize();
+
+    this.removeDupSelection();
   }
 
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.handleRowSelMouseUp);
+  }
+
+  removeDupSelection() {
+    let rowSelection = [...this.state.rowSelection];
+
+    this.props.store.subgroupRecSelectedList.map(subg => {
+      let idx = rowSelection.findIndex(item => item.id === subg.id);
+      if (idx >= 0) rowSelection.splice(idx);
+    });
+
+    if (rowSelection.length !== this.state.rowSelection.length) {
+      this.setState({ rowSelection });
+    }
   }
 
   orderedGroupRecords(group) {
@@ -89,8 +107,30 @@ export default class TableView extends React.Component {
   }
 
   handleRowSelMouseDown(e, group, seqId) {
+
+    const { rows } = this.cachedData;
+    let selList = this.props.store.subgroupRecSelectedList.filter(item => item.group === group);
+    let recordId = rows.find(item => item.id === group).extended[seqId].id;
+
+    let selListIndex = -1;
+    
+    for (let i = 0; i < selList.length; ++i) {
+      for  (let j = 0; j < selList[i].records.length; ++j) {
+        if (selList[i].records[j] === recordId) {
+          selListIndex = i;
+          break;
+        }
+      }
+      if (selListIndex >= 0) break;
+    }
+
     if (e.button === 2) {
       e.preventDefault();
+      if (selListIndex >= 0) {
+        this.props.store.subgroupRecSelectedList.splice(selListIndex, 1);
+        return;
+      }
+
       let selIndex = this.state.rowSelection.findIndex(item => item.group === group);
       if (selIndex < 0) return;
       let inRange = false;
@@ -103,7 +143,9 @@ export default class TableView extends React.Component {
         rowSelection.splice(selIndex, 1);
         this.setState({ rowSelection });
       }
-
+      return;
+    } else if (selListIndex >= 0) {
+      this.props.store.currentSubgroup = selList[selListIndex];
       return;
     }
 
@@ -192,7 +234,6 @@ export default class TableView extends React.Component {
     if (!this.rowSelecting) return;
     let sel = this.state.rowSelection[this.state.rowSelection.length - 1];
     if (!sel) return;
-    
     let records = this.orderedGroupRecords(this.selectionGroup);
 
     let selTupleIds = [];
@@ -204,7 +245,8 @@ export default class TableView extends React.Component {
     
     this.props.store.currentSubgroup = {
       group: this.selectionGroup,
-      recordIds: selTupleIds,
+      id: sel.id,
+      records: selTupleIds,
     };
 
     this.rowSelecting = false;
@@ -289,7 +331,7 @@ export default class TableView extends React.Component {
   }
 
   formatData() {
-    const { recList, recSelectedList, recNum, dataGroups } = toJS(this.props.store);
+    const { recList, recSelectedList, recNum, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
     
     const { mode, order, orderCol } = this.state;
     const rows = [], columns = [];
@@ -302,18 +344,46 @@ export default class TableView extends React.Component {
       let deleteAttr = new Set(recList.group[gindex].nodes
         .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)
         .map(n => n.id.substring(0, n.id.indexOf(':'))));
+      
+      let subgroupSelMap = {};
+      subgroupRecSelectedList.map(item => {
+        if (item.group === group.id) {
+          if (!subgroupSelMap[item.select]) {
+            let delNos = rec[item.select].dL;
+            let delAtts = new Set(recList.group[gindex].nodes
+              .filter(n => delNos.findIndex(no => no === n.eventNo) >= 0)
+              .map(n => n.id.substring(0, n.id.indexOf(':'))));
 
+            subgroupSelMap[item.select] = {
+              records: new Set(),
+              deleteAttr: delAtts
+            }
+          }
+
+          subgroupSelMap[item.select].records = new Set([...item.records, ...subgroupSelMap[item.select].records]);
+        }
+      });
+      
       if (mode === 1) {
         group.records.forEach(rec => {
           const r = {};
           r.id = rec.id;
           r.data = {};
-          
+        
+          let select = -1;
+
+          for (let sel in subgroupSelMap) {
+            if (subgroupSelMap[sel].records.has(rec.id)) {
+              select = sel;
+              break;
+            }
+          }
+
           for (let a of rec.data) {
             r.data[a.attName] = {
               value: a.value,
               utility: a.utility,
-              del: deleteAttr.has(a.attName),
+              del: select === -1 ? deleteAttr.has(a.attName) :subgroupSelMap[select].deleteAttr.has(a.attName) ,
             };
           }
 
@@ -329,11 +399,21 @@ export default class TableView extends React.Component {
           const er = {};
           er.id = rec.id;
           er.data = {};
+
+          let select = -1;
+
+          for (let sel in subgroupSelMap) {
+            if (subgroupSelMap[sel].records.has(rec.id)) {
+              select = sel;
+              break;
+            }
+          }
+
           for (let a of rec.data) {
             er.data[a.attName] = {
               value: a.value,
               utility: a.utility,
-              del: deleteAttr.has(a.attName),
+              del: select === -1 ? deleteAttr.has(a.attName) :subgroupSelMap[select].deleteAttr.has(a.attName)
             }
           }
           
@@ -393,7 +473,8 @@ export default class TableView extends React.Component {
   }
 
   renderTable() {
-    const { columns, rows } = this.formatData();
+    this.cachedData = this.formatData();
+    const { columns, rows } = this.cachedData;
     if (rows.length === 0) return this.renderEmpty();
 
     return (
@@ -471,7 +552,7 @@ export default class TableView extends React.Component {
       key={`${isGroup ? 'g' : 'r'} ${row.id}`}
       onMouseDown={e => !isGroup && seqId && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
-      onClick={isGroup ? (() => this.props.store.recNum = row.id) : undefined}>
+      onClick={isGroup ? (() => {this.props.store.recNum = row.id, this.props.store.currentSubgroup = null}) : undefined}>
       
       {columns.map(col => {
         const { data } = row;
@@ -484,7 +565,7 @@ export default class TableView extends React.Component {
                 className={'bg' + (del ? ' del' : '')}
                 style={{ 
                   backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
-                  backgroundImage: del ? `url(${CrossIcon})` : undefined,
+                  backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
               />
             </div>
@@ -519,9 +600,37 @@ export default class TableView extends React.Component {
 
             // if (unfolded) {
             const eRows = [];
+
             row.extended.forEach((eRow, index) => {
               eRows.push(this.renderRow(eRow, columns, false, row.id, index));
             });
+
+            let highlightMasks = [];
+
+            this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
+              .map(item => {
+                let cnt = 0;
+                let start = -1;
+                let recordSet = new Set(item.records);
+
+                for (let i = 0; i < row.extended.length; ++i) {
+                  let recId = row.extended[i].id;
+                  if (recordSet.has(recId)) {
+                    if (cnt === 0) start = i;
+                    cnt++;
+                  } else if (cnt >= 1) {
+                    highlightMasks.push(
+                      <div
+                      className="highlight-mask"
+                      key={`${row.id} ${recId}`}
+                      style={{ top: start * 10, height: cnt * 10 }}  
+                    />
+                    );
+                    start = -1;
+                    cnt = 0;
+                  }
+                }
+              });
 
             groupedRows.push(<div key={"w" + row.id} onMouseMove={this.handleMouseMove} className="scroll-wrapper extent-rows" id={`wrapper-${row.id}`}>
               {eRows}
@@ -534,6 +643,17 @@ export default class TableView extends React.Component {
                   style={{ top: start * 10, height: 10 * (end - start + 1)}} />
                 ))
               ))}
+              { highlightMasks }
+              {/* {
+                this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
+                  .map(item => item.records.map(recId => (
+                    <div
+                      className="highlight-mask"
+                      key={`${item.group} ${recId}`}
+                      style={{ top: row.extended.findIndex(e => e.id === recId) * 10, height: 10 }}  
+                    />
+                  )))
+              } */}
             </div>)
             // }
 

@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import { Radio, Button, Switch } from 'antd';
 import OverviewInf from './RecInfer/OverviewInf'
 import SubInfer from './RecInfer/SubInfer'
-import { toJS } from 'mobx';
+import { toJS, autorun } from 'mobx';
 
 const RadioGroup = Radio.Group;
 @inject(['store'])
@@ -15,15 +15,35 @@ export default class RecView extends React.Component {
     select: null,
     show: false
   };
+
+  prevRecNum = null;
+  prevSubgroup = null;
+
   constructor(props) {
     super(props);
     this.reset = this.reset.bind(this);
     this.changeState = this.changeState.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.prevRecNum = this.props.store.recNum;
+    this.prevSubgroupId = this.props.store.currentSubgroup ? this.props.store.currentSubgroup.id : undefined;
+  }
 
-  componentDidUpdate() {}
+  componentDidUpdate() {
+    const { recNum, currentSubgroup } = this.props.store;
+    const { prevRecNum, prevSubgroupId } = this;
+    const subgId = currentSubgroup ? currentSubgroup.id : undefined;
+
+    this.prevRecNum = recNum;
+    this.prevSubgroupId = subgId;
+
+    if ((recNum !== prevRecNum) || (subgId && !prevSubgroupId) || (!subgId && prevSubgroupId) ||
+      (subgId && prevSubgroupId && subgId !== prevSubgroupId)) {
+      this.reset();
+    }
+  }
 
   componentWillMount() {
     this.props.store.getRecList()
@@ -37,7 +57,23 @@ export default class RecView extends React.Component {
   }
 
   submit() {
+    if (this.props.store.currentSubgroup) {
+      let subgIdx = this.props.store.subgroupRecSelectedList.findIndex(item => item.id === this.props.store.currentSubgroup.id);
+      let subg;
+      if (subgIdx >= 0) {
+        subg = toJS(this.props.store.subgroupRecSelectedList[subgIdx]);
+        subg.select = this.state.select;
 
+        this.props.store.subgroupRecSelectedList.splice(subgIdx, 1, subg);
+      } else {
+        subg = toJS(this.props.store.currentSubgroup);
+        subg.select = this.state.select;
+        
+        this.props.store.subgroupRecSelectedList.push(subg);
+      }
+
+      this.props.store.currentSubgroup = null;
+    }
   }
 
   changeState(value) {
@@ -94,7 +130,22 @@ export default class RecView extends React.Component {
     const recData = this.setPosition(recList.group[recNum]);
     let deleteList = recList.rec[recNum];
     let select = [];
-    if (this.state.select === null) select = [1, 0, 0];//select = recSelectedList[recNum];
+
+    if (this.state.select === null) {
+      if (this.props.store.currentSubgroup) {
+        let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
+        if (subg) {
+          for (let i = 0; i < 3; ++i) {
+            if (i === subg.select) select.push(1);
+            else select.push(0);
+          }
+        } else {
+          select = [1, 0, 0];
+        }
+      } else {
+        select = [1, 0, 0];//select = recSelectedList[recNum];
+      }
+    }
     else {
       for (let i = 0; i < 3; i++) {
         if (i === this.state.select) select.push(1);

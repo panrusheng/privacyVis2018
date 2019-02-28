@@ -197,6 +197,13 @@
                 border: 1px solid rgb(20, 80, 150);
                 pointer-events: none;
             }
+            .highlight-mask {
+                position: absolute;
+                pointer-events: none;
+                border: 1px solid grey;
+                background-color: rgba($color: #999999, $alpha: 0.2);
+                width: 100%;
+            }
         }
 
         .table-row {
