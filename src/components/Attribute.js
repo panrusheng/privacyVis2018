@@ -39,8 +39,8 @@ export default class Attribute extends React.Component {
         'link',
         d3
           .forceLink(links)
-          .distance(15)
-          .strength(2)
+          .distance(5)
+          .strength(0.5)
           .iterations(1)
       )
       .force('x', d3.forceX())

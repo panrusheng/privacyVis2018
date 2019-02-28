@@ -32,14 +32,17 @@ export default class AttrNetwork extends Component {
       nodes,
       links
     } = data;
-    const margin = 50,
+    const margin = 100,
       merge = 'child' in nodes[0],
       r = merge ? 10 : 8,
       rowHeight = 30,
       legendWidth = 135,
       legendHeight = 140,
       legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
-      fontSize = 13;
+      fontSize = 13,
+      colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6',];
+    let cn = 0, colorMap = {}, attrSet = {}, hullList = [];
+
 
     const ScaleX = d3
       .scaleLinear()
@@ -54,6 +57,14 @@ export default class AttrNetwork extends Component {
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
+      if (!(nodes[i].attrName in colorMap)) {
+        colorMap[nodes[i].attrName] = colorList[cn];
+        attrSet[nodes[i].attrName] = [[nodes[i].x, nodes[i].y]];
+        cn++;
+        if (cn === colorList.length) cn = 0;
+      } else {
+        attrSet[nodes[i].attrName].push([nodes[i].x, nodes[i].y]);
+      }
     }
 
     const g = d3
@@ -64,6 +75,116 @@ export default class AttrNetwork extends Component {
     d3.selectAll('.n2d').remove();
     d3.selectAll('.edgeDetail').remove();
 
+    if (!merge) {
+      let hullPadding = 50;
+      let vecFrom = function (p0, p1) {               // Vector from p0 to p1
+        return [p1[0] - p0[0], p1[1] - p0[1]];
+      }
+      let vecScale = function (v, scale) {            // Vector v scaled by 'scale'
+        return [scale * v[0], scale * v[1]];
+      }
+      let vecSum = function (pv1, pv2) {              // The sum of two points/vectors
+        return [pv1[0] + pv2[0], pv1[1] + pv2[1]];
+      }
+      let vecUnit = function (v) {                    // Vector with direction of v and length 1
+        let norm = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+        return vecScale(v, 1 / norm);
+      }
+      let vecScaleTo = function (v, length) {         // Vector with direction of v with specified length
+        return vecScale(vecUnit(v), length);
+      }
+      let unitNormal = function (pv0, p1) {           // Unit normal to vector pv0, or line segment from p0 to p1
+        if (p1 != null) pv0 = vecFrom(pv0, p1);
+        let normalVec = [-pv0[1], pv0[0]];
+        return vecUnit(normalVec);
+      };
+
+      let lineFn = d3.line()
+        .curve(d3.curveCatmullRomClosed)
+        .x(d => d.p[0])
+        .y(d => d.p[1]);
+
+      const smoothHull = function (polyPoints) {
+        let pointCount = polyPoints.length;
+        if (!polyPoints || pointCount < 1) return "";
+        if (pointCount === 1) return smoothHull1(polyPoints);
+        if (pointCount === 2) return smoothHull2(polyPoints);
+        polyPoints = d3.polygonHull(polyPoints);
+
+        let hullPoints = polyPoints.map(function (point, index) {
+          let pNext = polyPoints[(index + 1) % pointCount];
+          return {
+            p: point,
+            v: vecUnit(vecFrom(point, pNext))
+          };
+        });
+
+        for (let i = 0; i < hullPoints.length; ++i) {
+          let priorIndex = (i > 0) ? (i - 1) : (pointCount - 1);
+          let extensionVec = vecUnit(vecSum(hullPoints[priorIndex].v, vecScale(hullPoints[i].v, -1)));
+          hullPoints[i].p = vecSum(hullPoints[i].p, vecScale(extensionVec, hullPadding));
+        }
+
+        return lineFn(hullPoints);
+      }
+
+      let smoothHull1 = function (polyPoints) {
+        let p1 = [polyPoints[0][0], polyPoints[0][1] - hullPadding];
+        let p2 = [polyPoints[0][0], polyPoints[0][1] + hullPadding];
+        return 'M ' + p1
+          + ' A ' + [hullPadding, hullPadding, '0,0,0', p2].join(',')
+          + ' A ' + [hullPadding, hullPadding, '0,0,0', p1].join(',');
+      };
+
+
+      let smoothHull2 = function (polyPoints) {
+
+        let v = vecFrom(polyPoints[0], polyPoints[1]);
+        let extensionVec = vecScaleTo(v, hullPadding);
+
+        let extension0 = vecSum(polyPoints[0], vecScale(extensionVec, -1));
+        let extension1 = vecSum(polyPoints[1], extensionVec);
+
+        let tangentHalfLength = 1.2 * hullPadding;
+        let controlDelta = vecScaleTo(unitNormal(v), tangentHalfLength);
+        let invControlDelta = vecScale(controlDelta, -1);
+
+        let control0 = vecSum(extension0, invControlDelta);
+        let control1 = vecSum(extension1, invControlDelta);
+        let control3 = vecSum(extension0, controlDelta);
+
+        return 'M ' + extension0
+          + ' C ' + [control0, control1, extension1].join(',')
+          + ' S ' + [control3, extension0].join(',')
+          + ' Z';
+      };
+
+
+      for (let i in attrSet) {
+        hullList.push({ n: i, d: smoothHull(attrSet[i]) });
+      }
+
+      const voronoiG = g.append('g')
+        .attr('class', 'n2d');
+      // voronoiG.selectAll('circle')
+      //   .data(nodes)
+      //   .enter()
+      //   .append('circle')
+      //   .attr('r', margin / 2)
+      //   .style('fill', d => colorMap[d.attrName])
+      //   .style('stroke', 'none')
+      //   .attr('cx', d => d.x)
+      //   .attr('cy', d => d.y)
+      voronoiG.selectAll('path')
+        .data(hullList)
+        .enter()
+        .append('path')
+        .style('fill', d => colorMap[d.n])
+        .style('opacity', 0.5)
+        .attr('d', d => d.d);
+
+
+    }
     g.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -141,44 +262,6 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', 'middle')
       .text('Correlation (MI)');
 
-    if (!merge) {
-      if (nullList.length > 0) {
-        let ListSvg = g.append('g')
-          .attr('class', 'n2d')
-          .attr('transform', 'translate(' + (ww - legendWidth - 21) + ',' + (hh - legendHH - 10) + ')');
-        ListSvg.append('rect')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('width', legendWidth + 20)
-          .attr('height', legendHH)
-          .attr('rx', 5)
-          .attr('ry', 5)
-          .style('fill', '#dedede')
-          // .style('stroke', '#ccc')
-          // .style('stroke-dasharray', '2 1');
-        ListSvg.append('text')
-          .attr('x', legendWidth / 2 + 10)
-          .attr('y', rowHeight - 10)
-          .style('font-size', 18)
-          .style('text-anchor', 'middle')
-          .text('Irrelevant events');
-        // ListSvg.append('line')
-        //   .attr('x1', 5)
-        //   .attr('x2', legendWidth - 5)
-        //   .attr('y1', rowHeight)
-        //   .attr('y2', rowHeight)
-        //   .style('stroke', '#ccc')
-        //   .style('stroke-dasharray', '5 5');
-      }
-      for (let i = 0; i < nullList.length; i++) {
-        let n = nullList[i];
-        n.x = ww - legendWidth + r + 11;
-        n.y = hh - legendHH + rowHeight * i + rowHeight + 10;
-        nodes.push(n);
-      }
-
-    }
-
     g.append('defs')
       .attr('class', 'n2d')
       .append('marker')
@@ -222,7 +305,9 @@ export default class AttrNetwork extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-width', 3)
+      .style('stroke-width', d => {
+        return merge ? 3 : (1 + d.cpt[1] * d.cpt[2] / d.cpt[0] * 4);
+      })
       .style('cursor', 'pointer')
       .on('click', d => {
         if (!merge) {
@@ -711,6 +796,44 @@ export default class AttrNetwork extends Component {
               });
           });
       });
+
+    if (!merge) {
+      if (nullList.length > 0) {
+        let ListSvg = g.append('g')
+          .attr('class', 'n2d')
+          .attr('transform', 'translate(' + (ww - legendWidth - 21) + ',' + (hh - legendHH - 10) + ')');
+        ListSvg.append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', legendWidth + 20)
+          .attr('height', legendHH)
+          .attr('rx', 5)
+          .attr('ry', 5)
+          .style('fill', '#dedede')
+        // .style('stroke', '#ccc')
+        // .style('stroke-dasharray', '2 1');
+        ListSvg.append('text')
+          .attr('x', legendWidth / 2 + 10)
+          .attr('y', rowHeight - 10)
+          .style('font-size', 18)
+          .style('text-anchor', 'middle')
+          .text('Irrelevant events');
+        // ListSvg.append('line')
+        //   .attr('x1', 5)
+        //   .attr('x2', legendWidth - 5)
+        //   .attr('y1', rowHeight)
+        //   .attr('y2', rowHeight)
+        //   .style('stroke', '#ccc')
+        //   .style('stroke-dasharray', '5 5');
+      }
+      for (let i = 0; i < nullList.length; i++) {
+        let n = nullList[i];
+        n.x = ww - legendWidth + r + 11;
+        n.y = hh - legendHH + rowHeight * i + rowHeight + 10;
+        nodes.push(n);
+      }
+
+    }
     //label
     g
       .append('g')
