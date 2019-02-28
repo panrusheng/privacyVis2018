@@ -200,8 +200,8 @@
             .highlight-mask {
                 position: absolute;
                 pointer-events: none;
-                border: 1px solid grey;
-                background-color: rgba($color: #999999, $alpha: 0.2);
+                border: 2px solid #3987db;
+                // background-color: rgba($color: #999999, $alpha: 0.2);
                 width: 100%;
             }
         }

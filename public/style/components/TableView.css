@@ -142,8 +142,7 @@
       .table-view .table .table-body .highlight-mask {
         position: absolute;
         pointer-events: none;
-        border: 1px solid grey;
-        background-color: rgba(153, 153, 153, 0.2);
+        border: 2px solid #3987db;
         width: 100%; }
     .table-view .table .table-row {
       display: flex;
