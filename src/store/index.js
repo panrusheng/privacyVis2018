@@ -80,8 +80,20 @@ class AppStore {
   }
 
   @action
-  getGBN() {
-    axios.post('/get_gbn').then(data => {
+  getGBN(getDistrib) {
+    let attributes = [];
+    this.selectedAttributes.forEach(item => {
+      attributes.push({
+        attName: item.attrName,
+        sensitive: item.sensitive,
+      })
+    })
+
+    axios.post('/get_gbn', null, {
+      params: {
+        attributes: JSON.stringify(attributes),
+      }
+    }).then(data => {
       data.links.forEach(item => item.value = parseFloat(item.value));
       data.nodes.forEach(node => {
         node.attrName = node.attName;
@@ -130,70 +142,46 @@ class AppStore {
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
       // this.GBN = data;
-    });
-  }
-
-  @action
-  removeAttributes(attrName) {
-    const index = this.selectedAttributes.findIndex(
-      item => item.attrName === attrName
-    );
-    if (index >= 0) {
-      this.selectedAttributes.splice(index, 1);
-    }
+    }).then(() => {
+      if (getDistrib) {
+        this.getAttrDistribution();
+      }
+    })
   }
   
   @action
-  setAttributes(attributes) {
-    return axios.post('/set_selected_attribute', null, {
+  getAttrDistribution() {
+    axios.post('/get_attribute_distribution', null, {
       params: {
-        attributes: JSON.stringify(attributes.map(({ attrName, sensitive }) => ({ attName: attrName, sensitive })))
+        attributes: JSON.stringify(this.selectedAttributes.map(({ attrName }) => attrName))
       }
-    }).then(() => {
-      axios.post('/get_attribute_distribution', null, {
-        params: {
-          attributes: JSON.stringify(attributes.map(({ attrName }) => attrName))
-        }
-      }).then((data) => {
-        const selectedAttributes = [];
-        data.attributes.forEach(attr => {
-          attr.attrName = attr.attributeName;
-          attr.utility = 1;
-          attr.sensitive = (attributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
+    }).then((data) => {
+      const selectedAttributes = [];
+      data.attributes.forEach(attr => {
+        attr.attrName = attr.attributeName;
+        attr.utility = 1;
+        attr.sensitive = (this.selectedAttributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
 
-          if (attr.type === 'numerical') {
-            attr.breakPoints = [];
-            attr.data = dataPreprocess(attr.data);
-            attr.data.sort((a, b) => a.label - b.label);
-          } else {
-            attr.groups = [];
-            attr.data.forEach(d => {
-              attr.groups.push({
-                name: d.category,
-                categories: [d],
-                value: d.value
-              });
+        if (attr.type === 'numerical') {
+          attr.breakPoints = [];
+          attr.data = dataPreprocess(attr.data);
+          attr.data.sort((a, b) => a.label - b.label);
+        } else {
+          attr.groups = [];
+          attr.data.forEach(d => {
+            attr.groups.push({
+              name: d.category,
+              categories: [d],
+              value: d.value
             });
-          }
+          });
+        }
 
-          selectedAttributes.push(attr);
-        });
-        this.selectedAttributes = selectedAttributes;
+        selectedAttributes.push(attr);
       });
-    });
-  }
 
-  @action
-  setAttributeValue(attrName, value) {
-    const index = this.selectedAttributes.findIndex(
-      item => item.attrName === attrName
-    );
-    if (index >= 0) {
-      this.selectedAttributes[index] = Object.assign({},
-        this.selectedAttributes[index],
-        value
-      );
-    }
+      this.selectedAttributes = selectedAttributes;
+    });
   }
 
   @action

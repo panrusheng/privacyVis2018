@@ -58,8 +58,10 @@ export default class LoadData extends React.Component {
             attributes.push({ attrName: attr.attrName, sensitive: this.state.currentSelected[index] === 2 });
         });
 
+        this.props.store.selectedAttributes = attributes;
         this.props.store.setSystemStage(0);
-        this.props.store.setAttributes(attributes).then(() => this.props.store.getGBN());
+        this.props.store.getGBN(true);
+        // this.props.store.getAttrDistribution();
     }
 
     toggleCheck(index) {
