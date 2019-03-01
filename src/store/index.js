@@ -5,6 +5,7 @@ import {
 } from 'mobx';
 import axios from '../utils/axios.js';
 import { dataPreprocess } from '../utils/preprocess.js';
+import * as d3 from 'd3';
 
 class AppStore {
   @observable
@@ -91,7 +92,7 @@ class AppStore {
         attributes: JSON.stringify(atts),
       }
     }).then(data => {
-      const { GBN, attributes } = data;
+      const { GBN } = data;
 
       GBN.links.forEach(item => item.value = parseFloat(item.value));
       GBN.nodes.forEach(node => {
@@ -165,7 +166,6 @@ class AppStore {
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
-      // this.GBN = data;
     });
   }
 
@@ -243,6 +243,8 @@ class AppStore {
     });
     attr.groups = newGroups;
     this.selectedAttributes[index] = attr;
+
+    this.editGBN();
   }
 
   @action
@@ -265,6 +267,8 @@ class AppStore {
     attr.groups = newGroups;
 
     this.selectedAttributes[index] = attr;
+
+    this.editGBN();
   }
 
   @action
@@ -277,6 +281,7 @@ class AppStore {
     const attr = toJS(this.selectedAttributes[index]);
     attr.breakPoints = [...new Set([...attr.breakPoints, point])];
     this.selectedAttributes.splice(index, 1, attr);
+    this.editGBN();
   }
 
   @action
@@ -288,6 +293,7 @@ class AppStore {
     const attr = Object.assign({}, this.selectedAttributes[index]);
     attr.breakPoints.splice(pIndex, 1);
     this.selectedAttributes.splice(index, 1, attr);
+    this.editGBN();
   }
 
   @action
@@ -300,6 +306,8 @@ class AppStore {
     const attr = Object.assign({}, this.selectedAttributes[index]);
     attr.breakPoints.splice(pIndex, 1, [value]);
     this.selectedAttributes.splice(index, 1, attr);
+
+    this.editGBN();
   }
 
   @action
@@ -320,37 +328,36 @@ class AppStore {
   }
 
   @action
-  //request new GBN after re-defining events
-  updateGBN() { }
+  editGBN() { 
+    let eventList = [];
+    this.selectedAttributes.forEach(attr => {
+      let e = {};
+      e.attName = attr.attrName;
+      if (attr.type === 'numerical') {
+        const labels = attr.data.map(item => item.label);
+        const [lMin, lMax] = d3.extent(labels);
+        e.splitPoints = attr.breakPoints.map(p => p * (lMax - lMin) + lMin);
+      } else {
+        e.groups = attr.groups.map(g => ({
+          categories: g.categories.map(cat => cat.category),
+          name: g.name,
+        }));
+      }
+      eventList.push(e);
+    });
 
-  @action
-  //modify GBN interactively
-  editGBN() { }
+    axios.post('/edit_gbn', null, {
+      params: {
+        events: JSON.stringify(eventList),
+      }
+    }).then(() => {
+      // todo
+    });
+  }
 
   @action
   setSystemStage(stage) {
     this.systemStage = stage;
-  }
-
-  getAllRecords() {
-    const { currentDataset } = this;
-
-    axios.get('/', {
-      params: {
-        dataset: currentDataset,
-      }
-    }).then(data => {
-      const records = [];
-
-      data.forEach(item => {
-        delete item.page;
-        delete item.rows;
-
-        records.push(item);
-      });
-
-      this.records = records;
-    })
   }
 
   @action
@@ -395,7 +402,7 @@ class AppStore {
       });
 
       this.recList = data;
-      this.recSelctedList = data.rec.map(d => [1, 0, 0]);
+      this.recSelectedList = data.rec.map(d => [1, 0, 0]);
 
 
       // TEST

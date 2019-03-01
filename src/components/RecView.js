@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import { Radio, Button, Switch } from 'antd';
 import OverviewInf from './RecInfer/OverviewInf'
 import SubInfer from './RecInfer/SubInfer'
-import { toJS, autorun } from 'mobx';
+import { toJS, autorun, set } from 'mobx';
 
 const RadioGroup = Radio.Group;
 @inject(['store'])
@@ -57,19 +57,36 @@ export default class RecView extends React.Component {
   }
 
   submit() {
-    if (this.props.store.currentSubgroup) {
-      let subgIdx = this.props.store.subgroupRecSelectedList.findIndex(item => item.id === this.props.store.currentSubgroup.id);
-      let subg;
-      if (subgIdx >= 0) {
-        subg = toJS(this.props.store.subgroupRecSelectedList[subgIdx]);
-        subg.select = this.state.select;
+    const { currentSubgroup, subgroupRecSelectedList, recSelectedList, recNum } = this.props.store;
 
-        this.props.store.subgroupRecSelectedList.splice(subgIdx, 1, subg);
+    let recSel = recSelectedList[recNum].findIndex(s => s === 1);
+
+    if (currentSubgroup) {
+      let subgIdx = subgroupRecSelectedList.findIndex(item => item.id === currentSubgroup.id);
+
+      if (recSel === this.state.select) {
+        if (subgIdx >= 0) {
+          this.props.store.subgroupRecSelectedList.splice(subgIdx, 1);
+        }
       } else {
-        subg = toJS(this.props.store.currentSubgroup);
+        let subg = subgIdx >= 0 ? toJS(subgroupRecSelectedList[subgIdx]) : toJS(currentSubgroup);
+        let dupSelIndex = subgroupRecSelectedList.findIndex(item => item.group === subg.group &&  item.select === this.state.select);
+        let dupSelSubg = subgroupRecSelectedList[dupSelIndex];
+
+        if (dupSelIndex >= 0 && dupSelSubg.id !== subg.id) {
+          subg.records = [...new Set([...subg.records, ...dupSelSubg.records])];
+        }
+
         subg.select = this.state.select;
         
-        this.props.store.subgroupRecSelectedList.push(subg);
+        let selectedList = toJS(subgroupRecSelectedList);
+        
+        if (subgIdx >= 0) selectedList[subgIdx] = subg;
+        else selectedList.push(subg);
+
+        if (dupSelIndex >= 0) selectedList.splice(dupSelIndex, 1);
+      
+        this.props.store.subgroupRecSelectedList = selectedList;
       }
 
       this.props.store.currentSubgroup = null;

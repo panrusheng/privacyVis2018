@@ -19,13 +19,6 @@ const stages = [
 @inject(['store'])
 @observer
 class App extends React.Component {
-  componentDidMount() {
-    // this.props.store.fetchAttributes();
-
-    // test
-    this.props.store.getAllRecords();
-  }
-
   render() {
     const { systemStage } = this.props.store;
 
