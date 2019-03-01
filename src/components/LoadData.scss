@@ -7,6 +7,9 @@
 
         .datasets {
             display: flex;
+            .icon-button img{
+                cursor: pointer;
+            }
 
             .button {
                 height: 40px;

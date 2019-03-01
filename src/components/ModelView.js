@@ -2,18 +2,18 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import './ModelView.scss';
 import * as d3 from 'd3';
-import { Select, Button, Menu } from 'antd';
+import { Select, Button, InputNumber, Input, Menu } from 'antd';
 // import { toJS } from 'mobx';
 const Option = Select.Option;
 @inject(['store'])
 @observer
 export default class ModelView extends React.Component {
   state = {
-
+    model: 'knn',
   };
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+  }
 
   componentDidMount() {
     const comparison = this.props.store.comparison;
@@ -149,8 +149,97 @@ export default class ModelView extends React.Component {
       .attr('width', 20).attr('height', 20).attr('rx', 5).attr('ry', 5).style('fill', d => d.color).style('opacity', 0.8);
   }
 
-  modelSelected(e) {
-
+  renderPanel(model) {
+    switch(model) {
+      case "bn": return (<div className="model-panel">
+        <div className="model-unit">
+          <span className="label">Search algorithm: </span>
+          <Select defaultValue="k2" style={{ width: 270 }}>
+            <Option value="k2">K2</Option>
+            <Option value="gs">Genetic Search</Option>
+            <Option value="hc">Hill Climber</Option>
+            <Option value="lhc">LAGD Hill Climber</Option>
+            <Option value="lcs">Local Score Search</Option>
+            <Option value="rhc">Repeated Hill Climber</Option>
+            <Option value="sa">Simulated Annealing</Option>
+            <Option value="ts">Tabu Search</Option>
+            <Option value="tan">Transductive Adversarial Networks</Option>
+          </Select>
+        </div>
+      </div>);
+      case "svm": return (
+      <div className="model-panel">
+        <div className="model-unit">
+          <span className="label">Kernel type:</span>
+          <Select defaultValue={0}>
+            <Option value={0}>Linear</Option>
+            <Option value={1}>Polynomial</Option>
+            <Option value={2}>Exponential</Option>
+            <Option value={3}>Sigmoid</Option>
+          </Select>
+        </div>
+        <div className="model-unit">
+          <span className="label">Degree:</span>
+          <InputNumber value={3} min={1} max={5} defaultValue={3} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+        <div className="model-unit">
+          <span className="label">Gamma:</span>
+          <InputNumber value={1} min={0} max={5} defaultValue={1} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+        <div className="model-unit">
+          <span className="label">Coef0:</span>
+          <InputNumber value={0} min={0} max={5} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+      </div>);
+      case "rf": return (
+      <div className="model-panel">
+        <div className="model-unit">
+          <span className="label">BatchSize:</span>
+          <InputNumber value={100} min={1} max={100} defaultValue={100} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+        <div className="model-unit">
+          <span className="label">Max Depth:</span>
+          <InputNumber value={0} min={0} max={10} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+      </div>);
+      case "knn": return (
+      <div className="model-panel">
+        <div className="model-unit">
+          <span className="label">Cross Validate:</span>
+          <Select defaultValue={true}>
+            <Option value={true}>True</Option>
+            <Option value={false}>False</Option>
+          </Select>
+        </div>
+        <div className="model-unit">
+          <span className="label">K:</span>
+          <InputNumber min={1} max={5} defaultValue={1} step={1} style={{ width: 70, textAlign: 'left' }} />
+        </div>
+        <div className="model-unit">
+          <span className="label">Distance Weighting:</span>
+          <Select defaultValue={0}>
+            <Option value={0}>None</Option>
+            <Option value={1}>Inverse</Option>
+            <Option value={2}>Similarity</Option>
+          </Select>
+        </div>
+        <div className="model-unit">
+          <span className="label">Search Algorithm:</span>
+          <Input/>
+        </div>
+        <div className="model-unit">
+          <span className="label">Mean Squared:</span>
+          <Select defaultValue={true}>
+            <Option value={true}>True</Option>
+            <Option value={false}>False</Option>
+          </Select>
+        </div>
+        <div className="model-unit">
+          <span className="label">Distance Function:</span>
+          <Input/>
+        </div>
+      </div>);
+    }
   }
 
   submit() {
@@ -167,13 +256,20 @@ export default class ModelView extends React.Component {
           <div className="operation">
             <div className='mod-panel'>
               <div>
-                <span className="label">Model: </span>
-                <Select defaultValue="bn" style={{ width: 220 }} onChange={this.modelSelected}>
-                  <Option value="bn">Bayesian Network</Option>
-                  <Option value="svm">Support Vector Machine</Option>
-                </Select>
+                <div className="model-title">
+                  <div>
+                  <span className="label">Model: </span>
+                  <Select defaultValue={ this.state.model } id="modelSelect" style={{ width: 220 }} onChange={(e) => this.setState({model: e})}>
+                    <Option value="bn">Bayesian Network</Option>
+                    <Option value="svm">Support Vector Machine</Option>
+                    <Option value="rf">Random Forest</Option>
+                    <Option value="knn">K-nearest Neighbors</Option>
+                  </Select>
+                  </div>
+                  <Button className='model-submit' style={{width: 100}} onClick={this.submit}>Submit</Button>
+                </div>
               </div>
-              <Button className='model-submit' onClick={this.submit}>Submit</Button>
+              {this.renderPanel(this.state.model)}
             </div>
             <div className="mod-mainContent">
               {this.props.store.comparison.map((d, i) => (

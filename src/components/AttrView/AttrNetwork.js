@@ -319,7 +319,7 @@ export default class AttrNetwork extends Component {
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
       .style('stroke-width', d => {
-        return merge ? 3 : (1 + d.cpt[1] * d.cpt[2] / d.cpt[0] * 4);
+        return merge ? 3 : (1 + d.cpt[0] * d.cpt[2] / d.cpt[1] * 4);
       })
       .style('cursor', 'pointer')
       .on('click', d => {
