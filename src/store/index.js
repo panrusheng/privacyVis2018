@@ -77,10 +77,10 @@ class AppStore {
   }
 
   @action
-  getGBN(getDistrib) {
-    let attributes = [];
+  getGBN() {
+    let atts = [];
     this.selectedAttributes.forEach(item => {
-      attributes.push({
+      atts.push({
         attName: item.attrName,
         sensitive: item.sensitive,
       })
@@ -88,11 +88,13 @@ class AppStore {
 
     axios.post('/get_gbn', null, {
       params: {
-        attributes: JSON.stringify(attributes),
+        attributes: JSON.stringify(atts),
       }
     }).then(data => {
-      data.links.forEach(item => item.value = parseFloat(item.value));
-      data.nodes.forEach(node => {
+      const { GBN, attributes } = data;
+
+      GBN.links.forEach(item => item.value = parseFloat(item.value));
+      GBN.nodes.forEach(node => {
         node.attrName = node.attName;
         const a = this.selectedAttributes.find(item => item.attrName === node.attrName);
         if (!a) {
@@ -101,58 +103,41 @@ class AppStore {
         node.value = a.sensitive ? -1 : a.utility;
       });
 
-      data.nodes.sort((a, b) => a.eventNo - b.eventNo);
+      GBN.nodes.sort((a, b) => a.eventNo - b.eventNo);
 
       let dataGBN = {};
       dataGBN.nodes = [];
       dataGBN.links = [];
       dataGBN.nullNodes = [];
       let nullList = [], nodeList4links = [];
-      for (let i = 0; i < data.nodes.length; i++) {
+      for (let i = 0; i < GBN.nodes.length; i++) {
         nullList.push(false);
       }
-      for (let i = 0; i < data.links.length; i++) {
-        nullList[data.links[i].source] = true;
-        nullList[data.links[i].target] = true;
+      for (let i = 0; i < GBN.links.length; i++) {
+        nullList[GBN.links[i].source] = true;
+        nullList[GBN.links[i].target] = true;
       }
 
-      for (let i = 0; i < data.nodes.length; i++) {
+      for (let i = 0; i < GBN.nodes.length; i++) {
         if (nullList[i]) {
-          dataGBN.nodes.push(data.nodes[i]);
+          dataGBN.nodes.push(GBN.nodes[i]);
           nodeList4links.push(i);
         } else {
-          dataGBN.nullNodes.push(data.nodes[i]);
+          dataGBN.nullNodes.push(GBN.nodes[i]);
         }
       }
-      for (let i = 0; i < data.links.length; i++) {
+      for (let i = 0; i < GBN.links.length; i++) {
 
-        let source = data.links[i].source, target = data.links[i].target;
+        let source = GBN.links[i].source, target = GBN.links[i].target;
         for (let j = source; j >= 0; j--) {
           source = nullList[j] ? source : source - 1;
         }
         for (let j = target; j >= 0; j--) {
           target = nullList[j] ? target : target - 1;
         }
-        dataGBN.links.push({ source: source, target: target, value: data.links[i].value, cpt: data.links[i].cpt })
+        dataGBN.links.push({ source: source, target: target, value: GBN.links[i].value, cpt: GBN.links[i].cpt })
       }
 
-      this.GBN = dataGBN;
-      this.nodeList4links = nodeList4links;
-      // this.GBN = data;
-    }).then(() => {
-      if (getDistrib) {
-        this.getAttrDistribution();
-      }
-    })
-  }
-  
-  @action
-  getAttrDistribution() {
-    axios.post('/get_attribute_distribution', null, {
-      params: {
-        attributes: JSON.stringify(this.selectedAttributes.map(({ attrName }) => attrName))
-      }
-    }).then((data) => {
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
@@ -178,6 +163,9 @@ class AppStore {
       });
 
       this.selectedAttributes = selectedAttributes;
+      this.GBN = dataGBN;
+      this.nodeList4links = nodeList4links;
+      // this.GBN = data;
     });
   }
 
