@@ -170,7 +170,7 @@ export default class ModelView extends React.Component {
       case "svm": return (
       <div className="model-panel">
         <div className="model-unit">
-          <span className="label">Kernel type:</span>
+          <span className="label" style={{ width: 75}}>Kernel type:</span>
           <Select defaultValue={0}>
             <Option value={0}>Linear</Option>
             <Option value={1}>Polynomial</Option>
@@ -179,66 +179,131 @@ export default class ModelView extends React.Component {
           </Select>
         </div>
         <div className="model-unit">
-          <span className="label">Degree:</span>
+          <span className="label"  style={{ width: 75}}>Degree:</span>
           <InputNumber value={3} min={1} max={5} defaultValue={3} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
         <div className="model-unit">
-          <span className="label">Gamma:</span>
+          <span className="label" style={{ width: 75}}>Gamma:</span>
           <InputNumber value={1} min={0} max={5} defaultValue={1} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
         <div className="model-unit">
-          <span className="label">Coef0:</span>
-          <InputNumber value={0} min={0} max={5} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
+          <span className="label" style={{ width: 75}}>Coef0:</span>
+          <InputNumber value={0} min={0} max={5} defaultValue={0} step={0.01} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
       case "rf": return (
       <div className="model-panel">
         <div className="model-unit">
-          <span className="label">BatchSize:</span>
+          <span className="label">Batch size:</span>
           <InputNumber value={100} min={1} max={100} defaultValue={100} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
         <div className="model-unit">
-          <span className="label">Max Depth:</span>
+          <span className="label">Max depth:</span>
           <InputNumber value={0} min={0} max={10} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
       case "knn": return (
       <div className="model-panel">
         <div className="model-unit">
-          <span className="label">Cross Validate:</span>
-          <Select defaultValue={true}>
+          <span className="label" style={{"min-width": 125}}>Cross Validate:</span>
+          <Select defaultValue={true} style={{ width: 100}}>
             <Option value={true}>True</Option>
             <Option value={false}>False</Option>
           </Select>
         </div>
         <div className="model-unit">
-          <span className="label">K:</span>
-          <InputNumber min={1} max={5} defaultValue={1} step={1} style={{ width: 70, textAlign: 'left' }} />
+          <span className="label" style={{"min-width": 100}}>K:</span>
+          <InputNumber min={1} max={5} defaultValue={1} step={1} style={{ width: 75, textAlign: 'left' }} />
         </div>
         <div className="model-unit">
-          <span className="label">Distance Weighting:</span>
-          <Select defaultValue={0}>
+          <span className="label" style={{"min-width": 125}}>Distance weighting:</span>
+          <Select defaultValue={0} style={{ width: 100}}>
             <Option value={0}>None</Option>
             <Option value={1}>Inverse</Option>
             <Option value={2}>Similarity</Option>
           </Select>
         </div>
         <div className="model-unit">
-          <span className="label">Search Algorithm:</span>
-          <Input/>
-        </div>
-        <div className="model-unit">
-          <span className="label">Mean Squared:</span>
-          <Select defaultValue={true}>
+          <span className="label" style={{"min-width": 100}}>Mean squared:</span>
+          <Select defaultValue={false}>
             <Option value={true}>True</Option>
             <Option value={false}>False</Option>
           </Select>
         </div>
         <div className="model-unit">
-          <span className="label">Distance Function:</span>
-          <Input/>
+          <span className="label" style={{"min-width": 125}}>Distance Function:</span>
+          <Select defaultValue={0} style={{ width: 220}}>
+            <Option value={0}>Eculidean Distance</Option>
+            <Option value={1}>Filtered Distance</Option>
+            <Option value={2}>Chebyshev Distance</Option>
+            <Option value={3}>Manhattan Distance</Option>
+            <Option value={4}>Minkowski Distance</Option>  
+          </Select>
+        </div>
+        <div className="model-unit">
+          <span className="label" style={{"min-width": 125}}>Search Algorithm:</span>
+          <Select defaultValue={0} style={{ width: 220}}>
+            <Option value={0}>Linear NN Search</Option>
+            <Option value={1}>Ball Tree</Option>
+            <Option value={2}>Cover Tree</Option>
+            <Option value={3}>Filtered Neighbour Search</Option>
+            <Option value={4}>KDTree</Option>  
+          </Select>
         </div>
       </div>);
+      case "dt": return (
+        <div className="model-panel">
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Unpruned:</span>
+            <Select defaultValue={false} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Confidence threshold:</span>
+            <InputNumber min={0.05} max={1} defaultValue={0.25} step={0.05} style={{ width: 75, textAlign: 'left' }} />
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Min instance:</span>
+            <InputNumber min={1} max={5} defaultValue={2} step={1} style={{ width: 75, textAlign: 'left' }} />
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Laplace smoothing:</span>
+            <Select defaultValue={false} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Reduced error pruning:</span>
+            <Select defaultValue={false} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>MDL correction:</span>
+            <Select defaultValue={true} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Collapse tree:</span>
+            <Select defaultValue={true} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+          <div className="model-unit">
+            <span className="label" style={{"min-width": 147}}>Subtree raising:</span>
+            <Select defaultValue={true} style={{ width: 75}}>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
+            </Select>
+          </div>
+        </div>);
     }
   }
 
@@ -263,6 +328,7 @@ export default class ModelView extends React.Component {
                     <Option value="bn">Bayesian Network</Option>
                     <Option value="svm">Support Vector Machine</Option>
                     <Option value="rf">Random Forest</Option>
+                    <Option value="dt">Decision Tree</Option>
                     <Option value="knn">K-nearest Neighbors</Option>
                   </Select>
                   </div>
