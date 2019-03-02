@@ -72,6 +72,8 @@ class AppStore {
   @observable
   recNum = 0;
 
+  gbnSearchAlgorithm = 'K2';
+
   @action
   getDataSetList() {
     // TODO: fetch all datasets
@@ -90,6 +92,7 @@ class AppStore {
     axios.post('/get_gbn', null, {
       params: {
         attributes: JSON.stringify(atts),
+        method: this.gbnSearchAlgorithm,
       }
     }).then(data => {
       const { GBN } = data;
@@ -307,7 +310,7 @@ class AppStore {
     attr.breakPoints.splice(pIndex, 1, [value]);
     this.selectedAttributes.splice(index, 1, attr);
 
-    this.editGBN();
+    // this.editGBN();
   }
 
   @action

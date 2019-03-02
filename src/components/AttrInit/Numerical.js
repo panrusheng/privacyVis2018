@@ -225,6 +225,7 @@ export default class Numerical extends React.Component {
               value
             );
           })
+          .on('end', this.props.editGBN)
       );
 
   }

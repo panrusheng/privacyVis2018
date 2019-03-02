@@ -7,6 +7,7 @@
 
         .datasets {
             display: flex;
+            flex-wrap: wrap;
 
             .button {
                 height: 40px;
@@ -17,13 +18,13 @@
                 align-items: center;
                 padding: 0 10px;
                 cursor: pointer;
+                margin: 0 10px 10px 0;
 
                 &.active {
                     background-color: #999;
                     color: white;
                 }
             }
-            margin-bottom: 20px;
         } 
     }
     .attr-list {

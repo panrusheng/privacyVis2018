@@ -54,7 +54,6 @@ export default class AttrInitialize extends React.Component {
 
   componentDidUpdate() {
     this.setSize();
-    this.scrollLeft();
   }
 
   componentWillUnmount() {
@@ -197,6 +196,7 @@ export default class AttrInitialize extends React.Component {
             addBreakPoint={this.addBreakPoint}
             removeBreakPoint={this.removeBreakPoint}
             updateBreakPoint={this.updateBreakPoint}
+            editGBN={() => this.props.store.editGBN()}
             attr={attr}
             {...attrSize}
           />

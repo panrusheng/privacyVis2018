@@ -8,6 +8,8 @@ import { Modal } from 'antd';
 import axios from '../utils/axios';
 import './LoadData.scss';
 
+const SearchAlgorithm = ['K2', 'GeneticSearch', 'HillClimber', 'LAGDHillClimber', 'LocalScoreSearchAlgorithm',
+    'RepeatedHillClimber', 'SimulatedAnnealing', 'TabuSearch', 'TAN'];
 
 @inject(['store'])
 @observer
@@ -16,6 +18,7 @@ export default class LoadData extends React.Component {
         currentDataset: null,
         datasets: [],
         currentSelected: [],
+        searchAlgorithm: 'K2'
     }
 
     constructor(props) {
@@ -59,8 +62,9 @@ export default class LoadData extends React.Component {
         });
 
         this.props.store.selectedAttributes = attributes;
+        this.props.store.gbnSearchAlgorithm = this.state.searchAlgorithm;
         this.props.store.setSystemStage(0);
-        this.props.store.getGBN(true);
+        this.props.store.getGBN();
         // this.props.store.getAttrDistribution();
     }
 
@@ -134,6 +138,18 @@ export default class LoadData extends React.Component {
                         <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
                         <div className="datasets">
                             { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
+                        </div>
+                    </div>
+                    <div className="load-panel">
+                        <div style={{ marginBottom: 10 }}>Bayesian Network Search Algorithm</div>
+                        <div className="datasets">
+                            { SearchAlgorithm.map(algo => (
+                                <div
+                                    key={algo}
+                                    onClick={() => this.setState({ searchAlgorithm: algo })}
+                                    className={`button ${algo === this.state.searchAlgorithm ? 'active' : ''}`}>
+                                    {algo}
+                                </div>)) }
                         </div>
                     </div>
                 </div>
