@@ -26,14 +26,14 @@ export default class RecView extends Component {
       ww,
       hh,
       data,
-      name
+      num,
+      change
     } = this.props;
     if (data.nodes.length === 0) return;
     const margin = 20;
     const {
       nodes,
-      links,
-      num
+      links
     } = data;
     const del = sch.dL;
     // const r = 4;
@@ -69,7 +69,7 @@ export default class RecView extends Component {
 
     if (d3.selectAll('#arrowSub'.length === 0)) {
       g.append('defs')
-        .attr('class', name)
+        .attr('class', "rec-small-" + num)
         .append('marker')
         .attr('id', 'arrowSub')
         .attr('viewBox', '0 -5 10 10')
@@ -83,7 +83,7 @@ export default class RecView extends Component {
     }
 
     g.append('g')
-      .attr('class', name)
+      .attr('class', "rec-small-" + num)
       .selectAll('line')
       .data(links)
       .enter()
@@ -99,7 +99,7 @@ export default class RecView extends Component {
       .style('cursor', 'pointer');
 
     g.append('g')
-      .attr('class', name)
+      .attr('class', "rec-small-" + num)
       .selectAll('circle')
       .data(nodes)
       .enter()
@@ -116,7 +116,7 @@ export default class RecView extends Component {
       .attr('cy', d => d.y);
 
     g.append('g')
-      .attr('class', name)
+      .attr('class', "rec-small-" + num)
       .selectAll('text')
       .data(delList)
       .enter()
@@ -130,13 +130,13 @@ export default class RecView extends Component {
 
     if (rec > 0) {
       g.append('path')
-        .attr('class', name)
+        .attr('class', "rec-small-" + num)
         .attr('d', 'M2,2 L 50,2 L 2,50 Z')
         .style('fill', '#1866bb')
         .style('opacity', 0.9);
 
       g.append('text')
-        .attr('class', name)
+        .attr('class', "rec-small-" + num)
         .attr('transform', 'rotate(-45)')
         .attr('x', 0)
         .attr('y', 30)
@@ -146,7 +146,7 @@ export default class RecView extends Component {
     }
 
     g.append('rect')
-      .attr('class', name)
+      .attr('class', "rec-small-" + num)
       .attr('x', 2)
       .attr('y', 2)
       .attr('width', ww - 4)
@@ -154,23 +154,24 @@ export default class RecView extends Component {
       .style('stroke', rec > 0 ? 'rgba(24,102,187,0.9)' : 'none')
       .style('stroke-width', 3)
       .style('fill', '#000')
-      .style('fill-opacity', 0);
+      .style('fill-opacity', 0)
+      .on('click', () => { change(num); });
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.ww
       }
-      height = {
+      height={
         this.props.hh
       }
-      />
+    />
     );
   }
 }

@@ -38,7 +38,7 @@ export default class RecView extends Component {
       nodes,
       links,
     } = data;
-    const maxRec = 2,
+    const maxRec = sch.length - 1,
       angle = 2 / (maxRec + 1);
     const del = [];
 

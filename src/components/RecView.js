@@ -197,16 +197,16 @@ export default class RecView extends React.Component {
                 {deleteList.map((d, i) => (
                   <div className="rec-td" key={"rec-graph-" + i}>
                     <svg width={ww} height={hh}>
-                      <SubInfer data={recData} sch={d} rec={select[i]} ww={ww} hh={hh} name={"rec-small-" + i} />
+                      <SubInfer data={recData} sch={d} rec={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
                     </svg>
                   </div>
                 ))}
               </div>
               <div className='rec-selection'>
                 <RadioGroup onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
-                  <Radio value={0}>{"Utility loss: " + deleteList[0].uL.toFixed(2)}</Radio>
-                  <Radio value={1}>{"Utility loss: " + deleteList[1].uL.toFixed(2)}</Radio>
-                  <Radio value={2}>{"Utility loss: " + deleteList[2].uL.toFixed(2)}</Radio>
+                {deleteList.map((d, i) => (
+                  <Radio value={i} key={'radio' + i}>{"Utility loss: " + d.uL.toFixed(2)}</Radio>
+                ))}
                 </RadioGroup>
               </div>
             </div>
