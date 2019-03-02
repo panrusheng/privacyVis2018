@@ -340,7 +340,7 @@ export default class TableView extends React.Component {
       let deleteEventNos;
       let rec = recList.rec[gindex];
       let recSelIndex =(recSelectedList[gindex] || [1, 0, 0]).findIndex(val => val === 1);
-      deleteEventNos = rec[recSelIndex];
+      deleteEventNos = (rec && rec[recSelIndex]) || { dL: [], };
       let deleteAttr = new Set(recList.group[gindex].nodes
         .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)
         .map(n => n.id.substring(0, n.id.indexOf(':'))));

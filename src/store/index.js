@@ -367,12 +367,10 @@ class AppStore {
   @action
   getRecList() {
     const { GBN } = this;
-    axios.post('/get_recommendation', null, {
-      params: {
-        links: JSON.stringify(GBN.links),
-        utilityList: JSON.stringify(this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility }))),
-        attributes: JSON.stringify(this.selectedAttributes.map(item => item.attrName))
-      }
+    axios.post('/get_recommendation', {
+      links: JSON.stringify(GBN.links),
+      utilityList: JSON.stringify(this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility }))),
+      attributes: JSON.stringify(this.selectedAttributes.map(item => item.attrName))
     }).then(groups => {
       groups.forEach(g => {
         let id = 0;
@@ -467,9 +465,23 @@ class AppStore {
       }
     }
     this.trimList = trimList;
+
+    this.setTrim();
   }
 
+  @action
+  setTrim() {
+    let trimOption = {};
+    this.trimList.forEach(item => {
+      trimOption[item.attrName] = item.trimmed;
+    });
 
+    axios.post('/set_trim', null, {
+      params: {
+        options: JSON.stringify(trimOption),
+      }
+    });
+  }
 }
 
 export default AppStore;

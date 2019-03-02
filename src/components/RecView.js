@@ -178,8 +178,8 @@ export default class RecView extends React.Component {
           <div className="operation">
             <div className="rec-overview">
               <svg width={width} height={height}>
-                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} change={this.changeState} 
-                  show={this.state.show} ww={width}z hh={height} name={"rec-big"} />
+                { deleteList && <OverviewInf data={recData} sch={deleteList} selected={this.state.select} change={this.changeState} 
+                  show={this.state.show} ww={width}z hh={height} name={"rec-big"} />}
               </svg>
               <div className="rec-panel">
                 <Button className="rec-button" onClick={this.reset} disabled={(this.state.select === null)}>Reset</Button>
@@ -194,7 +194,7 @@ export default class RecView extends React.Component {
             </div>
             <div className="rec-solution">
               <div className="rec-list">
-                {deleteList.map((d, i) => (
+                {deleteList && deleteList.map((d, i) => (
                   <div className="rec-td" key={"rec-graph-" + i}>
                     <svg width={ww} height={hh}>
                       <SubInfer data={recData} sch={d} rec={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
@@ -204,7 +204,7 @@ export default class RecView extends React.Component {
               </div>
               <div className='rec-selection'>
                 <RadioGroup onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
-                {deleteList.map((d, i) => (
+                {deleteList && deleteList.map((d, i) => (
                   <Radio value={i} key={'radio' + i}>{"Utility loss: " + d.uL.toFixed(2)}</Radio>
                 ))}
                 </RadioGroup>
