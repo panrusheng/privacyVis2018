@@ -33,3 +33,32 @@
         margin-right: 0; }
       .attribute-view .attr-operations .operation:first-child {
         flex: 1; }
+  .attribute-view .gbn-legend {
+    display: flex;
+    height: 50px;
+    margin: 5px 50px 0px 50px;
+    padding: 13px;
+    text-align: center;
+    border: 2px #ddd dashed; }
+    .attribute-view .gbn-legend .gbn-legend-unit {
+      display: flex;
+      width: 220px;
+      height: 20px; }
+      .attribute-view .gbn-legend .gbn-legend-unit label {
+        line-height: 15px;
+        margin-left: 5px; }
+    .attribute-view .gbn-legend .gbn-sen {
+      width: 16px;
+      height: 16px;
+      background-color: #FE2901;
+      border-radius: 16px; }
+    .attribute-view .gbn-legend .gbn-non {
+      width: 16px;
+      height: 16px;
+      background-color: #7bbc88;
+      border-radius: 16px; }
+    .attribute-view .gbn-legend .gbn-edge {
+      width: 50px;
+      margin-top: 5px;
+      height: 10px;
+      background-image: linear-gradient(to right, rgba(102, 102, 102, 0), #666666); }

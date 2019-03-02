@@ -110,13 +110,15 @@
         margin: 5px 120px 0px 120px;
         padding: 13px;
         text-align: center;
-        border-radius: 5;
         border: 2px #ddd dashed;
         
         .model-legend-unit{
           display: flex;
           width: 220px;
           height: 30px;
+          label {
+              margin-left: 5px;
+          }
         }
         .model-dis {
           width: 20px;
@@ -133,5 +135,5 @@
           height: 20px;
           background-color: rgba(254,41,1, 0.3);
         }
-      }
+    }
 }

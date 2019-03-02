@@ -163,7 +163,7 @@ export default class Attribute extends React.Component {
     let data = toJS(this.props.store.GBN); // deep copy
     let canvas;
     const filterRange = d3.extent(data.links, d => d.value);
-    canvas = { ww: 940, hh: 920 };
+    canvas = { ww: 940, hh: 860 };
     let layout = this.forceDirected(data.nodes, data.links);
     if (this.state.mergeAttribute) {
       layout = this.mergeGraph(layout, data.nodes, data.links);
@@ -201,6 +201,20 @@ export default class Attribute extends React.Component {
             />
           </svg>
         </div>
+        <div className="gbn-legend">
+              <div className='gbn-legend-unit'>
+                <div className="gbn-sen" />
+                <label>Sensitive</label>
+              </div>
+              <div className='gbn-legend-unit'>
+                <div className="gbn-non" />
+                <label>Non-sensitive</label>
+              </div>
+              <div className='gbn-legend-unit'>
+                <div className="gbn-edge" />
+                <label>P(Target|Source)</label>
+              </div>
+            </div>
       </div>
     );
   }

@@ -292,19 +292,19 @@ export default class ModelView extends React.Component {
               ))}
             </div>
             <div className="model-legend">
-          <div className='model-legend-unit'>
-            <div className="model-dis" />
-            <label>Real occurrences</label>
-          </div>
-          <div className='model-legend-unit'>
-            <div className="model-pos" />
-            <label>Identified as positives</label>
-          </div>
-          <div className='model-legend-unit'>
-            <div className="model-tp" />
-            <label>Correctly identified as positives</label>
-          </div>
-        </div>
+              <div className='model-legend-unit'>
+                <div className="model-dis" />
+                <label>Real occurrences</label>
+              </div>
+              <div className='model-legend-unit'>
+                <div className="model-pos" />
+                <label>Identified as positives</label>
+              </div>
+              <div className='model-legend-unit'>
+                <div className="model-tp" />
+                <label>Correctly identified as positives</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
