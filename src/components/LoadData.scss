@@ -9,6 +9,10 @@
             display: flex;
             flex-wrap: wrap;
 
+            .icon-button img{
+                cursor: pointer;
+            }
+
             .button {
                 height: 40px;
                 border-radius: 10px;

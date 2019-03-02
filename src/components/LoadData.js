@@ -124,7 +124,7 @@ export default class LoadData extends React.Component {
                         </div>
                         { currentAttrList.map((attr, index) => (
                             <div className="attr-list-item">
-                                <div onClick={() => this.toggleCheck(index)}>{
+                                <div onClick={() => this.toggleCheck(index)} className="icon-button">{
                                     //checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
                                     currentSelected[index] === 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] === 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
                                 }</div>

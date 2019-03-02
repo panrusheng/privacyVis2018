@@ -37,7 +37,6 @@ export default class AttrNetwork extends Component {
       r = merge ? 10 : 8,
       rowHeight = 30,
       legendWidth = 135,
-      legendHeight = 140,
       legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
       fontSize = 13,
       colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6',];
@@ -166,15 +165,7 @@ export default class AttrNetwork extends Component {
 
       const voronoiG = g.append('g')
         .attr('class', 'n2d');
-      // voronoiG.selectAll('circle')
-      //   .data(nodes)
-      //   .enter()
-      //   .append('circle')
-      //   .attr('r', margin / 2)
-      //   .style('fill', d => colorMap[d.attrName])
-      //   .style('stroke', 'none')
-      //   .attr('cx', d => d.x)
-      //   .attr('cy', d => d.y)
+     
       voronoiG.selectAll('path')
         .data(hullList)
         .enter()
@@ -196,71 +187,6 @@ export default class AttrNetwork extends Component {
         d3.selectAll('.edgeDetail').remove();
         d3.selectAll('.context-menu').remove();
       });
-
-    //legend
-    let legend = g.append('g')
-      .attr('class', 'n2d')
-      .attr('transform', 'translate(' + 10 + ',' + (hh - legendHeight - 10) + ')');
-    legend.append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', legendWidth)
-      .attr('height', legendHeight)
-      .attr('rx', 5)
-      .attr('ry', 5)
-      .style('fill', '#fff')
-      .style('stroke', '#ccc')
-      .style('stroke-dasharray', '2 1');
-    legend.append('text')
-      .attr('x', legendWidth / 2)
-      .attr('y', rowHeight - 10)
-      .style('font-size', 18)
-      .style('text-anchor', 'middle')
-      .text('Legend');
-    legend.append('line')
-      .attr('x1', 5)
-      .attr('x2', legendWidth - 5)
-      .attr('y1', rowHeight)
-      .attr('y2', rowHeight)
-      .style('stroke', '#ccc')
-      .style('stroke-dasharray', '5 5');
-
-    let legendCircle = legend.selectAll('legend')
-      .data([{ type: 'Sensitive', color: '#FE2901' }, { type: 'Non-sensitive', color: '#7bbc88' }])
-      .enter();
-    legendCircle.append('circle')
-      .attr('cx', 20)
-      .attr('cy', (d, i) => rowHeight * i + rowHeight + 20)
-      .attr('r', r)
-      .style('fill', d => d.color);
-
-    legendCircle.append('text')
-      .attr('x', r + 25)
-      .attr('y', (d, i) => rowHeight * i + rowHeight - r + fontSize + 20)
-      .text(d => d.type);
-
-    let mainGradient = g.append('linearGradient').attr('id', 'edgeGradient');
-
-    mainGradient.append('stop')
-      .attr('class', 'stop-left')
-      .attr('stop-color', 'rgba(102,102,102,0)')
-      .attr('offset', '0');
-
-    mainGradient.append('stop')
-      .attr('class', 'stop-right')
-      .attr('stop-color', 'rgba(102,102,102,1)')
-      .attr('offset', '1');
-    legend.append('rect')
-      .attr('x', 10)
-      .attr('y', rowHeight * 4)
-      .attr('width', legendWidth - 20)
-      .attr('height', 5)
-      .style('fill', 'url(#edgeGradient)');
-    legend.append('text')
-      .attr('x', legendWidth / 2)
-      .attr('y', 3 * rowHeight - r + fontSize + 20)
-      .style('text-anchor', 'middle')
-      .text('Correlation (MI)');
 
     g.append('defs')
       .attr('class', 'n2d')
@@ -318,9 +244,7 @@ export default class AttrNetwork extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-width', d => {
-        return merge ? 3 : (1 + d.cpt[1] * d.cpt[2] / d.cpt[0] * 4);
-      })
+      .style('stroke-width', 3)//d => merge ? 3 : 1 + d.cpt[2] * 3)
       .style('cursor', 'pointer')
       .on('click', d => {
         if (!merge) {

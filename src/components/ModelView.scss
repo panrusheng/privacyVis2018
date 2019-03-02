@@ -20,10 +20,48 @@
         flex-direction: column;
         .mod-panel {
             display: flex;
-            flex-direction: wrap;
-            height: 170px;
+            height: 170px; 
+            border-radius: 5px;
+            // border: solid 2px #fff;
+            padding: 10px;
+            width: 840px;
+            margin-left: 50px;
+            background-color: rgb(208, 224, 240);
+            .model-title {
+                border-right: solid 1px #fff;
+                width: 300px;
+                height: 150px; 
+                display: flex;
+                flex-direction: column;
+                // justify-content: space-around;
+            } 
             .model-submit {
-                margin-left: 50px;
+                margin-left: 100px;
+                margin-top: 18px;
+            }
+            .model-panel {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                height: 150px;
+                width: 600px;
+            }
+            .model-unit {
+                height: 30px;
+                min-width: 250px;
+                display: flex;
+                flex-direction: row;
+                margin-right: 10px;
+                margin-bottom: 5px;
+                input {
+                    width: 100px;
+                }
+            }
+            .label {
+                margin: 10px;
+                vertical-align: middle;
+                color: #333;
+                line-height: 14px;
             }
         }
         .mod-mainContent {
@@ -46,6 +84,7 @@
             height:280px;
             margin: 10px;
             width:380px;
+            border-radius: 5px;
             // border: solid 1px #ccc;
             background-color: #efefef;
             flex-direction: column;
@@ -72,7 +111,6 @@
         margin: 5px 120px 0px 120px;
         padding: 13px;
         text-align: center;
-        border-radius: 5;
         border: 2px #ddd dashed;
         
         .model-legend-unit{
@@ -80,9 +118,7 @@
           width: 220px;
           height: 30px;
           label {
-            margin-left: 5px;
-            vertical-align: middle;
-            color: #333;
+              margin-left: 5px;
           }
         }
         .model-dis {
@@ -100,5 +136,5 @@
           height: 20px;
           background-color: rgba(254,41,1, 0.3);
         }
-      }
+    }
 }
