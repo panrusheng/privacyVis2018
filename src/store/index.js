@@ -34,6 +34,7 @@ class AppStore {
   };
 
   nodeList4links = [];
+
   @observable
   recList = { group: [], rec: [] }
 
@@ -366,20 +367,20 @@ class AppStore {
   @action
   getRecList() {
     const { GBN } = this;
-    axios.post('/get_recommendation', {
+    axios.post('/get_recommendation', null, {
       params: {
-        // currentGBN: GBN,
+        links: JSON.stringify(GBN.links),
+        utilityList: JSON.stringify(this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility }))),
+        attributes: JSON.stringify(this.selectedAttributes.map(item => item.attrName))
       }
-    }).then(data => {
-      data.rec = [];
-      data.group.splice(10); 
-      data.group.map(g => {
+    }).then(groups => {
+      groups.forEach(g => {
         let id = 0;
-        g.nodes.map(node => {
+        g.localGBN.nodes.map(node => {
           let newId = id++;
           let oldId = node.eventNo;
 
-          g.links.forEach(link => {
+          g.localGBN.links.forEach(link => {
             if (link.source === oldId) {
               link.source = newId;
             }
@@ -392,62 +393,59 @@ class AppStore {
         })
       });
 
-      data.rec = data.group.map((g) => {
-        let top3rec = new Array(3);
-        for (let i = 0; i < 3; ++i) {
-          top3rec[i] = {
-            dL: [ g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo, g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo, g.nodes[Math.floor(Math.random()*g.nodes.length)].eventNo ],
-            uL: 0.3,
-          };
-        }
+      let recList = {};
+      recList.group = groups.map(item => item.localGBN);
+      recList.rec = groups.map(item => item.rec);
 
-        return top3rec;
-      });
-
-      this.recList = data;
-      this.recSelectedList = data.rec.map(d => [1, 0, 0]);
-
-
-      // TEST
-      const groups = [];
-      const attributes = ["wei", "gen", "cat", "res", "sch", "fue", "gcs", "fmp", "tra", "emp", "jol", "fe", "he", "ascc"];
-      let id = 0;
-      let recId = 1;
-      data.group.forEach(({ num }) => {
-        num = 20;
-        let g = {
-          id: id++,
-          data: {},
-          records: [],
-        };
-
-        for (const a of attributes) g.data[a] = Math.random().toFixed(4);
-        for (let i = 0; i < num; ++i) {
-          let rec = {
-            id: recId++,
-            data: [],
-          };
-
-          for (const a of attributes) {
-            rec.data.push({
-              attName: a,
-              value: Math.random().toFixed(4),
-              utility: Math.random().toFixed(3),
-            });
-          }
-          g.records.push(rec);
-        }
-
-        groups.push(g);
-      });
-
-      this.dataGroups = groups;
+      this.recList = recList;
+      this.recSelectedList = groups.map(() => [1, 0, 0]);
+      this.dataGroups = groups.map(g => ({
+        id: g.id,
+        records: g.records,
+        data: g.data,
+      }));
     })
   }
 
-  @action
-  editRecList() {
 
+  @action getResult() {
+    let options = [];
+    this.recSelectedList.forEach((selectArray, index) =>{
+      let gSel, flag;
+      flag = true;
+      selectArray.forEach((s, idx) => {
+        if (s === 1) gSel = idx;
+        else if (s !== 0) flag = false;
+      });
+
+      if (flag) {
+        options.push({ flag, no: gSel });
+        return;
+      }
+
+      let selectionList = new Array(3);
+      let subgroups = this.subgroupRecSelectedList.filter(item => item.group === index);
+      let spSelIds = new Set();
+
+      subgroups.forEach(subg => {
+        selectionList[subg.select] = subg.records;
+        spSelIds = new Set([...spSelIds, subg.records]);
+      });
+
+      selectionList[gSel] = [];
+
+      this.dataGroups[index].records.forEach(item => {
+        if (!spSelIds.has(item.id)) selectionList[gSel].push(item.id);
+      });
+    });
+
+    axios.post('/get_result', null, {
+      params: {
+        options: JSON.stringify(options),
+      }
+    }).then(data => {
+      // TODO
+    })
   }
 
   @action
