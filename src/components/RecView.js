@@ -149,19 +149,19 @@ export default class RecView extends React.Component {
     let select = [];
 
     if (this.state.select === null) {
-      if (this.props.store.currentSubgroup) {
-        let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
-        if (subg) {
-          for (let i = 0; i < 3; ++i) {
-            if (i === subg.select) select.push(1);
-            else select.push(0);
-          }
-        } else {
-          select = [1, 0, 0];
-        }
-      } else {
+      // if (this.props.store.currentSubgroup) {
+      //   let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
+      //   if (subg) {
+      //     for (let i = 0; i < 3; ++i) {
+      //       if (i === subg.select) select.push(1);
+      //       else select.push(0);
+      //     }
+      //   } else {
+      //     select = [1, 0, 0];
+      //   }
+      // } else {
         select = recSelectedList[recNum];
-      }
+      // }
     }
     else {
       for (let i = 0; i < 3; i++) {
