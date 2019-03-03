@@ -177,47 +177,49 @@ class AppStore {
   editInference(source, target, cpt) {
     let newGBN = {};
     newGBN.nodes = [...this.GBN.nodes];
-    if (cpt.length === 0) {
+    let oL = toJS(this.GBN.links);
+    if (cpt[2] === 0) {
       newGBN.links = [];
-      for (let i = 0; i < this.GBN.links.length; i++) {
+      for (let i = 0; i < oL.length; i++) {
         if (
-          this.GBN.links[i].source === source &&
-          this.GBN.links[i].target === target
+          oL[i].source === source &&
+          oL[i].target === target
         )
           continue;
-        newGBN.links.push(this.GBN.links[i]);
+        newGBN.links.push(oL[i]);
       }
     } else {
       let flag = false;
-      newGBN.links = [...this.GBN.links];
-      const pa = cpt[0],
-        pa0 = 1 - pa,
-        pb = cpt[1],
-        pb0 = 1 - pb,
-        pab = pa * cpt[2],
-        pab0 = pa * (1 - cpt[2]),
-        pa0b = pa0 * cpt[3],
-        pa0b0 = pa0 * (1 - cpt[3]);
-      const value = pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
+      newGBN.links = oL;
+      // const pa = cpt[0],
+      //   pa0 = 1 - pa,
+      //   pb = cpt[1],
+      //   pb0 = 1 - pb,
+      //   pab = pa * cpt[2],
+      //   pab0 = pa * (1 - cpt[2]),
+      //   pa0b = pa0 * cpt[3],
+      //   pa0b0 = pa0 * (1 - cpt[3]);
+      const value = cpt[2];//pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
       for (let i = 0; i < newGBN.links.length; i++) {
         if (
-          newGBN.links[i].source === source &&
-          newGBN.links[i].target === target
+          oL[i].source === source &&
+          oL[i].target === target
         ) {
-          newGBN.links[i].cpt = cpt;
-          newGBN.links[i].value = value;
+          oL[i].cpt = cpt;
+          oL[i].value = value;
           flag = true;
           break;
         }
       }
       if (!flag)
-        newGBN.links.push({
+      oL.push({
           source: source,
           target: target,
           value: value,
           cpt: cpt
         });
     }
+    console.log(newGBN.links);
     this.GBN = newGBN;
   }
 
