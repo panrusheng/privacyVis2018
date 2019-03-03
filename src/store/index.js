@@ -21,7 +21,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = 3; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = -1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   dataGroups = [];
@@ -393,7 +393,7 @@ class AppStore {
 
       let recList = {};
       recList.group = groups.map(item => item.localGBN);
-      recList.rec = groups.map(item => item.rec);
+      recList.rec = groups.map(item => item.recList);
 
       this.recList = recList;
       this.recSelectedList = groups.map(() => [1, 0, 0]);
