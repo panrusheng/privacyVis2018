@@ -5,13 +5,13 @@ import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
 import { toJS, values, set } from 'mobx';
-import OmitVal from './TableView/OmitVal.js';
-import CrossIcon from '../assets/image/cross.png';
 import SlashIcon from '../assets/image/slash.png'
 import * as d3 from 'd3';
 
 const DESC = -1;
 const ASC = 1;
+
+const CELL_HEIGHT = 15;
 
 const cmp = function (a, b) {
   if (a > b) return 1;
@@ -27,10 +27,11 @@ export default class TableView extends React.Component {
   state = {
     orderCol: undefined,
     order: DESC,
-    omitValue: false,
     mode: 2, // 1: all records, 2: grouped rec,
     unfoldedGroups: [],
     rowSelection: [], // selected rows id,
+    foldState: [],
+    foldAll: false,
   };
 
   rowSelecting = false;
@@ -43,6 +44,7 @@ export default class TableView extends React.Component {
   tooltipData = null;
 
   cachedData = null;
+  tempSelection = null;
 
   constructor(props) {
     super(props);
@@ -62,12 +64,23 @@ export default class TableView extends React.Component {
   componentDidMount() {
     window.addEventListener('mouseup', this.handleRowSelMouseUp);
 
+    if (this.props.store.recordCount !== this.state.foldState.length) {
+      let foldState = new Array(this.props.store.recordCount).fill(true);
+      if (foldState.length > 0) foldState[0] = false;
+      this.setState({ foldState });
+    }
+
     this.adjustTableSize();
   }
 
   componentDidUpdate() {
-    this.adjustTableSize();
+    if (this.props.store.recordCount !== this.state.foldState.length) {
+      let foldState = new Array(this.props.store.recordCount).fill(true);
+      if (foldState.length > 0) foldState[0] = false;
+      this.setState({ foldState });
+    }
 
+    this.adjustTableSize();
     this.removeDupSelection();
   }
 
@@ -158,24 +171,25 @@ export default class TableView extends React.Component {
     if ((selIndex >= 0 && this.selectionGroup === group && e.ctrlKey)) {
     
     } else if (selIndex >= 0) {
-      rowSelection.splice(selIndex, 1, {
+      rowSelection.splice(selIndex, 1);
+      this.tempSelection = {
         group,
         ranges: [{
           start: seqId,
           end: seqId,
         }],
         id: incrId++,
-      })
-
+      };
     } else {
-      rowSelection.push({
+      this.tempSelection = {
         group,
         ranges: [{
           start: seqId,
           end: seqId,
         }],
         id: incrId++,
-      });
+      };
+      //rowSelection.push();
     }
     
     this.selectionGroup = group;
@@ -189,13 +203,19 @@ export default class TableView extends React.Component {
     if (!this.rowSelecting) return;
   
     let selection = [...this.state.rowSelection];
+
+    if (this.tempSelection) {
+      selection.push(this.tempSelection);
+      this.tempSelection = null;
+    }
+
     let sel = selection[selection.length - 1];
     if (!sel) return;
 
     sel = Object.assign({}, sel);
 
     let relativeY = e.clientY - document.querySelector('#wrapper-' + sel.group).getBoundingClientRect().top;
-    let seq = Math.floor(relativeY / 10);
+    let seq = Math.floor(relativeY / CELL_HEIGHT);
 
     let { start, end } = sel.ranges[sel.ranges.length - 1];
 
@@ -232,6 +252,11 @@ export default class TableView extends React.Component {
 
   handleRowSelMouseUp(e) {
     if (!this.rowSelecting) return;
+    if (this.tempSelection) {
+      this.tempSelection = null;
+      return;
+    }
+  
     let sel = this.state.rowSelection[this.state.rowSelection.length - 1];
     if (!sel) return;
     let records = this.orderedGroupRecords(this.selectionGroup);
@@ -271,13 +296,13 @@ export default class TableView extends React.Component {
     if (!this.tableBody) return;
     const { clientHeight, scrollHeight, clientWidth, scrollWidth } = this.tableBody;
 
-    if (clientWidth === scrollWidth) {
+    if (clientWidth >= scrollWidth) {
       this.leftHeader.style.marginBottom = 0;
     } else {
       this.leftHeader.style.marginBottom = '8px';
     }
 
-    if (clientHeight === scrollHeight) {
+    if (clientHeight >= scrollHeight) {
       this.topHeader.style.marginRight = 0;
     } else {
       this.topHeader.style.marginRight = '8px';
@@ -367,6 +392,7 @@ export default class TableView extends React.Component {
       if (mode === 1) {
         group.records.forEach(rec => {
           const r = {};
+          r.group = group.id;
           r.id = rec.id;
           r.data = {};
         
@@ -394,6 +420,7 @@ export default class TableView extends React.Component {
         r.id = group.id;
         r.extended = [];
         r.data = group.data;
+        r.noRisk = this.props.store.recList.rec[group.id] && this.props.store.recList.rec[group.id].length === 0;
 
         group.records.forEach(rec => {
           const er = {};
@@ -468,6 +495,23 @@ export default class TableView extends React.Component {
     d3.select('.tooltip').style('display', 'none');
   }
 
+  toggleGroup(g) {
+    let foldState;
+    if (this.state.foldAll) {
+      foldState = new Array(this.props.store.recordCount).fill(true);
+    } else {
+      foldState = [...this.state.foldState];
+    }
+
+    foldState[g] = !foldState[g];
+    
+    if (!foldState[g]) {
+      this.props.store.recNum = g;
+    }
+    this.props.store.currentSubgroup = null;
+    this.setState({ foldAll: false, foldState });
+  }
+
   renderEmpty() {
     return <div>No Attribute</div>;
   }
@@ -518,17 +562,14 @@ export default class TableView extends React.Component {
         className="table-header left"
         ref={dom => this.leftHeader = dom}>
         {
-          rows.map(({ id, extended }) => {
-            if (mode === 1) return (<div className="table-cell" key={"r" + id}>{id}</div>);
+          rows.map(({ id, extended, group, noRisk }) => {
+            if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
             return [
-              <div className="table-cell em group" key={"r" + id} onClick={() => this.props.store.recNum = id}>G{id + 1}</div>,
-              <div className="scroll-wrapper" data={id} key={'w' + id}>
-                <div className="table-cell"  style={{ height: extended.length * 10 }}/>
-                {/* {rowSelection.filter(item => item.group === id).map(({ start, end, id }, index) => (
-                  <div onContextMenu={e => this.removeSelection(e, id)} key={"r-s"+index} className="selection-mask" style={{ top: start, height: end - start }} />
-                ))} */}
-              </div>
+              <div className={`table-cell em group ${noRisk ? 'no-risk' : ''}`} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
+              !this.state.foldAll && !this.state.foldState[id] && (<div className="scroll-wrapper" data={id} key={'w' + id}>
+                <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
+                )
             ]
           })
         }
@@ -548,11 +589,11 @@ export default class TableView extends React.Component {
 
   renderRow(row, columns, isGroup = false, groupId, seqId) {
     return (<div
-      className={`table-row ${isGroup ? 'group' : ''}`}
-      key={`${isGroup ? 'g' : 'r'} ${row.id}`}
+      className={`table-row ${isGroup ? 'group' : ''} ${isGroup && row.noRisk ? 'no-risk' : ''}`}
+      key={`${isGroup ? '' : groupId} ${row.id}`}
       onMouseDown={e => !isGroup && seqId && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
-      onClick={isGroup ? (() => {this.props.store.recNum = row.id, this.props.store.currentSubgroup = null}) : undefined}>
+      onClick={isGroup ? (() => this.toggleGroup(row.id)) : undefined}>
       
       {columns.map(col => {
         const { data } = row;
@@ -593,79 +634,73 @@ export default class TableView extends React.Component {
       > 
         {
           rows.map((row) => {
-            if (mode === 1) return this.renderRow(row, columns);
+            if (mode === 1) return this.renderRow(row, columns, false, row.group);
             const groupedRows = [];
             groupedRows.push(this.renderRow(row, columns, true));
-            // const unfolded = unfoldedGroups.findIndex(gid => gid === row.id) >= 0;
+            
+            if (!this.state.foldAll && !this.state.foldState[row.id]) {
+              const eRows = [];
 
-            // if (unfolded) {
-            const eRows = [];
-
-            row.extended.forEach((eRow, index) => {
-              eRows.push(this.renderRow(eRow, columns, false, row.id, index));
-            });
-
-            let highlightMasks = [];
-
-            this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
-              .map(item => {
-                let cnt = 0;
-                let start = -1;
-                let recordSet = new Set(item.records);
-
-                for (let i = 0; i < row.extended.length; ++i) {
-                  let recId = row.extended[i].id;
-                  if (recordSet.has(recId)) {
-                    if (cnt === 0) start = i;
-                    cnt++;
-                  } else if (cnt >= 1) {
-                    highlightMasks.push(
-                      <div
-                      className="highlight-mask"
-                      key={`${row.id} ${recId}`}
-                      style={{ top: start * 10, height: cnt * 10 }}  
-                    />
-                    );
-                    start = -1;
-                    cnt = 0;
-                  }
-                }
+              row.extended.forEach((eRow, index) => {
+                eRows.push(this.renderRow(eRow, columns, false, row.id, index));
               });
 
-            groupedRows.push(<div key={"w" + row.id} onMouseMove={this.handleMouseMove} className="scroll-wrapper extent-rows" id={`wrapper-${row.id}`}>
-              {eRows}
-              {rowSelection.filter(item => item.group === row.id).map(({ ranges, group, id }) => (
-                ranges.map(({ start, end }) => (
-                  <div
-                  onContextMenu={e => this.removeSelection(e, id)}
-                  key={`${start}-${end}-${group}`}
-                  className="selection-mask"
-                  style={{ top: start * 10, height: 10 * (end - start + 1)}} />
-                ))
-              ))}
-              { highlightMasks }
-              {/* {
-                this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
-                  .map(item => item.records.map(recId => (
-                    <div
-                      className="highlight-mask"
-                      key={`${item.group} ${recId}`}
-                      style={{ top: row.extended.findIndex(e => e.id === recId) * 10, height: 10 }}  
-                    />
-                  )))
-              } */}
-            </div>)
-            // }
+              let highlightMasks = [];
 
+              this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
+                .map(item => {
+                  let cnt = 0;
+                  let start = -1;
+                  let recordSet = new Set(item.records);
+
+                  for (let i = 0; i < row.extended.length; ++i) {
+                    let recId = row.extended[i].id;
+                    if (recordSet.has(recId)) {
+                      if (cnt === 0) start = i;
+                      cnt++;
+                    } else if (cnt >= 1) {
+                      highlightMasks.push(
+                        <div
+                        className="highlight-mask"
+                        key={`${row.id} ${recId}`}
+                        style={{ top: start * CELL_HEIGHT, height: cnt * CELL_HEIGHT }}  
+                      />
+                      );
+                      start = -1;
+                      cnt = 0;
+                    }
+                  }
+                });
+
+              groupedRows.push(<div key={"w" + row.id} onMouseMove={this.handleMouseMove} className="scroll-wrapper extent-rows" id={`wrapper-${row.id}`}>
+                {eRows}
+                {rowSelection.filter(item => item.group === row.id).map(({ ranges, group, id }) => (
+                  ranges.map(({ start, end }) => (
+                    <div
+                    onContextMenu={e => this.removeSelection(e, id)}
+                    key={`${start}-${end}-${group}`}
+                    className="selection-mask"
+                    style={{ top: start * CELL_HEIGHT, height: CELL_HEIGHT * (end - start + 1)}} />
+                  ))
+                ))}
+                { highlightMasks }
+                {/* {
+                  this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
+                    .map(item => item.records.map(recId => (
+                      <div
+                        className="highlight-mask"
+                        key={`${item.group} ${recId}`}
+                        style={{ top: row.extended.findIndex(e => e.id === recId) * 10, height: 10 }}  
+                      />
+                    )))
+                } */}
+              </div>)
+            }
             return groupedRows;
           })
         }
       </div>
     )
-  }
-
-  renderOmitValView() {
-    return <OmitVal />
   }
 
   render() {
@@ -674,14 +709,14 @@ export default class TableView extends React.Component {
         <div className="table-title">
           <div className="view-title">Data Table View</div>
           <div className="operation">
-            <label>Omit Value</label>
+            <label>Fold All Groups</label>
             <Switch
-              checked={this.state.omitValue}
-              onChange={checked => this.setState({ omitValue: checked })}
+              checked={this.state.foldAll}
+              onChange={val => this.setState({ foldAll: val })}
             />
           </div>
         </div>
-        {this.state.omitValue ? this.renderOmitValView() : this.renderTable()}
+        {this.renderTable()}
         <div className="table-legend">
           <div className='table-legend-unit'>
             <div className="table-utility" />

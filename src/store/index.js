@@ -74,6 +74,7 @@ class AppStore {
   recNum = 0;
 
   gbnSearchAlgorithm = 'K2';
+  recordCount = 0;
 
   @action
   getDataSetList() {
@@ -372,8 +373,11 @@ class AppStore {
       utilityList: this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility })),
       attributes: this.selectedAttributes.map(item => item.attrName)
     }).then(groups => {
+      this.recordCount = 0;
       groups.forEach(g => {
         let id = 0;
+        this.recordCount += g.records.length;
+
         g.localGBN.nodes.map(node => {
           let newId = id++;
           let oldId = node.eventNo;

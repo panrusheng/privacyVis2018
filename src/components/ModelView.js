@@ -5,14 +5,54 @@ import * as d3 from 'd3';
 import { Select, Button, InputNumber, Input, Menu } from 'antd';
 // import { toJS } from 'mobx';
 const Option = Select.Option;
+
 @inject(['store'])
 @observer
 export default class ModelView extends React.Component {
   state = {
     model: 'knn',
+    options: {
+      crossValidate: 0, distanceWeighting: 0, k: 1, meanSquared: 0,
+      searchAlgorithm: 0, distanceFunction: 0,
+    }
   };
+
   constructor(props) {
     super(props);
+
+    this.changeModel = this.changeModel.bind(this);
+  }
+
+  changeModel(model) {
+    let options;
+    switch (model) {
+      case 'knn': {
+        options = {
+          crossValidate: 0, distanceWeighting: 0, k: 1, meanSquared: 0,
+          searchAlgorithm: 0, distanceFunction: 0,
+        };
+        break;
+      }
+      case 'bn': {
+        options = { searchAlgorithm: 'k2' };
+        break;
+      }
+      case 'svm': {
+        options = { kernelType: 0, degree: 3, gamma: this.props.store.selectedAttributes.length > 0 ?  parseFloat((1/this.props.store.selectedAttributes.length).toFixed(2)) : 1 , coef0: 0 };
+        break;
+      }
+      case 'dt': {
+        options =  { unpruned: 0, confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: 1,
+          reducedErrorPruning: 0, MDLCorrection: 1, collapseTree: 1, subtreeRaising: 1 };
+        break;
+      }
+      case 'rf': {
+        options = { maxDepth: 0 };        
+        break;
+      }
+    }
+
+    this.setState({ options, model });
   }
 
   componentDidMount() {
@@ -149,12 +189,16 @@ export default class ModelView extends React.Component {
       .attr('width', 20).attr('height', 20).attr('rx', 5).attr('ry', 5).style('fill', d => d.color).style('opacity', 0.8);
   }
 
+  handleOptionUpdate(name, value) {
+    this.setState({ options: Object.assign({}, this.state.options, { [name]: value }) });
+  }
+
   renderPanel(model) {
     switch(model) {
       case "bn": return (<div className="model-panel">
-        <div className="model-unit">
+        <div className="model-unit" key="bn-1">
           <span className="label">Search algorithm: </span>
-          <Select defaultValue="k2" style={{ width: 270 }}>
+          <Select value={this.state.options.searchAlgorithm} style={{ width: 270 }} onChange={value => this.handleOptionUpdate('searchAlgorithm', value)}>
             <Option value="k2">K2</Option>
             <Option value="gs">Genetic Search</Option>
             <Option value="hc">Hill Climber</Option>
@@ -169,70 +213,66 @@ export default class ModelView extends React.Component {
       </div>);
       case "svm": return (
       <div className="model-panel">
-        <div className="model-unit">
+        <div className="model-unit" key="svm-1">
           <span className="label" style={{ width: 75}}>Kernel type:</span>
-          <Select defaultValue={0}>
+          <Select value={this.state.options.kernelType} onChange={value => this.handleOptionUpdate('kernelType', value)}>
             <Option value={0}>Linear</Option>
             <Option value={1}>Polynomial</Option>
             <Option value={2}>Exponential</Option>
             <Option value={3}>Sigmoid</Option>
           </Select>
         </div>
-        <div className="model-unit">
+        <div className="model-unit" key="svm-2">
           <span className="label"  style={{ width: 75}}>Degree:</span>
-          <InputNumber value={3} min={1} max={5} defaultValue={3} step={1} style={{ width: 70, textAlign: 'left' }} />
+          <InputNumber value={this.state.options.degree} onChange={value => this.handleOptionUpdate('degree', value)}  min={1} max={5} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
-        <div className="model-unit">
+        <div className="model-unit" key="svm-3">
           <span className="label" style={{ width: 75}}>Gamma:</span>
-          <InputNumber value={1} min={0} max={5} defaultValue={1} step={1} style={{ width: 70, textAlign: 'left' }} />
+          <InputNumber value={this.state.options.gamma} onChange={value => this.handleOptionUpdate('gamma', value)} min={0} max={5} step={0.01} style={{ width: 70, textAlign: 'left' }} />
         </div>
-        <div className="model-unit">
+        <div className="model-unit" key="svm-4">
           <span className="label" style={{ width: 75}}>Coef0:</span>
-          <InputNumber value={0} min={0} max={5} defaultValue={0} step={0.01} style={{ width: 70, textAlign: 'left' }} />
+          <InputNumber value={this.state.options.coef0} onChange={value => this.handleOptionUpdate('coef0', value)} min={0} max={5} step={0.01} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
       case "rf": return (
       <div className="model-panel">
-        <div className="model-unit">
-          <span className="label">Batch size:</span>
-          <InputNumber value={100} min={1} max={100} defaultValue={100} step={1} style={{ width: 70, textAlign: 'left' }} />
-        </div>
-        <div className="model-unit">
+        <div className="model-unit" key="rf-1">
           <span className="label">Max depth:</span>
-          <InputNumber value={0} min={0} max={10} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
+          <InputNumber value={this.state.options.maxDepth} onChange={value => this.handleOptionUpdate('maxDepth', value)} min={0} max={10} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
       case "knn": return (
       <div className="model-panel">
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 125}}>Cross Validate:</span>
-          <Select defaultValue={true} style={{ width: 100}}>
-            <Option value={true}>True</Option>
-            <Option value={false}>False</Option>
+        <div className="model-unit" key="knn-1">
+          <span className="label" style={{"minWidth": 125}}>Cross Validate:</span>
+          <Select value={this.state.options.crossValidate} onChange={value => this.handleOptionUpdate('crossValidate', value)} style={{ width: 100}}>
+            <Option value={1}>True</Option>
+            <Option value={0}>False</Option>
           </Select>
         </div>
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 100}}>K:</span>
-          <InputNumber min={1} max={5} defaultValue={1} step={1} style={{ width: 75, textAlign: 'left' }} />
+        <div className="model-unit" key="knn-2">
+          <span className="label" style={{"minWidth": 100}}>K:</span>
+          <InputNumber value={this.state.options.k} onChange={value => this.handleOptionUpdate('k', value)} min={1} max={5} defaultValue={1} step={1} style={{ width: 75, textAlign: 'left' }} />
         </div>
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 125}}>Distance weighting:</span>
-          <Select defaultValue={0} style={{ width: 100}}>
+        <div className="model-unit" key="knn-3">
+          <span className="label" style={{"minWidth": 125}}>Distance weighting:</span>
+          <Select  value={this.state.options.distanceWeighting} onChange={value => this.handleOptionUpdate('distanceWeighting', value)} style={{ width: 100}}>
             <Option value={0}>None</Option>
             <Option value={1}>Inverse</Option>
             <Option value={2}>Similarity</Option>
           </Select>
         </div>
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 100}}>Mean squared:</span>
-          <Select defaultValue={false}>
-            <Option value={true}>True</Option>
-            <Option value={false}>False</Option>
+        <div className="model-unit" key="knn-4">
+          <span className="label" style={{"minWidth": 100}}>Mean squared:</span>
+          <Select  value={this.state.options.meanSquared} onChange={value => this.handleOptionUpdate('meanSquared', value)}>
+            <Option value={1}>True</Option>
+            <Option value={0}>False</Option>
           </Select>
         </div>
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 125}}>Distance Function:</span>
-          <Select defaultValue={0} style={{ width: 220}}>
+        <div className="model-unit" key="knn-5">
+          <span className="label" style={{"minWidth": 125}}>Distance Function:</span>
+          <Select  value={this.state.options.distanceFunction} onChange={value => this.handleOptionUpdate('distanceFunction', value)} style={{ width: 220}}>
             <Option value={0}>Eculidean Distance</Option>
             <Option value={1}>Filtered Distance</Option>
             <Option value={2}>Chebyshev Distance</Option>
@@ -240,9 +280,9 @@ export default class ModelView extends React.Component {
             <Option value={4}>Minkowski Distance</Option>  
           </Select>
         </div>
-        <div className="model-unit">
-          <span className="label" style={{"min-width": 125}}>Search Algorithm:</span>
-          <Select defaultValue={0} style={{ width: 220}}>
+        <div className="model-unit" key="knn-6">
+          <span className="label" style={{"minWidth": 125}}>Search Algorithm:</span>
+          <Select  value={this.state.options.searchAlgorithm} onChange={value => this.handleOptionUpdate('searchAlgorithm', value)} style={{ width: 220}}>
             <Option value={0}>Linear NN Search</Option>
             <Option value={1}>Ball Tree</Option>
             <Option value={2}>Cover Tree</Option>
@@ -253,54 +293,54 @@ export default class ModelView extends React.Component {
       </div>);
       case "dt": return (
         <div className="model-panel">
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Unpruned:</span>
-            <Select defaultValue={false} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit" key="dt-7">
+            <span className="label" style={{"minWidth": 147}}>Unpruned:</span>
+            <Select  value={this.state.options.unpruned} onChange={value => this.handleOptionUpdate('unpruned', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Confidence threshold:</span>
-            <InputNumber min={0.05} max={1} defaultValue={0.25} step={0.05} style={{ width: 75, textAlign: 'left' }} />
+          <div className="model-unit" key="dt-8">
+            <span className="label" style={{"minWidth": 147}}>Confidence threshold:</span>
+            <InputNumber  value={this.state.options.confidenceThreshold} onChange={value => this.handleOptionUpdate('confidenceThreshold', value)}  min={0.05} max={1} defaultValue={0.25} step={0.05} style={{ width: 75, textAlign: 'left' }} />
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Min instance:</span>
-            <InputNumber min={1} max={5} defaultValue={2} step={1} style={{ width: 75, textAlign: 'left' }} />
+          <div className="model-unit" key="dt-9">
+            <span className="label" style={{"minWidth": 147}}>Min instance:</span>
+            <InputNumber  value={this.state.options.minInstance} onChange={value => this.handleOptionUpdate('minInstance', value)}  min={1} max={5} defaultValue={2} step={1} style={{ width: 75, textAlign: 'left' }} />
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Laplace smoothing:</span>
-            <Select defaultValue={false} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit" key="dt-1">
+            <span className="label" style={{"minWidth": 147}}>Laplace smoothing:</span>
+            <Select  value={this.state.options.laplaceSmoothing} onChange={value => this.handleOptionUpdate('laplaceSmoothing', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Reduced error pruning:</span>
-            <Select defaultValue={false} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit" key="23-1">
+            <span className="label" style={{"minWidth": 147}}>Reduced error pruning:</span>
+            <Select  value={this.state.options.reducedErrorPruning} onChange={value => this.handleOptionUpdate('reducedErrorPruning', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>MDL correction:</span>
-            <Select defaultValue={true} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit"  key="1-1">
+            <span className="label" style={{"minWidth": 147}}>MDL correction:</span>
+            <Select  value={this.state.options.MDLCorrection} onChange={value => this.handleOptionUpdate('MDLCorrection', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Collapse tree:</span>
-            <Select defaultValue={true} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit" key="2-1">
+            <span className="label" style={{"minWidth": 147}}>Collapse tree:</span>
+            <Select  value={this.state.options.collapseTree} onChange={value => this.handleOptionUpdate('collapseTree', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
-          <div className="model-unit">
-            <span className="label" style={{"min-width": 147}}>Subtree raising:</span>
-            <Select defaultValue={true} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+          <div className="model-unit" key="3-1">
+            <span className="label" style={{"minWidth": 147}}>Subtree raising:</span>
+            <Select  value={this.state.options.subtreeRaising} onChange={value => this.handleOptionUpdate('subtreeRaising', value)} style={{ width: 75}}>
+              <Option value={1}>True</Option>
+              <Option value={0}>False</Option>
             </Select>
           </div>
         </div>);
@@ -324,7 +364,7 @@ export default class ModelView extends React.Component {
                 <div className="model-title">
                   <div>
                   <span className="label">Model: </span>
-                  <Select defaultValue={ this.state.model } id="modelSelect" style={{ width: 220 }} onChange={(e) => this.setState({model: e})}>
+                  <Select defaultValue={ this.state.model } id="modelSelect" style={{ width: 220 }} onChange={this.changeModel}>
                     <Option value="bn">Bayesian Network</Option>
                     <Option value="svm">Support Vector Machine</Option>
                     <Option value="rf">Random Forest</Option>

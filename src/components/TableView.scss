@@ -92,6 +92,10 @@
                 background: transparent;  /* optional: just make scrollbar invisible */
             }
 
+            .no-risk {
+                background-color: rgba(186,135, 100, 0.1);
+            }
+
             .scroll-wrapper {
                 overflow: hidden;
                 min-width: fit-content;
@@ -102,11 +106,6 @@
                     background: transparent;  /* optional: just make scrollbar invisible */
                 }
             }
-
-            .table-cell.h-10 {
-                height: 10px;
-            }
-
 
             .table-cell.group {
                 cursor: pointer;
@@ -138,14 +137,22 @@
 
             .table-cell {
                 box-shadow: 1px 1px 0px rgba($color: #999999, $alpha: 0.2);
-                height: 10px;
+                height: 15px;
             }
 
             .table-row.group {
                 .table-cell {
                     height: 30px;
                 }
+
             }
+
+            .table-row.no-risk {
+                .table-cell {
+                    background-color: rgba(186,135, 100, 0.1);
+                }
+            }
+
             &::-webkit-scrollbar {
                 width: 8px;
                 border-radius: 4px;
@@ -278,7 +285,7 @@
         .table-norisk {
           width: 20px;
           height: 20px;
-          background-color: rgba(254,41,1, 0.3);
+          background-color: rgba(186,135, 100, 0.1);
         }
     }
 }
