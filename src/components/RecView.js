@@ -149,19 +149,7 @@ export default class RecView extends React.Component {
     let select = [];
 
     if (this.state.select === null) {
-      if (this.props.store.currentSubgroup) {
-        let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
-        if (subg) {
-          for (let i = 0; i < 3; ++i) {
-            if (i === subg.select) select.push(1);
-            else select.push(0);
-          }
-        } else {
-          select = [1, 0, 0];
-        }
-      } else {
-        select = [1, 0, 0];//select = recSelectedList[recNum];
-      }
+      select = recSelectedList[recNum];
     }
     else {
       for (let i = 0; i < 3; i++) {
@@ -178,8 +166,8 @@ export default class RecView extends React.Component {
           <div className="operation">
             <div className="rec-overview">
               <svg width={width} height={height}>
-                { deleteList && <OverviewInf data={recData} sch={deleteList} selected={this.state.select} change={this.changeState} 
-                  show={this.state.show} ww={width}z hh={height} name={"rec-big"} />}
+                <OverviewInf data={recData} sch={deleteList} selected={this.state.select} change={this.changeState} 
+                  show={this.state.show} ww={width}z hh={height} name={"rec-big"} />
               </svg>
               <div className="rec-panel">
                 <Button className="rec-button" onClick={this.reset} disabled={(this.state.select === null)}>Reset</Button>

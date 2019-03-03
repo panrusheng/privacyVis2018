@@ -483,7 +483,7 @@ export default class TableView extends React.Component {
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
         </div>
-        <div className="wrapper" style={{ maxHeight: 'calc(100% - 30px)' }}>
+        <div className="wrapper" style={{ maxHeight: 'calc(100% - 55px)' }}>
           {this.renderTableHeaderLeft(rows)}
           {this.renderTableBody(rows, columns)}
         </div>
@@ -671,21 +671,29 @@ export default class TableView extends React.Component {
   render() {
     return (
       <div className="table-view">
-        <div>
+        <div className="table-title">
           <div className="view-title">Data Table View</div>
-        </div>
-        {this.state.omitValue ? this.renderOmitValView() : this.renderTable()}
-        <div className="table-foot">
-          <div className="table-legend">
-            <label>Utitliy Value:</label>
-            <div className="gradient-color" />
-          </div>
           <div className="operation">
             <label>Omit Value</label>
             <Switch
               checked={this.state.omitValue}
               onChange={checked => this.setState({ omitValue: checked })}
             />
+          </div>
+        </div>
+        {this.state.omitValue ? this.renderOmitValView() : this.renderTable()}
+        <div className="table-legend">
+          <div className='table-legend-unit'>
+            <div className="table-utility" />
+            <label>Utility</label>
+          </div>
+          <div className='table-legend-unit'>
+            <div className="table-risk" />
+            <label>Privacy exposure risk</label>
+          </div>
+          <div className='table-legend-unit'>
+            <div className="table-norisk" />
+            <label>No risk</label>
           </div>
         </div>
       </div>

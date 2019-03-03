@@ -8,8 +8,8 @@ import { Modal } from 'antd';
 import axios from '../utils/axios';
 import './LoadData.scss';
 
-const SearchAlgorithm = ['K2', 'GeneticSearch', 'HillClimber', 'LAGDHillClimber', 'LocalScoreSearchAlgorithm',
-    'RepeatedHillClimber', 'SimulatedAnnealing', 'TabuSearch', 'TAN'];
+const SearchAlgorithm = ['K2', 'Genetic Search', 'Hill Climber', 'LAGD Hill Climber', 'Local Score Search Algorithm',
+    'Repeated Hill Climber', 'Simulated Annealing', 'Tabu Search', 'TAN'];
 
 @inject(['store'])
 @observer

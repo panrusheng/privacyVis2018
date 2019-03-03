@@ -396,7 +396,18 @@ class AppStore {
       recList.rec = groups.map(item => item.recList);
 
       this.recList = recList;
-      this.recSelectedList = groups.map(() => [1, 0, 0]);
+      let recSelectedList = [];
+      for (let i = 0; i < recList.rec.length; i++) {
+        if (recList.rec[i].length === 0) recSelectedList.push([]);
+        else {
+          let rec = [1];
+          for (let j = 1; j < recList.rec[i].length; j++) {
+            rec.push(0);
+          }
+          recSelectedList.push(rec);
+        }
+      }
+      this.recSelectedList = recSelectedList;
       this.dataGroups = groups.map(g => ({
         id: g.id,
         records: g.records,

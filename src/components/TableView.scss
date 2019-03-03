@@ -4,55 +4,41 @@
     padding: 10px;
     overflow: hidden;
 
-    .view-title {
-        font-size: 24px;
-        text-align: left;
-        padding-bottom: 10px;
-    }
-
-    .ant-switch-checked {
-        background: #1866bb;
-    }
-    
-    .table-foot {
+    .table-title {
         display: flex;
         justify-content: space-between;
-        margin-top: 10px;
-
-        .table-legend {
-            display:flex;
-            padding: 7px;
-            text-align: center;
-            // border-radius: 5;
-            // border: 2px #ddd dashed;
-            // height: 40px;
-
-            label {
-                margin-right: 5px;
-            }
-
-            .gradient-color {
-                width: 200px;
-                height: 10px;
-                margin-top: 7px;
-                background-image: linear-gradient(to right, rgba(33, 115, 50, 0.1), rgba(33, 115, 50, 0.87));
-            }
+        .view-title {
+            font-size: 24px;
+            text-align: left;
+            padding-bottom: 10px;
         }
-
+    
         .operation {
             display: flex;
             margin-right: 8px;
             margin-top: 10px;
             margin-bottom: 10px;
-
+    
             label {
                 margin-right: 5px;
             }
+
+            .ant-switch-checked {
+                background: #1866bb;
+            }
         }
     }
+    
+    // .table-foot {
+    //     display: flex;
+    //     justify-content: space-between;
+    //     margin-top: 10px;
+
+        
+    // }
 
     .table {
-        height: calc(100% - 80px);
+        height: calc(100% - 105px);
         user-select: none;
         &.all-record {
             .table-body {.table-cell {
@@ -261,5 +247,38 @@
     .scroll-wrapper {
         position: relative;
         overflow: -moz-scrollbars-none;
+    }
+    .table-legend {
+        display: flex;
+        height: 50px;
+        margin: 5px 120px 0px 120px;
+        padding: 13px;
+        text-align: center;
+        border: 2px #ddd dashed;
+        
+        .table-legend-unit{
+          display: flex;
+          width: 200px;
+          height: 30px;
+          label {
+              margin-left: 5px;
+          }
+        }
+        .table-utility {
+          width: 100px;
+          height: 10px;
+          margin-top: 7px;
+          background-image: linear-gradient(to right, rgba(33, 115, 50, 0.1), rgba(33, 115, 50, 0.87));
+        }
+        .table-risk {
+          width: 20px;
+          height: 20px;
+          background-color: #dedede;
+        }
+        .table-norisk {
+          width: 20px;
+          height: 20px;
+          background-color: rgba(254,41,1, 0.3);
+        }
     }
 }
