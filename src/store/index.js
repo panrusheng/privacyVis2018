@@ -368,9 +368,9 @@ class AppStore {
   getRecList() {
     const { GBN } = this;
     axios.post('/get_recommendation', {
-      links: JSON.stringify(GBN.links),
-      utilityList: JSON.stringify(this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility }))),
-      attributes: JSON.stringify(this.selectedAttributes.map(item => item.attrName))
+      links: GBN.links,
+      utilityList: this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility })),
+      attributes: this.selectedAttributes.map(item => item.attrName)
     }).then(groups => {
       groups.forEach(g => {
         let id = 0;
