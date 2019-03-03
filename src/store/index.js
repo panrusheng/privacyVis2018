@@ -393,7 +393,7 @@ class AppStore {
 
       let recList = {};
       recList.group = groups.map(item => item.localGBN);
-      recList.rec = groups.map(item => item.rec);
+      recList.rec = groups.map(item => item.recList);
 
       this.recList = recList;
       this.recSelectedList = groups.map(() => [1, 0, 0]);
