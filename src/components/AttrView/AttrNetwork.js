@@ -1,7 +1,11 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
 import * as d3 from 'd3';
 // import { toJS } from 'mobx';
-import { inject } from 'mobx-react';
+import {
+  inject
+} from 'mobx-react';
 @inject(['store'])
 export default class AttrNetwork extends Component {
   // constructor(props) {
@@ -32,6 +36,7 @@ export default class AttrNetwork extends Component {
       nodes,
       links
     } = data;
+    nullList = nullList ? nullList : [];
     const margin = 100,
       merge = 'child' in nodes[0],
       r = merge ? 10 : 8,
@@ -39,8 +44,11 @@ export default class AttrNetwork extends Component {
       legendWidth = 135,
       legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
       fontSize = 13,
-      colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6',];
-    let cn = 0, colorMap = {}, attrSet = {}, hullList = [];
+      colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6', ];
+    let cn = 0,
+      colorMap = {},
+      attrSet = {},
+      hullList = [];
 
 
     const ScaleX = d3
@@ -58,7 +66,9 @@ export default class AttrNetwork extends Component {
       nodes[i].y = ScaleY(nodes[i].y);
       if (!(nodes[i].attrName in colorMap)) {
         colorMap[nodes[i].attrName] = colorList[cn];
-        attrSet[nodes[i].attrName] = [[nodes[i].x, nodes[i].y]];
+        attrSet[nodes[i].attrName] = [
+          [nodes[i].x, nodes[i].y]
+        ];
         cn++;
         if (cn === colorList.length) cn = 0;
       } else {
@@ -76,23 +86,23 @@ export default class AttrNetwork extends Component {
 
     if (!merge) {
       let hullPadding = 50;
-      let vecFrom = function (p0, p1) {               // Vector from p0 to p1
+      let vecFrom = function (p0, p1) { // Vector from p0 to p1
         return [p1[0] - p0[0], p1[1] - p0[1]];
       }
-      let vecScale = function (v, scale) {            // Vector v scaled by 'scale'
+      let vecScale = function (v, scale) { // Vector v scaled by 'scale'
         return [scale * v[0], scale * v[1]];
       }
-      let vecSum = function (pv1, pv2) {              // The sum of two points/vectors
+      let vecSum = function (pv1, pv2) { // The sum of two points/vectors
         return [pv1[0] + pv2[0], pv1[1] + pv2[1]];
       }
-      let vecUnit = function (v) {                    // Vector with direction of v and length 1
+      let vecUnit = function (v) { // Vector with direction of v and length 1
         let norm = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
         return vecScale(v, 1 / norm);
       }
-      let vecScaleTo = function (v, length) {         // Vector with direction of v with specified length
+      let vecScaleTo = function (v, length) { // Vector with direction of v with specified length
         return vecScale(vecUnit(v), length);
       }
-      let unitNormal = function (pv0, p1) {           // Unit normal to vector pv0, or line segment from p0 to p1
+      let unitNormal = function (pv0, p1) { // Unit normal to vector pv0, or line segment from p0 to p1
         if (p1 != null) pv0 = vecFrom(pv0, p1);
         let normalVec = [-pv0[1], pv0[0]];
         return vecUnit(normalVec);
@@ -130,9 +140,9 @@ export default class AttrNetwork extends Component {
       let smoothHull1 = function (polyPoints) {
         let p1 = [polyPoints[0][0], polyPoints[0][1] - hullPadding];
         let p2 = [polyPoints[0][0], polyPoints[0][1] + hullPadding];
-        return 'M ' + p1
-          + ' A ' + [hullPadding, hullPadding, '0,0,0', p2].join(',')
-          + ' A ' + [hullPadding, hullPadding, '0,0,0', p1].join(',');
+        return 'M ' + p1 +
+          ' A ' + [hullPadding, hullPadding, '0,0,0', p2].join(',') +
+          ' A ' + [hullPadding, hullPadding, '0,0,0', p1].join(',');
       };
 
 
@@ -152,20 +162,23 @@ export default class AttrNetwork extends Component {
         let control1 = vecSum(extension1, invControlDelta);
         let control3 = vecSum(extension0, controlDelta);
 
-        return 'M ' + extension0
-          + ' C ' + [control0, control1, extension1].join(',')
-          + ' S ' + [control3, extension0].join(',')
-          + ' Z';
+        return 'M ' + extension0 +
+          ' C ' + [control0, control1, extension1].join(',') +
+          ' S ' + [control3, extension0].join(',') +
+          ' Z';
       };
 
 
       for (let i in attrSet) {
-        hullList.push({ n: i, d: smoothHull(attrSet[i]) });
+        hullList.push({
+          n: i,
+          d: smoothHull(attrSet[i])
+        });
       }
 
       const voronoiG = g.append('g')
         .attr('class', 'n2d');
-     
+
       voronoiG.selectAll('path')
         .data(hullList)
         .enter()
@@ -244,7 +257,7 @@ export default class AttrNetwork extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-width', 3)//d => merge ? 3 : 1 + d.cpt[2] * 3)
+      .style('stroke-width', 3) //d => merge ? 3 : 1 + d.cpt[2] * 3)
       .style('cursor', 'pointer')
       .on('click', d => {
         if (!merge) {
@@ -256,13 +269,17 @@ export default class AttrNetwork extends Component {
           x2 = nodes[d.target.index].x,
           y1 = nodes[d.source.index].y,
           y2 = nodes[d.target.index].y;
-        let dx1 = x2 - x1, dy1 = y2 - y1, dx2 = 1, dy2 = 0;
+        let dx1 = x2 - x1,
+          dy1 = y2 - y1,
+          dx2 = 1,
+          dy2 = 0;
         let l = Math.sqrt(dx1 * dx1 + dy1 * dy1),
-          w = 30, scale = ww / l * 0.7 > 3 ? 3 : ww / l * 0.7;
+          w = 30,
+          scale = ww / l * 0.7 > 3 ? 3 : ww / l * 0.7;
         let ifFlip = dy1 > 0,
           f = ifFlip ? -1 : 1;
-        let transX = ww / 2//((1 - f) * x1 + (f + 1) * x2) / 2;
-        let transY = hh / 2//((1 - f) * y1 + (f + 1) * y2) / 2;
+        let transX = ww / 2 //((1 - f) * x1 + (f + 1) * x2) / 2;
+        let transY = hh / 2 //((1 - f) * y1 + (f + 1) * y2) / 2;
         if (l === 0) return -1;
         let angle =
           ((f * Math.asin((dx1 * dx2 + dy1 * dy2) / l)) / Math.PI) * 180;
@@ -307,13 +324,13 @@ export default class AttrNetwork extends Component {
             let x1 = ((dd.source + 1 / 2) * 2 * w) / sourceList.length,
               x2 = ((dd.target + 1 / 2) * 2 * w) / targetList.length;
             let y = ifFlip ? 3 + triH - l / 2 : l / 2 - (3 + triH);
-            return ('M' + (ifFlip ? x1 - w : w - x1) + ',' + y + 'L' + (ifFlip ? x2 - w : w - x2) + ',' + (- y));
+            return ('M' + (ifFlip ? x1 - w : w - x1) + ',' + y + 'L' + (ifFlip ? x2 - w : w - x2) + ',' + (-y));
           })
           .style('opacity', dd => dd.value)
           .style('stroke', '#666')
           .attr('marker-end', 'url(#arrow-detail)')
           .style('stroke-width', 2);
-          
+
         edgeDetail.append('g')
           .attr('transform', 'translate(' + f * w + ',' + (ifFlip ? 3 - l / 2 : l / 2 - 3) + ') rotate(' + (f + 1) * 90 + ')')
           .append('text')
@@ -397,7 +414,8 @@ export default class AttrNetwork extends Component {
           height = rowHeight * 5,
           width = 115;
         let newCPT = d.cpt;
-        let sourceID = d.source.index, targetID = d.target.index;
+        let sourceID = d.source.index,
+          targetID = d.target.index;
         d3.selectAll('.context-menu').remove();
         g.append('rect')
           .attr('class', 'context-menu')
@@ -411,9 +429,10 @@ export default class AttrNetwork extends Component {
           .style('stroke', '#1866BB')
           .style('stoke-width', 1);
         let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
-        'P(' + nodes[targetID].id.slice(0, 3) + '):',
-        'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
-        'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):']
+          'P(' + nodes[targetID].id.slice(0, 3) + '):',
+          'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
+          'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):'
+        ]
         g.selectAll('fillEmpth')
           .data(titleList)
           .enter()
@@ -466,6 +485,7 @@ export default class AttrNetwork extends Component {
           .attr('y', y + 17 + height / 5 * 4)
           .style('fill', '#fff')
           .style('text-anchor', 'middle')
+          .style('pointer-events', 'none')
           .style('cursor', 'pointer')
           .text('Submit');
         g
@@ -516,6 +536,7 @@ export default class AttrNetwork extends Component {
                   let txt = inp.node().value;
                   el.text(txt);
                   newCPT[ii] = parseFloat(txt);
+                  console.log(newCPT[ii]);
                   p_el.selectAll('.inputSVG').remove();
                 }
               });
@@ -539,25 +560,25 @@ export default class AttrNetwork extends Component {
       .style('cursor', merge ? 'arrow' : 'crosshair')
       .call(
         d3
-          .drag()
-          .on('start', (d, i) => {
-            const startY = d.y;
-            const startX = d.x;
-            addlink
-              .attr('x1', startX)
-              .attr('y1', startY)
-              .attr('x2', startX)
-              .attr('y2', startY)
-              .attr('source-index', i)
-              .attr('target-index', -1);
-          })
-          .on('drag', function () {
-            const coordinates = d3.mouse(this);
-            addlink
-              .style('opacity', 1)
-              .attr('x2', coordinates[0])
-              .attr('y2', coordinates[1]);
-          })
+        .drag()
+        .on('start', (d, i) => {
+          const startY = d.y;
+          const startX = d.x;
+          addlink
+            .attr('x1', startX)
+            .attr('y1', startY)
+            .attr('x2', startX)
+            .attr('y2', startY)
+            .attr('source-index', i)
+            .attr('target-index', -1);
+        })
+        .on('drag', function () {
+          const coordinates = d3.mouse(this);
+          addlink
+            .style('opacity', 1)
+            .attr('x2', coordinates[0])
+            .attr('y2', coordinates[1]);
+        })
       )
       .on('mouseover', (d, i) => {
         if ((addlink.attr('source-index') === '-1') || (addlink.attr('target-index') !== '-1')) return;
@@ -571,15 +592,15 @@ export default class AttrNetwork extends Component {
         const height = rowHeight * 5,
           width = 115,
           x =
-            (parseFloat(addlink.attr('x1')) +
-              parseFloat(addlink.attr('x2')) -
-              width) /
-            2,
+          (parseFloat(addlink.attr('x1')) +
+            parseFloat(addlink.attr('x2')) -
+            width) /
+          2,
           y =
-            (parseFloat(addlink.attr('y1')) +
-              parseFloat(addlink.attr('y2')) -
-              height) /
-            2;
+          (parseFloat(addlink.attr('y1')) +
+            parseFloat(addlink.attr('y2')) -
+            height) /
+          2;
         let newCPT = [0, 0, 0, 0];
         d3.selectAll('.context-menu').remove();
         g.append('rect')
@@ -594,9 +615,10 @@ export default class AttrNetwork extends Component {
           .style('stroke', '#1866bb')
           .style('stoke-width', 1);
         let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
-        'P(' + nodes[i].id.slice(0, 3) + '):',
-        'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
-        'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):']
+          'P(' + nodes[i].id.slice(0, 3) + '):',
+          'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
+          'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):'
+        ]
         g.selectAll('fillEmpth')
           .data(titleList)
           .enter()
@@ -618,6 +640,7 @@ export default class AttrNetwork extends Component {
           .style('stroke-dasharray', '2 1');
         g.append('rect')
           .attr('class', 'context-menu')
+          .attr('id', 'edit-cpt-button')
           .attr('x', x + width / 4)
           .attr('y', y - 1 + height / 5 * 4)
           .attr('width', width / 2)
@@ -628,11 +651,11 @@ export default class AttrNetwork extends Component {
           .style('stroke', '#fff')
           .style('stoke-width', 1)
           .style('cursor', 'pointer')
-          .on('mouseover', function () {
-            d3.select(this).style('fill', '#b9d1ea').style('stroke', '#74a3d6');
+          .on('mouseover', () => {
+            d3.select('#edit-cpt-button').style('fill', '#b9d1ea').style('stroke', '#74a3d6');
           })
-          .on('mouseout', function () {
-            d3.select(this).style('fill', '#a2c1e3').style('stroke', '#fff');
+          .on('mouseout', () => {
+            d3.select('#edit-cpt-button').style('fill', '#a2c1e3').style('stroke', '#fff');
           })
           .on('click', () => {
             d3.selectAll('.inputSVG').remove();
@@ -650,6 +673,7 @@ export default class AttrNetwork extends Component {
           .style('fill', '#fff')
           .style('text-anchor', 'middle')
           .style('cursor', 'pointer')
+          .style('pointer-events', 'none')
           .text('Submit');
 
         g.selectAll('input-title-text')
@@ -759,19 +783,19 @@ export default class AttrNetwork extends Component {
   }
 
   render() {
-    return (<
-      g ref={
+    return ( <
+      g ref = {
         g => {
           this.g = g;
         }
       }
-      width={
+      width = {
         this.props.width
       }
-      height={
+      height = {
         this.props.height
       }
-    />
+      />
     );
   }
 }
