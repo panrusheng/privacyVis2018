@@ -21,7 +21,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = 3; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = -1; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   dataGroups = [];
@@ -368,9 +368,9 @@ class AppStore {
   getRecList() {
     const { GBN } = this;
     axios.post('/get_recommendation', {
-      links: JSON.stringify(GBN.links),
-      utilityList: JSON.stringify(this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility }))),
-      attributes: JSON.stringify(this.selectedAttributes.map(item => item.attrName))
+      links: GBN.links,
+      utilityList: this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility })),
+      attributes: this.selectedAttributes.map(item => item.attrName)
     }).then(groups => {
       groups.forEach(g => {
         let id = 0;
