@@ -326,12 +326,12 @@ class AppStore {
     const attr = Object.assign({}, this.selectedAttributes[index], { utility: value });
     this.selectedAttributes.splice(index, 1, attr);
 
-    index = this.GBN.nodes.find(item => item.attrName === attrName);
-    if (index < 0) return;
+    // index = this.GBN.nodes.find(item => item.attrName === attrName);
+    // if (index < 0) return;
 
-    const newNodes = [...this.GBN.nodes];
-    newNodes.splice(index, 1, Object.assign({}, this.GBN.nodes[index], { value }));
-    this.GBN.nodes = newNodes;
+    // const newNodes = [...this.GBN.nodes];
+    // newNodes.splice(index, 1, Object.assign({}, this.GBN.nodes[index], { value }));
+    // this.GBN.nodes = newNodes;
   }
 
   @action
