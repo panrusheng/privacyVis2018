@@ -92,8 +92,11 @@
                 background: transparent;  /* optional: just make scrollbar invisible */
             }
 
-            .no-risk {
+            .risk {
                 background-color: rgba(186,135, 100, 0.1);
+            }
+            .no-risk {
+                background-color: #efefef;
             }
 
             .scroll-wrapper {
@@ -147,9 +150,14 @@
 
             }
 
-            .table-row.no-risk {
+            .table-row.risk {
                 .table-cell {
                     background-color: rgba(186,135, 100, 0.1);
+                }
+            }
+            .table-row.no-risk {
+                .table-cell {
+                    background-color: #efefef;
                 }
             }
 
@@ -265,7 +273,8 @@
         
         .table-legend-unit{
           display: flex;
-          width: 200px;
+          min-width: 120px;
+          margin-left: 40px;
           height: 30px;
           label {
               margin-left: 5px;
@@ -278,14 +287,15 @@
           background-image: linear-gradient(to right, rgba(33, 115, 50, 0.1), rgba(33, 115, 50, 0.87));
         }
         .table-risk {
-          width: 20px;
-          height: 20px;
-          background-color: #dedede;
+          width: 100px;
+          height: 10px;
+          margin-top: 7px;
+          background-image: linear-gradient(to right, rgba(186,135, 100, 0.1), rgba(186,135, 100, 1));
         }
         .table-norisk {
           width: 20px;
           height: 20px;
-          background-color: rgba(186,135, 100, 0.1);
+          background-color: #efefef;
         }
     }
 }

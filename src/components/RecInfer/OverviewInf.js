@@ -32,7 +32,7 @@ export default class RecView extends Component {
     } = this.props;
     const that = this;
     if (data.nodes.length === 0) return;
-    const marginX = 100,
+    const marginX = 150,
       marginY = 50;
     const {
       nodes,

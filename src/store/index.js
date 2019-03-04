@@ -422,6 +422,7 @@ class AppStore {
         id: g.id,
         records: g.records || [],
         data: g.data,
+        risk: g.risk,
       }));
     })
   }

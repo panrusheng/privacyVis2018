@@ -411,7 +411,15 @@ export default class TableView extends React.Component {
         r.id = group.id;
         r.extended = [];
         r.data = group.data;
-        r.noRisk = this.props.store.recList.rec[group.id] && this.props.store.recList.rec[group.id].length === 0;
+        // r.noRisk = this.props.store.recList.rec[group.id] && this.props.store.recList.rec[group.id].length === 0;
+        r.risk = 0;
+        if (this.props.store.recList.rec[group.id].length > 0)
+        for (let i in group.risk) {
+          r.risk = (r.risk > group.risk[i]) ? r.risk: group.risk[i];
+        }
+        console.log(group);
+        console.log(r.risk);
+        
 
         group.records.forEach(rec => {
           const er = {};
@@ -556,11 +564,11 @@ export default class TableView extends React.Component {
         className="table-header left"
         ref={dom => this.leftHeader = dom}>
         {
-          rows.map(({ id, extended, group, noRisk }) => {
+          rows.map(({ id, extended, group, risk }) => {
             if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
             return [
-              <div className={`table-cell em group ${noRisk ? 'no-risk' : ''}`} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
+              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(186,135, 100, '+ (0.1 + risk * 2) +')': '#efefef'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
               !this.state.foldAll && !this.state.foldState[id] && (<div className="scroll-wrapper" data={id} key={'w' + id}>
                 <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
                 )
@@ -583,7 +591,8 @@ export default class TableView extends React.Component {
 
   renderRow(row, columns, isGroup = false, groupId, seqId) {
     return (<div
-      className={`table-row ${isGroup ? 'group' : ''} ${isGroup && row.noRisk ? 'no-risk' : ''}`}
+      className={`table-row ${isGroup ? 'group' : ''}`} 
+      style={isGroup?{backgroundColor: row.risk?'rgba(186,135, 100, '+ (0.1 + row.risk * 2) +')': '#efefef'}:{}}
       key={`${isGroup ? '' : groupId} ${row.id}`}
       onMouseDown={e => !isGroup && seqId !== undefined && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
@@ -703,7 +712,7 @@ export default class TableView extends React.Component {
         <div className="table-title">
           <div className="view-title">Data Table View</div>
           <div className="operation">
-            <label>Fold All Groups</label>
+            <label>{this.state.foldAll? 'Unfold': 'Fold'} All Groups</label>
             <Switch
               checked={this.state.foldAll}
               onChange={val => this.setState({ foldAll: val })}

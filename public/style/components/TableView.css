@@ -62,8 +62,10 @@
         /* remove scrollbar space */
         background: transparent;
         /* optional: just make scrollbar invisible */ }
-      .table-view .table .table-header.left .no-risk {
+      .table-view .table .table-header.left .risk {
         background-color: rgba(186, 135, 100, 0.1); }
+      .table-view .table .table-header.left .no-risk {
+        background-color: #efefef; }
       .table-view .table .table-header.left .scroll-wrapper {
         overflow: hidden;
         min-width: fit-content;
@@ -100,8 +102,10 @@
         height: 15px; }
       .table-view .table .table-body .table-row.group .table-cell {
         height: 30px; }
-      .table-view .table .table-body .table-row.no-risk .table-cell {
+      .table-view .table .table-body .table-row.risk .table-cell {
         background-color: rgba(186, 135, 100, 0.1); }
+      .table-view .table .table-body .table-row.no-risk .table-cell {
+        background-color: #efefef; }
       .table-view .table .table-body::-webkit-scrollbar {
         width: 8px;
         border-radius: 4px;
@@ -182,7 +186,8 @@
     border: 2px #ddd dashed; }
     .table-view .table-legend .table-legend-unit {
       display: flex;
-      width: 200px;
+      min-width: 120px;
+      margin-left: 40px;
       height: 30px; }
       .table-view .table-legend .table-legend-unit label {
         margin-left: 5px; }
@@ -192,10 +197,11 @@
       margin-top: 7px;
       background-image: linear-gradient(to right, rgba(33, 115, 50, 0.1), rgba(33, 115, 50, 0.87)); }
     .table-view .table-legend .table-risk {
-      width: 20px;
-      height: 20px;
-      background-color: #dedede; }
+      width: 100px;
+      height: 10px;
+      margin-top: 7px;
+      background-image: linear-gradient(to right, rgba(186, 135, 100, 0.1), #ba8764); }
     .table-view .table-legend .table-norisk {
       width: 20px;
       height: 20px;
-      background-color: rgba(186, 135, 100, 0.1); }
+      background-color: #efefef; }
