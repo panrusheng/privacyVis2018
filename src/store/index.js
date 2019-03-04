@@ -217,7 +217,6 @@ class AppStore {
           cpt: cpt
         });
     }
-    console.log(newGBN.links);
     this.GBN = newGBN;
   }
 
@@ -392,14 +391,13 @@ class AppStore {
             }
           });
 
+          g.recList.forEach(rec => {
+            let idx = rec.dL.findIndex(d => d === oldId);
+            if (idx >= 0) rec.dL[idx] = newId;
+          });
+
           node.eventNo = newId;
         });
-        g.recList.forEach(item => {
-          item.dL.forEach((dl, idx) => {
-            let id = g.localGBN.nodes.find(node => node.id === dl).eventNo;
-            item.dL[idx] = id;
-          })
-        })
       });
 
       let recList = {};
@@ -418,6 +416,7 @@ class AppStore {
           recSelectedList.push(rec);
         }
       }
+
       this.recSelectedList = recSelectedList;
       this.dataGroups = groups.map(g => ({
         id: g.id,

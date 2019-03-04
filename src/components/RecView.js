@@ -66,6 +66,16 @@ export default class RecView extends React.Component {
 
       if (recSel === this.state.select) {
         if (subgIdx >= 0) {
+          // let subgSel = subgroupRecSelectedList[subgIdx].select;
+          // if (subgSel !== this.state.select) {
+          //   let li = toJS(recSelectedList[recNum]);
+          //   for (let i = 0; i < li.length; ++i) {
+          //     if (i === subgSel) continue;
+          //     if (li[i] > subgSel) li[i]--;
+          //   }
+          //   li[subgSel] = 0;
+          //   this.props.recSelectedList.splice(recNum, 1, li);
+          // }
           this.props.store.subgroupRecSelectedList.splice(subgIdx, 1);
         }
       } else {
@@ -90,6 +100,16 @@ export default class RecView extends React.Component {
       }
 
       this.props.store.currentSubgroup = null;
+    } else {
+      let sgIndex = subgroupRecSelectedList.findIndex(item => item.group === recNum && item.select === this.state.select);
+      if (sgIndex) {
+        this.props.store.subgroupRecSelectedList.splice(sgIndex, 1);
+      }
+
+      let selList = toJS(recSelectedList[recNum]);
+      selList[recSel] = 0;
+      selList[this.state.select] = 1;
+      this.props.store.recSelectedList.splice(recNum, 1, selList);
     }
   }
 
@@ -160,7 +180,7 @@ export default class RecView extends React.Component {
       //     select = [1, 0, 0];
       //   }
       // } else {
-        select = recSelectedList[recNum];
+        select = recSelectedList[recNum] || [];
       // }
     }
     else {

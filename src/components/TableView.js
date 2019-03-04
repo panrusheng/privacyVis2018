@@ -164,23 +164,14 @@ export default class TableView extends React.Component {
 
     this.props.store.recNum = group;
     this.rowSelecting = true;
-    const rowSelection = [...this.state.rowSelection];
+    let rowSelection = [...this.state.rowSelection];
 
     let selIndex = rowSelection.findIndex(item => item.group === group);
     
     if ((selIndex >= 0 && this.selectionGroup === group && e.ctrlKey)) {
     
-    } else if (selIndex >= 0) {
-      rowSelection.splice(selIndex, 1);
-      this.tempSelection = {
-        group,
-        ranges: [{
-          start: seqId,
-          end: seqId,
-        }],
-        id: incrId++,
-      };
     } else {
+      rowSelection = [];
       this.tempSelection = {
         group,
         ranges: [{
@@ -591,7 +582,7 @@ export default class TableView extends React.Component {
     return (<div
       className={`table-row ${isGroup ? 'group' : ''} ${isGroup && row.noRisk ? 'no-risk' : ''}`}
       key={`${isGroup ? '' : groupId} ${row.id}`}
-      onMouseDown={e => !isGroup && seqId && this.handleRowSelMouseDown(e, groupId, seqId)}
+      onMouseDown={e => !isGroup && seqId !== undefined && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
       onClick={isGroup ? (() => this.toggleGroup(row.id)) : undefined}>
       
