@@ -23,6 +23,7 @@ export default class RecView extends Component {
     const {
       sch,
       rec,
+      select,
       ww,
       hh,
       data,
@@ -133,7 +134,7 @@ export default class RecView extends Component {
         .attr('class', "rec-small-" + num)
         .attr('d', 'M2,2 L 50,2 L 2,50 Z')
         .style('fill', '#1866bb')
-        .style('opacity', 0.9);
+        .style('opacity', select ? 0.9 : 0.5);
 
       g.append('text')
         .attr('class', "rec-small-" + num)
@@ -151,27 +152,29 @@ export default class RecView extends Component {
       .attr('y', 2)
       .attr('width', ww - 4)
       .attr('height', hh - 4)
-      .style('stroke', rec > 0 ? 'rgba(24,102,187,0.9)' : 'none')
+      .style('stroke', select ? 'rgba(24,102,187,0.9)' : (rec > 0 ? 'rgba(24,102,187,0.5)' : 'none'))
       .style('stroke-width', 3)
       .style('fill', '#000')
       .style('fill-opacity', 0)
-      .on('click', () => { change(num); });
+      .on('click', () => {
+        change(num);
+      });
   }
 
   render() {
-    return (<
-      g ref={
+    return ( <
+      g ref = {
         g => {
           this.g = g;
         }
       }
-      width={
+      width = {
         this.props.ww
       }
-      height={
+      height = {
         this.props.hh
       }
-    />
+      />
     );
   }
 }

@@ -566,7 +566,7 @@ export default class TableView extends React.Component {
             if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
             return [
-              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(186,135, 100, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
+              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
               !this.state.foldAll && !this.state.foldState[id] && (<div className="scroll-wrapper" data={id} key={'w' + id}>
                 <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
                 )
@@ -590,7 +590,7 @@ export default class TableView extends React.Component {
   renderRow(row, columns, isGroup = false, groupId, seqId) {
     return (<div
       className={`table-row ${isGroup ? 'group' : ''}`} 
-      style={isGroup?{backgroundColor: row.risk?'rgba(186,135, 100, '+ (0.1 + row.risk * 2) +')': 'none'}:{}}
+      style={isGroup?{backgroundColor: row.risk?'rgba(254, 41, 1, '+ (0.1 + row.risk * 2) +')': 'none'}:{}}
       key={`${isGroup ? '' : groupId} ${row.id}`}
       onMouseDown={e => !isGroup && seqId !== undefined && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}

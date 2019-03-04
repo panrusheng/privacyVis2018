@@ -38,6 +38,8 @@ class AppStore {
   @observable
   recList = { group: [], rec: [] }
 
+  graphLayout = {};
+
   @observable
   recSelectedList = [];
 
@@ -169,6 +171,14 @@ class AppStore {
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
     });
+  }
+
+  @action setGraphLayout (layout) {
+    this.graphLayout = layout;
+  }
+
+  @action getGraphLayout () {
+    return this.graphLayout;
   }
 
   @action

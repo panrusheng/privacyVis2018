@@ -122,6 +122,7 @@ export default class RecView extends React.Component {
   forceDirected(n, l) {
     const links = l;
     const nodes = n;
+    let layout = this.props.store.getGraphLayout();
     let simulation = d3
       .forceSimulation(nodes)
       .force('charge', d3.forceManyBody().strength(-50))
@@ -130,8 +131,8 @@ export default class RecView extends React.Component {
         d3
           .forceLink(links)
           .id(d => d.eventNo)
-          .distance(15)
-          .strength(2)
+          .distance(5)
+          .strength(0.5)
           .iterations(1)
       )
       .force('x', d3.forceX())
@@ -148,6 +149,18 @@ export default class RecView extends React.Component {
       ++i
     ) {
       simulation.tick();
+    }
+
+    if ('nodes' in layout) {
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < layout.nodes.length; j++) {
+          if (nodes[i].id.split(':')[0] === layout.nodes[j].id) {
+            nodes[i].x = layout.nodes[j].x;
+            nodes[i].y = layout.nodes[j].y;
+            break;
+          }
+        }
+      }
     }
 
     return { nodes: nodes, links: links };
@@ -167,7 +180,7 @@ export default class RecView extends React.Component {
     const recData = this.setPosition(recList.group[recNum]);
     let deleteList = recList.rec[recNum];
     let select = [];
-
+    let list = recSelectedList[recNum] || [];
     if (this.state.select === null) {
       // if (this.props.store.currentSubgroup) {
       //   let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
@@ -180,7 +193,13 @@ export default class RecView extends React.Component {
       //     select = [1, 0, 0];
       //   }
       // } else {
-        select = recSelectedList[recNum] || [];
+        select = [];
+        let maxNo = 0;
+        for (let i = 0; i < list.length; i++) {
+            select.push(false);
+            if (list[maxNo] < list[i]) maxNo = i;
+        }
+        select[maxNo] = true;
       // }
     }
     else {
@@ -217,7 +236,7 @@ export default class RecView extends React.Component {
                 {deleteList && deleteList.map((d, i) => (
                   <div className="rec-td" key={"rec-graph-" + i}>
                     <svg width={ww} height={hh}>
-                      <SubInfer data={recData} sch={d} rec={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
+                      <SubInfer data={recData} sch={d} rec={recSelectedList[recNum][i]} select={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
                     </svg>
                   </div>
                 ))}
