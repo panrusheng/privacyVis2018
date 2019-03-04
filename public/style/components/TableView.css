@@ -204,4 +204,5 @@
     .table-view .table-legend .table-remove {
       width: 20px;
       height: 20px;
-      background: repeating-linear-gradient(-45deg, rgba(33, 115, 50, 0.5), rgba(33, 115, 50, 0.5) 4px, #333 1px, #333 5px); }
+      background-color: rgba(33, 115, 50, 0.5);
+      background-size: 20px; }

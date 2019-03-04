@@ -605,18 +605,10 @@ export default class TableView extends React.Component {
               key={col} data={value} className="table-cell tooltip-data" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               <div
                 className={'bg' + (del ? ' del' : '')}
-                style={
-                  // { 
-                  // backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
-                  // backgroundImage: del ? `url(${SlashIcon})` : undefined,
-                  // }
-                  del ? {backgroundImage: `repeating-linear-gradient(
-                    -45deg,
-                    rgba(33, 115, 50, ${utility / 1.3 + 0.1}),
-                    rgba(33, 115, 50, ${utility / 1.3 + 0.1})4px,
-                    #333 1px,
-                    #333 5px)`} : {backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`}
-              }
+                style={{ 
+                  backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
+                  backgroundImage: del ? `url(${SlashIcon})` : undefined,
+                }}
               />
             </div>
           )
@@ -736,7 +728,7 @@ export default class TableView extends React.Component {
             <label>Privacy exposure risk</label>
           </div>
           <div className='table-legend-unit'>
-            <div className="table-remove" />
+            <div className="table-remove" style={{backgroundImage: `url(${SlashIcon})`}}/>
             <label>To be removed</label>
           </div>
         </div>
