@@ -498,6 +498,9 @@ export default class TableView extends React.Component {
     
     if (!foldState[g]) {
       this.props.store.recNum = g;
+    } else if (this.props.store.recNum !== g) {
+      this.props.store.recNum = g;
+      return;
     }
     this.props.store.currentSubgroup = null;
     this.setState({ foldAll: false, foldState });
