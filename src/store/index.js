@@ -74,7 +74,6 @@ class AppStore {
   recNum = 0;
 
   gbnSearchAlgorithm = 'K2';
-  recordCount = 0;
 
   @action
   getDataSetList() {
@@ -98,15 +97,13 @@ class AppStore {
       }
     }).then(data => {
       const { GBN } = data;
+      let sensitiveMap = {};
+      this.selectedAttributes.forEach(({ attrName, sensitive }) => sensitiveMap[attrName] = sensitive);
 
       GBN.links.forEach(item => item.value = parseFloat(item.value));
       GBN.nodes.forEach(node => {
         node.attrName = node.attName;
-        const a = this.selectedAttributes.find(item => item.attrName === node.attrName);
-        if (!a) {
-          return;
-        }
-        node.value = a.sensitive ? -1 : a.utility;
+        node.value = sensitiveMap[node.attrName] ? -1 : 1;
       });
 
       GBN.nodes.sort((a, b) => a.eventNo - b.eventNo);
@@ -220,7 +217,6 @@ class AppStore {
           cpt: cpt
         });
     }
-    console.log(newGBN.links);
     this.GBN = newGBN;
   }
 
@@ -326,12 +322,11 @@ class AppStore {
     const attr = Object.assign({}, this.selectedAttributes[index], { utility: value });
     this.selectedAttributes.splice(index, 1, attr);
 
-    // index = this.GBN.nodes.find(item => item.attrName === attrName);
-    // if (index < 0) return;
-
-    // const newNodes = [...this.GBN.nodes];
-    // newNodes.splice(index, 1, Object.assign({}, this.GBN.nodes[index], { value }));
-    // this.GBN.nodes = newNodes;
+    const nodes = toJS(this.GBN.nodes);
+    nodes.forEach(node => {
+      if (node.attrName === attrName) node.value = value;
+    });
+    this.GBN.nodes = nodes;
   }
 
   @action
@@ -375,14 +370,17 @@ class AppStore {
       utilityList: this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility })),
       attributes: this.selectedAttributes.map(item => item.attrName)
     }).then(groups => {
-      this.recordCount = 0;
+      let sensitiveMap = {};
+      this.selectedAttributes.forEach(({ attrName, sensitive }) => sensitiveMap[attrName] = sensitive);
+
       groups.forEach(g => {
         let id = 0;
-        this.recordCount += g.records.length;
-
+        
         g.localGBN.nodes.map(node => {
           let newId = id++;
           let oldId = node.eventNo;
+          let attrName = node.id.substring(0, node.id.indexOf(':'));
+          node.value = sensitiveMap[attrName] ? -1 : node.value;
 
           g.localGBN.links.forEach(link => {
             if (link.source === oldId) {
@@ -393,8 +391,13 @@ class AppStore {
             }
           });
 
+          g.recList.forEach(rec => {
+            let idx = rec.dL.findIndex(d => d === oldId);
+            if (idx >= 0) rec.dL[idx] = newId;
+          });
+
           node.eventNo = newId;
-        })
+        });
       });
 
       let recList = {};
@@ -413,10 +416,11 @@ class AppStore {
           recSelectedList.push(rec);
         }
       }
+
       this.recSelectedList = recSelectedList;
       this.dataGroups = groups.map(g => ({
         id: g.id,
-        records: g.records,
+        records: g.records || [],
         data: g.data,
       }));
     })

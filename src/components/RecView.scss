@@ -42,6 +42,8 @@
         }
         .rec-selection {
             width: 890px;
+            display: flex;
+            justify-content: space-around;
             .ant-radio-wrapper {
                 margin-left: 82px;
                 margin-right: 82px;

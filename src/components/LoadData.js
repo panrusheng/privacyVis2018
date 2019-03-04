@@ -8,8 +8,16 @@ import { Modal } from 'antd';
 import axios from '../utils/axios';
 import './LoadData.scss';
 
-const SearchAlgorithm = ['K2', 'Genetic Search', 'Hill Climber', 'LAGD Hill Climber', 'Local Score Search Algorithm',
-    'Repeated Hill Climber', 'Simulated Annealing', 'Tabu Search', 'TAN'];
+const SearchAlgorithm = [ { name: 'K2', id: 'K2' },
+{ name: 'Genetic Search', id: 'GeneticSearch' },
+{ name: 'Hill Climber', id: 'HillClimber' },
+{ name: 'LAGD Hill Climber', id: 'LAGDHillClimber' },
+{ name: 'Local Score Search Algorithm',
+  id: 'LocalScoreSearchAlgorithm' },
+{ name: 'Repeated Hill Climber', id: 'RepeatedHillClimber' },
+{ name: 'Simulated Annealing', id: 'SimulatedAnnealing' },
+{ name: 'Tabu Search', id: 'TabuSearch' },
+{ name: 'TAN', id: 'TAN' } ]
 
 @inject(['store'])
 @observer
@@ -18,7 +26,7 @@ export default class LoadData extends React.Component {
         currentDataset: null,
         datasets: [],
         currentSelected: [],
-        searchAlgorithm: 'K2'
+        searchAlgorithm: 0,
     }
 
     constructor(props) {
@@ -62,7 +70,7 @@ export default class LoadData extends React.Component {
         });
 
         this.props.store.selectedAttributes = attributes;
-        this.props.store.gbnSearchAlgorithm = this.state.searchAlgorithm;
+        this.props.store.gbnSearchAlgorithm = SearchAlgorithm[this.state.searchAlgorithm].id;
         this.props.store.setSystemStage(0);
         this.props.store.getGBN();
         // this.props.store.getAttrDistribution();
@@ -143,12 +151,12 @@ export default class LoadData extends React.Component {
                     <div className="load-panel">
                         <div style={{ marginBottom: 10 }}>Bayesian Network Search Algorithm</div>
                         <div className="datasets">
-                            { SearchAlgorithm.map(algo => (
+                            { SearchAlgorithm.map(({name}, index) => (
                                 <div
-                                    key={algo}
-                                    onClick={() => this.setState({ searchAlgorithm: algo })}
-                                    className={`button ${algo === this.state.searchAlgorithm ? 'active' : ''}`}>
-                                    {algo}
+                                    key={name}
+                                    onClick={() => this.setState({ searchAlgorithm: index })}
+                                    className={`button ${index === this.state.searchAlgorithm ? 'active' : ''}`}>
+                                    {name}
                                 </div>)) }
                         </div>
                     </div>
