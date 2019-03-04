@@ -417,8 +417,6 @@ export default class TableView extends React.Component {
         for (let i in group.risk) {
           r.risk = (r.risk > group.risk[i]) ? r.risk: group.risk[i];
         }
-        console.log(group);
-        console.log(r.risk);
         
 
         group.records.forEach(rec => {
@@ -568,7 +566,7 @@ export default class TableView extends React.Component {
             if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
             return [
-              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(186,135, 100, '+ (0.1 + risk * 2) +')': '#efefef'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
+              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(186,135, 100, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
               !this.state.foldAll && !this.state.foldState[id] && (<div className="scroll-wrapper" data={id} key={'w' + id}>
                 <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
                 )
@@ -592,7 +590,7 @@ export default class TableView extends React.Component {
   renderRow(row, columns, isGroup = false, groupId, seqId) {
     return (<div
       className={`table-row ${isGroup ? 'group' : ''}`} 
-      style={isGroup?{backgroundColor: row.risk?'rgba(186,135, 100, '+ (0.1 + row.risk * 2) +')': '#efefef'}:{}}
+      style={isGroup?{backgroundColor: row.risk?'rgba(186,135, 100, '+ (0.1 + row.risk * 2) +')': 'none'}:{}}
       key={`${isGroup ? '' : groupId} ${row.id}`}
       onMouseDown={e => !isGroup && seqId !== undefined && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
@@ -607,10 +605,18 @@ export default class TableView extends React.Component {
               key={col} data={value} className="table-cell tooltip-data" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
               <div
                 className={'bg' + (del ? ' del' : '')}
-                style={{ 
-                  backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
-                  backgroundImage: del ? `url(${SlashIcon})` : undefined,
-                }}
+                style={
+                  // { 
+                  // backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
+                  // backgroundImage: del ? `url(${SlashIcon})` : undefined,
+                  // }
+                  del ? {backgroundImage: `repeating-linear-gradient(
+                    -45deg,
+                    rgba(33, 115, 50, ${utility / 1.3 + 0.1}),
+                    rgba(33, 115, 50, ${utility / 1.3 + 0.1})4px,
+                    #333 1px,
+                    #333 5px)`} : {backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`}
+              }
               />
             </div>
           )
@@ -730,8 +736,8 @@ export default class TableView extends React.Component {
             <label>Privacy exposure risk</label>
           </div>
           <div className='table-legend-unit'>
-            <div className="table-norisk" />
-            <label>No risk</label>
+            <div className="table-remove" />
+            <label>To be removed</label>
           </div>
         </div>
       </div>
