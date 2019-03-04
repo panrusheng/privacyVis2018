@@ -64,8 +64,8 @@ export default class TableView extends React.Component {
   componentDidMount() {
     window.addEventListener('mouseup', this.handleRowSelMouseUp);
 
-    if (this.props.store.recordCount !== this.state.foldState.length) {
-      let foldState = new Array(this.props.store.recordCount).fill(true);
+    if (this.props.store.dataGroups.length !== this.state.foldState.length) {
+      let foldState = new Array(this.props.store.dataGroups.length).fill(true);
       if (foldState.length > 0) foldState[0] = false;
       this.setState({ foldState });
     }
@@ -74,8 +74,8 @@ export default class TableView extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.store.recordCount !== this.state.foldState.length) {
-      let foldState = new Array(this.props.store.recordCount).fill(true);
+    if (this.props.store.dataGroups.length !== this.state.foldState.length) {
+      let foldState = new Array(this.props.store.dataGroups.length).fill(true);
       if (foldState.length > 0) foldState[0] = false;
       this.setState({ foldState });
     }
@@ -498,7 +498,7 @@ export default class TableView extends React.Component {
   toggleGroup(g) {
     let foldState;
     if (this.state.foldAll) {
-      foldState = new Array(this.props.store.recordCount).fill(true);
+      foldState = new Array(this.props.store.dataGroups.length).fill(true);
     } else {
       foldState = [...this.state.foldState];
     }
