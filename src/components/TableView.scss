@@ -54,6 +54,30 @@
             display: flex;
         }
 
+        .select-highlight {
+            pointer-events: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            border: 2px solid #0f6fd6;
+
+            &.left {
+                border-right: none;
+            }
+            &.right {
+                border-left: none;
+            }
+        }
+
+        .highlight-mask {
+            position: absolute;
+            pointer-events: none;
+            border: 2px solid #3987db;
+            // background-color: rgba($color: #999999, $alpha: 0.2);
+            width: 100%;
+        }
+
+
         .table-header.top {
             display: flex;
             overflow-x: hidden;
@@ -197,13 +221,6 @@
             .selection-mask {
                 border: 1px solid rgb(20, 80, 150);
                 pointer-events: none;
-            }
-            .highlight-mask {
-                position: absolute;
-                pointer-events: none;
-                border: 2px solid #3987db;
-                // background-color: rgba($color: #999999, $alpha: 0.2);
-                width: 100%;
             }
         }
 

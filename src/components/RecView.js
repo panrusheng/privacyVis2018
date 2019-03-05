@@ -78,6 +78,7 @@ export default class RecView extends React.Component {
           // }
           this.props.store.subgroupRecSelectedList.splice(subgIdx, 1);
         }
+        this.props.store.currentSubgroup = null;
       } else {
         let subg = subgIdx >= 0 ? toJS(subgroupRecSelectedList[subgIdx]) : toJS(currentSubgroup);
         let dupSelIndex = subgroupRecSelectedList.findIndex(item => item.group === subg.group &&  item.select === this.state.select);
@@ -97,12 +98,14 @@ export default class RecView extends React.Component {
         if (dupSelIndex >= 0) selectedList.splice(dupSelIndex, 1);
       
         this.props.store.subgroupRecSelectedList = selectedList;
+
+        this.props.store.currentSubgroup = subg;
       }
 
-      this.props.store.currentSubgroup = null;
     } else {
       let sgIndex = subgroupRecSelectedList.findIndex(item => item.group === recNum && item.select === this.state.select);
-      if (sgIndex) {
+
+      if (sgIndex >= 0) {
         this.props.store.subgroupRecSelectedList.splice(sgIndex, 1);
       }
 
@@ -236,7 +239,7 @@ export default class RecView extends React.Component {
                 {deleteList && deleteList.map((d, i) => (
                   <div className="rec-td" key={"rec-graph-" + i}>
                     <svg width={ww} height={hh}>
-                      <SubInfer data={recData} sch={d} rec={recSelectedList[recNum][i]} select={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
+                      <SubInfer data={recData} sch={d} rec={list[i]} select={select[i]} change={this.changeState} ww={ww} hh={hh} num={i} />
                     </svg>
                   </div>
                 ))}

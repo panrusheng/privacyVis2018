@@ -245,6 +245,7 @@ export default class TableView extends React.Component {
     if (!this.rowSelecting) return;
     if (this.tempSelection) {
       this.tempSelection = null;
+      this.props.store.currentSubgroup = null;
       return;
     }
   
@@ -323,19 +324,6 @@ export default class TableView extends React.Component {
       rowSelection: [],
       mode: this.state.mode === 1 ? 2 : 1,
     });
-  }
-
-  toggleGroup(groupId) {
-    const unfoldedGroups = [...this.state.unfoldedGroups];
-
-    let index = unfoldedGroups.findIndex(id => id === groupId);
-    if (index >= 0) {
-      unfoldedGroups.splice(index, 1);
-    } else {
-      unfoldedGroups.push(groupId);
-    }
-
-    this.setState({ unfoldedGroups });
   }
 
   setOrder(orderCol) {
@@ -507,6 +495,9 @@ export default class TableView extends React.Component {
     } else if (this.props.store.recNum !== g) {
       this.props.store.recNum = g;
       return;
+    } else if (this.props.store.recNum === g && this.props.store.currentSubgroup && this.props.store.currentSubgroup.group === g) {
+      this.props.store.currentSubgroup = null;
+      return;
     }
     this.props.store.currentSubgroup = null;
     this.setState({ foldAll: false, foldState });
@@ -555,7 +546,8 @@ export default class TableView extends React.Component {
 
   renderTableHeaderLeft(rows) {
     const { mode, rowSelection } = this.state;
-
+    let bodyHeight = 0;
+  
     return (
       <div
         onScroll={e => this.syncScroll(e, 'left')}
@@ -565,12 +557,36 @@ export default class TableView extends React.Component {
           rows.map(({ id, extended, group, risk }) => {
             if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
-            return [
-              <div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>,
-              !this.state.foldAll && !this.state.foldState[id] && (<div className="scroll-wrapper" data={id} key={'w' + id}>
-                <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
-                )
-            ]
+            let folded = this.state.foldAll || this.state.foldState[id];
+            let height = folded ? 30 : 30 + extended.length * CELL_HEIGHT;
+
+            let comps = [<div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>];
+
+            if (!folded) {
+              comps.push(<div className="scroll-wrapper" data={id} key={'w' + id}>
+              <div className={`table-cell`}  style={{ height: extended.length * CELL_HEIGHT, lineHeight: extended.length * CELL_HEIGHT + 'px', textAlign: 'center' }}>{extended.length}</div></div>
+              );
+            }
+
+            let currentSubgSelected = false;
+            if (this.props.store.currentSubgroup &&
+              this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id)) {
+              currentSubgSelected = true;
+            }
+
+            if (this.props.store.recNum === id && !currentSubgSelected) {
+              comps.push(
+                <div
+                  className="select-highlight left"
+                  style={{
+                    height,
+                    top: bodyHeight,
+                  }}
+                />);
+            }
+
+            bodyHeight += height;
+            return comps;
           })
         }
       </div>
@@ -624,6 +640,7 @@ export default class TableView extends React.Component {
 
   renderTableBody(rows, columns) {
     const { mode, unfoldedGroups, rowSelection } = this.state;
+    let bodyHeight = 0;
 
     return (
       <div
@@ -639,20 +656,28 @@ export default class TableView extends React.Component {
             const groupedRows = [];
             groupedRows.push(this.renderRow(row, columns, true));
             
-            if (!this.state.foldAll && !this.state.foldState[row.id]) {
+            let folded = this.state.foldAll || this.state.foldState[row.id];
+            let currentSubgSelected = false;
+            if (this.props.store.currentSubgroup &&
+              this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id)) {
+              currentSubgSelected = true;
+            }
+
+            if (!folded) {
               const eRows = [];
 
               row.extended.forEach((eRow, index) => {
                 eRows.push(this.renderRow(eRow, columns, false, row.id, index));
               });
 
-              let highlightMasks = [];
+              let subgHighlight = [];
 
               this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
                 .map(item => {
                   let cnt = 0;
                   let start = -1;
                   let recordSet = new Set(item.records);
+                  let isCurrentSubg = currentSubgSelected && this.props.store.currentSubgroup.id === item.id;
 
                   for (let i = 0; i < row.extended.length; ++i) {
                     let recId = row.extended[i].id;
@@ -660,18 +685,20 @@ export default class TableView extends React.Component {
                       if (cnt === 0) start = i;
                       cnt++;
                     } else if (cnt >= 1) {
-                      highlightMasks.push(
+                      subgHighlight.push(
                         <div
-                        className="highlight-mask"
+                        className={isCurrentSubg ? 'select-highlight' : 'highlight-mask'}
                         key={`${row.id} ${recId}`}
-                        style={{ top: start * CELL_HEIGHT, height: cnt * CELL_HEIGHT }}  
+                        style={{ top: bodyHeight + 30 + start * CELL_HEIGHT, height: cnt * CELL_HEIGHT }}  
                       />
                       );
                       start = -1;
                       cnt = 0;
-                    }
+                    } 
                   }
                 });
+              
+              groupedRows.push(...subgHighlight);
 
               groupedRows.push(<div key={"w" + row.id} onMouseMove={this.handleMouseMove} className="scroll-wrapper extent-rows" id={`wrapper-${row.id}`}>
                 {eRows}
@@ -684,7 +711,6 @@ export default class TableView extends React.Component {
                     style={{ top: start * CELL_HEIGHT, height: CELL_HEIGHT * (end - start + 1)}} />
                   ))
                 ))}
-                { highlightMasks }
                 {/* {
                   this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
                     .map(item => item.records.map(recId => (
@@ -697,6 +723,21 @@ export default class TableView extends React.Component {
                 } */}
               </div>)
             }
+
+            let height = folded ? 30 : 30 + row.extended.length * CELL_HEIGHT;
+            if (this.props.store.recNum === row.id && !currentSubgSelected) {
+              groupedRows.push(
+                <div
+                  key={'h' + row.id}
+                  className="select-highlight right"
+                  style={{
+                    height,
+                    top: bodyHeight,
+                  }}
+                />);
+            }
+
+            bodyHeight += height;
             return groupedRows;
           })
         }
