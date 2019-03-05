@@ -44,6 +44,9 @@ class AppStore {
   recSelectedList = [];
 
   @observable
+  groupSelectList = [];
+
+  @observable
   subgroupRecSelectedList = [];
   /**
    * subgroupRecSelectedList = [
@@ -428,6 +431,7 @@ class AppStore {
       }
 
       this.recSelectedList = recSelectedList;
+      this.groupSelectList = new Array(groups.length).fill(0);
       this.dataGroups = groups.map(g => ({
         id: g.id,
         records: g.records || [],
@@ -513,6 +517,27 @@ class AppStore {
         options: JSON.stringify(trimOption),
       }
     });
+  }
+
+  @action
+  updateRecSelectedList(group) {
+    let total = this.dataGroups[group].records.length;
+    let selList = new Array(this.recList.rec[group].length).fill(0);
+    let sgTotal = 0
+
+    this.subgroupRecSelectedList.filter(sug => sug.group === group)
+      .map(({ select, records }) => {
+        selList[select] += records.length;
+        sgTotal += records.length;
+      });
+    
+    selList[this.groupSelectList[group]] = total - sgTotal;
+    
+    for (let i = 0; i < selList.length; ++i) {
+      selList[i] = parseFloat((selList[i] / total).toFixed(2));
+    }
+    
+    this.recSelectedList.splice(group, 1, selList);
   }
 }
 

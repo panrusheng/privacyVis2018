@@ -141,6 +141,7 @@ export default class TableView extends React.Component {
       e.preventDefault();
       if (selListIndex >= 0) {
         this.props.store.subgroupRecSelectedList.splice(selListIndex, 1);
+        this.props.store.updateRecSelectedList(group);
         return;
       }
 
@@ -159,6 +160,7 @@ export default class TableView extends React.Component {
       return;
     } else if (selListIndex >= 0) {
       this.props.store.currentSubgroup = selList[selListIndex];
+      this.props.store.updateRecSelectedList(group);
       return;
     }
 
@@ -335,7 +337,7 @@ export default class TableView extends React.Component {
   }
 
   formatData() {
-    const { recList, recSelectedList, recNum, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
+    const { recList, groupSelectList, recNum, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
     
     const { mode, order, orderCol } = this.state;
     const rows = [], columns = [];
@@ -343,7 +345,7 @@ export default class TableView extends React.Component {
     dataGroups.forEach((group, gindex) => {
       let deleteEventNos;
       let rec = recList.rec[gindex];
-      let recSelIndex =(recSelectedList[gindex] || [1, 0, 0]).findIndex(val => val === 1);
+      let recSelIndex =groupSelectList[recNum];
       deleteEventNos = (rec && rec[recSelIndex]) || { dL: [], };
       let deleteAttr = new Set(recList.group[gindex].nodes
         .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)

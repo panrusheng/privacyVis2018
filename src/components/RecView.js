@@ -57,14 +57,14 @@ export default class RecView extends React.Component {
   }
 
   submit() {
-    const { currentSubgroup, subgroupRecSelectedList, recSelectedList, recNum } = this.props.store;
+    const { currentSubgroup, subgroupRecSelectedList, recNum, groupSelectList } = this.props.store;
 
-    let recSel = recSelectedList[recNum].findIndex(s => s === 1);
+    let groupSel = groupSelectList[recNum];
 
     if (currentSubgroup) {
       let subgIdx = subgroupRecSelectedList.findIndex(item => item.id === currentSubgroup.id);
 
-      if (recSel === this.state.select) {
+      if (groupSel === this.state.select) {
         if (subgIdx >= 0) {
           // let subgSel = subgroupRecSelectedList[subgIdx].select;
           // if (subgSel !== this.state.select) {
@@ -109,11 +109,12 @@ export default class RecView extends React.Component {
         this.props.store.subgroupRecSelectedList.splice(sgIndex, 1);
       }
 
-      let selList = toJS(recSelectedList[recNum]);
-      selList[recSel] = 0;
-      selList[this.state.select] = 1;
-      this.props.store.recSelectedList.splice(recNum, 1, selList);
+      this.props.store.groupSelectList.splice(recNum, 1, this.state.select);
     }
+
+    this.props.store.updateRecSelectedList(recNum);
+
+    this.reset();
   }
 
   changeState(value) {
@@ -184,18 +185,19 @@ export default class RecView extends React.Component {
     let deleteList = recList.rec[recNum];
     let select = [];
     let list = recSelectedList[recNum] || [];
+
     if (this.state.select === null) {
-      // if (this.props.store.currentSubgroup) {
-      //   let subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
-      //   if (subg) {
-      //     for (let i = 0; i < 3; ++i) {
-      //       if (i === subg.select) select.push(1);
-      //       else select.push(0);
-      //     }
-      //   } else {
-      //     select = [1, 0, 0];
-      //   }
-      // } else {
+      let subg;
+      if (this.props.store.currentSubgroup) {
+        subg = this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id);
+      }
+
+      if (subg) {
+        for (let i = 0; i < 3; ++i) {
+          if (i === subg.select) select.push(1);
+          else select.push(0);
+        }
+      } else {
         select = [];
         let maxNo = 0;
         for (let i = 0; i < list.length; i++) {
@@ -203,7 +205,7 @@ export default class RecView extends React.Component {
             if (list[maxNo] < list[i]) maxNo = i;
         }
         select[maxNo] = true;
-      // }
+      }
     }
     else {
       for (let i = 0; i < 3; i++) {
