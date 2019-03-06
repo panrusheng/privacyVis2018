@@ -66,19 +66,13 @@ export default class RecView extends React.Component {
 
       if (groupSel === this.state.select) {
         if (subgIdx >= 0) {
-          // let subgSel = subgroupRecSelectedList[subgIdx].select;
-          // if (subgSel !== this.state.select) {
-          //   let li = toJS(recSelectedList[recNum]);
-          //   for (let i = 0; i < li.length; ++i) {
-          //     if (i === subgSel) continue;
-          //     if (li[i] > subgSel) li[i]--;
-          //   }
-          //   li[subgSel] = 0;
-          //   this.props.recSelectedList.splice(recNum, 1, li);
-          // }
           this.props.store.subgroupRecSelectedList.splice(subgIdx, 1);
         }
         this.props.store.currentSubgroup = null;
+      } else if (currentSubgroup.records.length === this.props.store.dataGroups[recNum].records.length) {
+        // all group;
+        this.props.store.groupSelectList.splice(recNum, 1, this.state.select);
+        this.props.store.subgroupRecSelectedList = subgroupRecSelectedList.filter(item => item.group !== recNum);
       } else {
         let subg = subgIdx >= 0 ? toJS(subgroupRecSelectedList[subgIdx]) : toJS(currentSubgroup);
         let dupSelIndex = subgroupRecSelectedList.findIndex(item => item.group === subg.group &&  item.select === this.state.select);

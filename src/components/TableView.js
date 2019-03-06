@@ -34,6 +34,8 @@ export default class TableView extends React.Component {
     foldAll: false,
   };
 
+  recNum = -1;
+
   rowSelecting = false;
   selectionStaying = false;
   selectionGroup = null;
@@ -82,23 +84,44 @@ export default class TableView extends React.Component {
 
     this.adjustTableSize();
     this.removeDupSelection();
+    // this.removeSelectedRowSelection();
   }
 
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.handleRowSelMouseUp);
   }
 
+  removeSelectedRowSelection() {
+    const { rowSelection } = this.state;
+    const { subgroupRecSelectedList } = this.props.store;
+
+    if (rowSelection.length > 0 && subgroupRecSelectedList.find(item => item.id === rowSelection[0].id)) {
+      this.setState({ rowSelection: [] });
+    }
+  }
+
   removeDupSelection() {
     let rowSelection = [...this.state.rowSelection];
 
+
     this.props.store.subgroupRecSelectedList.map(subg => {
       let idx = rowSelection.findIndex(item => item.id === subg.id);
-      if (idx >= 0) rowSelection.splice(idx);
+      if (idx >= 0) rowSelection.splice(idx, 1);
     });
+
+    if (this.props.store.currentSubgroup) {
+      let idx = rowSelection.findIndex(item => item.id === this.props.store.currentSubgroup.id);
+      if (idx >= 0) rowSelection.splice(idx, 1);
+    }
 
     if (rowSelection.length !== this.state.rowSelection.length) {
       this.setState({ rowSelection });
     }
+
+    if (this.props.store.currentSubgroup &&
+      this.props.store.currentSubgroup.records.length === this.props.store.dataGroups[this.props.store.recNum].records.length) {
+        this.props.store.currentSubgroup = null;
+      }
   }
 
   orderedGroupRecords(group) {
@@ -337,7 +360,7 @@ export default class TableView extends React.Component {
   }
 
   formatData() {
-    const { recList, groupSelectList, recNum, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
+    const { recList, groupSelectList, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
     
     const { mode, order, orderCol } = this.state;
     const rows = [], columns = [];
@@ -345,12 +368,12 @@ export default class TableView extends React.Component {
     dataGroups.forEach((group, gindex) => {
       let deleteEventNos;
       let rec = recList.rec[gindex];
-      let recSelIndex =groupSelectList[recNum];
+      let recSelIndex =groupSelectList[gindex];
       deleteEventNos = (rec && rec[recSelIndex]) || { dL: [], };
       let deleteAttr = new Set(recList.group[gindex].nodes
         .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)
         .map(n => n.id.substring(0, n.id.indexOf(':'))));
-      
+
       let subgroupSelMap = {};
       subgroupRecSelectedList.map(item => {
         if (item.group === group.id) {
@@ -408,6 +431,9 @@ export default class TableView extends React.Component {
           r.risk = (r.risk > group.risk[i]) ? r.risk: group.risk[i];
         }
         
+        if (r.risk < this.props.store.riskLimit) {
+          r.risk = 0;
+        }
 
         group.records.forEach(rec => {
           const er = {};
@@ -496,13 +522,16 @@ export default class TableView extends React.Component {
       this.props.store.recNum = g;
     } else if (this.props.store.recNum !== g) {
       this.props.store.recNum = g;
+      if (this.state.rowSelection.length > 0) this.setState({ rowSelection: [] });
       return;
     } else if (this.props.store.recNum === g && this.props.store.currentSubgroup && this.props.store.currentSubgroup.group === g) {
       this.props.store.currentSubgroup = null;
+      if (this.state.rowSelection.length > 0) this.setState({ rowSelection: [] });
       return;
     }
+
     this.props.store.currentSubgroup = null;
-    this.setState({ foldAll: false, foldState });
+    this.setState({ foldAll: false, foldState, rowSelection: [] });
   }
 
   renderEmpty() {
@@ -549,7 +578,7 @@ export default class TableView extends React.Component {
   renderTableHeaderLeft(rows) {
     const { mode, rowSelection } = this.state;
     let bodyHeight = 0;
-  
+
     return (
       <div
         onScroll={e => this.syncScroll(e, 'left')}
@@ -576,9 +605,10 @@ export default class TableView extends React.Component {
               currentSubgSelected = true;
             }
 
-            if (this.props.store.recNum === id && !currentSubgSelected) {
+            if (this.props.store.recNum === id && !currentSubgSelected && (!this.state.rowSelection || this.state.rowSelection.length === 0)) {
               comps.push(
                 <div
+                  key={'sel' + id}
                   className="select-highlight left"
                   style={{
                     height,
@@ -624,7 +654,7 @@ export default class TableView extends React.Component {
               <div
                 className={'bg' + (del ? ' del' : '')}
                 style={{ 
-                  backgroundColor: `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
+                  backgroundColor: utility < 0 ? 'white' : `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
                   backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
               />
@@ -673,13 +703,15 @@ export default class TableView extends React.Component {
               });
 
               let subgHighlight = [];
-
+              
               this.props.store.subgroupRecSelectedList.filter(item => item.group === row.id)
                 .map(item => {
                   let cnt = 0;
                   let start = -1;
                   let recordSet = new Set(item.records);
                   let isCurrentSubg = currentSubgSelected && this.props.store.currentSubgroup.id === item.id;
+
+                  if (!isCurrentSubg) return;
 
                   for (let i = 0; i < row.extended.length; ++i) {
                     let recId = row.extended[i].id;
@@ -689,7 +721,7 @@ export default class TableView extends React.Component {
                     } else if (cnt >= 1) {
                       subgHighlight.push(
                         <div
-                        className={isCurrentSubg ? 'select-highlight' : 'highlight-mask'}
+                        className={'select-highlight'}
                         key={`${row.id} ${recId}`}
                         style={{ top: bodyHeight + 30 + start * CELL_HEIGHT, height: cnt * CELL_HEIGHT }}  
                       />
@@ -727,7 +759,7 @@ export default class TableView extends React.Component {
             }
 
             let height = folded ? 30 : 30 + row.extended.length * CELL_HEIGHT;
-            if (this.props.store.recNum === row.id && !currentSubgSelected) {
+            if (this.props.store.recNum === row.id && !currentSubgSelected && (!this.state.rowSelection || this.state.rowSelection.length === 0)) {
               groupedRows.push(
                 <div
                   key={'h' + row.id}

@@ -7,6 +7,7 @@ import axis from '../utils/axios'
 import { Modal } from 'antd';
 import axios from '../utils/axios';
 import './LoadData.scss';
+import { InputNumber } from 'antd';
 
 const SearchAlgorithm = [ { name: 'K2', id: 'K2' },
 { name: 'Genetic Search', id: 'GeneticSearch' },
@@ -159,6 +160,9 @@ export default class LoadData extends React.Component {
                                     {name}
                                 </div>)) }
                         </div>
+                    </div>
+                    <div className="load-panel">
+                        Risk Limit: <InputNumber value={this.props.store.riskLimit} step={0.1} min={0} max={1} onChange={val => this.props.store.riskLimit = val} />
                     </div>
                 </div>
             </Modal>

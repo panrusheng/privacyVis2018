@@ -11,6 +11,9 @@ import * as d3 from 'd3';
 
 class AppStore {
   @observable
+  riskLimit = 0.1;
+
+  @observable
   currentDataset = undefined;
 
   @observable
@@ -53,23 +56,10 @@ class AppStore {
 
   @observable
   subgroupRecSelectedList = [];
-  /**
-   * subgroupRecSelectedList = [
-   *  {
-   *    group: 1,
-        id: id,
-        records: [1, 2, 3, ...],
-        select: 1,
-   *  }
-   * ]
-   */
 
   @observable
   currentSubgroup = null;
-  // currentSubgroup = {
-  //   group: 0,
-  //   recordIds: [],
-  // }
+
 
   @observable
   comparison = [{
@@ -150,6 +140,7 @@ class AppStore {
       params: {
         attributes: JSON.stringify(atts),
         method: this.gbnSearchAlgorithm,
+        riskLimit: this.riskLimit,
       }
     }).then(data => {
       const {
@@ -519,38 +510,34 @@ class AppStore {
 
   @action getResult() {
     let options = [];
-    this.recSelectedList.forEach((selectArray, index) => {
-      let gSel, flag;
-      flag = true;
-      selectArray.forEach((s, idx) => {
-        if (s === 1) gSel = idx;
-        else if (s !== 0) flag = false;
+    
+    this.groupSelectList.forEach((groupSelect, index) => {
+      let flag = true;
+      let selectionList = [];
+
+      for (let i = 0; i < this.recList.rec[index].length; ++i) selectionList.push([]);
+
+      this.subgroupRecSelectedList.filter(({ records, group, select }) => {
+        if (group === index) {
+          flag = false;
+          selectionList[select].push(...records);
+        }
       });
 
       if (flag) {
         options.push({
           flag,
-          no: gSel
+          no: groupSelect,
         });
-        return;
+      } else {
+        options.push({
+          flag,
+          no: groupSelect,
+          selectionList
+        });
       }
-
-      let selectionList = new Array(3);
-      let subgroups = this.subgroupRecSelectedList.filter(item => item.group === index);
-      let spSelIds = new Set();
-
-      subgroups.forEach(subg => {
-        selectionList[subg.select] = subg.records;
-        spSelIds = new Set([...spSelIds, subg.records]);
-      });
-
-      selectionList[gSel] = [];
-
-      this.dataGroups[index].records.forEach(item => {
-        if (!spSelIds.has(item.id)) selectionList[gSel].push(item.id);
-      });
     });
-
+  
     axios.post('/get_result', null, {
       params: {
         options: JSON.stringify(options),
@@ -620,6 +607,7 @@ class AppStore {
 
     this.recSelectedList.splice(group, 1, selList);
   }
+
   @action
   setModel(model, options) {
     axios.post('/get_test', null, {
