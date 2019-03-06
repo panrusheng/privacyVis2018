@@ -4,7 +4,9 @@ import {
   toJS,
 } from 'mobx';
 import axios from '../utils/axios.js';
-import { dataPreprocess } from '../utils/preprocess.js';
+import {
+  dataPreprocess
+} from '../utils/preprocess.js';
 import * as d3 from 'd3';
 
 class AppStore {
@@ -36,7 +38,10 @@ class AppStore {
   nodeList4links = [];
 
   @observable
-  recList = { group: [], rec: [] }
+  recList = {
+    group: [],
+    rec: []
+  }
 
   graphLayout = {};
 
@@ -58,7 +63,7 @@ class AppStore {
    *  }
    * ]
    */
-  
+
   @observable
   currentSubgroup = null;
   // currentSubgroup = {
@@ -67,9 +72,22 @@ class AppStore {
   // }
 
   @observable
-  comparison = [
-    {eventName : 'sen: true', oriD: 0.7, oriC: 0.65, oriT: 0.8, proC: 0.65, proT: 0.3},
-    {eventName : 'sen: false', oriD: 0.3, oriC: 0.35, oriT: 0.8, proC: 0.35, proT: 0.1},
+  comparison = [{
+      eventName: 'sen: true',
+      oriD: 0.7,
+      oriC: 0.65,
+      oriT: 0.8,
+      proC: 0.65,
+      proT: 0.3
+    },
+    {
+      eventName: 'sen: false',
+      oriD: 0.3,
+      oriC: 0.35,
+      oriT: 0.8,
+      proC: 0.35,
+      proT: 0.1
+    },
   ];
 
   @observable
@@ -79,6 +97,39 @@ class AppStore {
   recNum = 0;
 
   gbnSearchAlgorithm = 'K2';
+  modelOption = {
+    bn: {
+      searchAlgorithm: 'K2'
+    },
+    svm: {
+      kernelType: 0,
+      degree: 0,
+      gamma: 1,
+      coef0: 0
+    },
+    rf: {
+      maxDepth: 0
+    },
+    dt: {
+      unpruned: false,
+      confidenceThreshold: 0.25,
+      minInstance: 2,
+      laplaceSmoothing: false,
+      reducedErrorPruning: false,
+      MDLCorrection: true,
+      collapseTree: true,
+      subtreeRaising: true
+    },
+    knn: {
+      crossValidate: false,
+      distanceWeighting: 0,
+      k: 1,
+      meanSquared: false,
+      searchAlgorithm: "LinearNNSearch",
+      distanceFunction: "EculideanDistance"
+
+    }
+  }
 
   @action
   getDataSetList() {
@@ -101,9 +152,14 @@ class AppStore {
         method: this.gbnSearchAlgorithm,
       }
     }).then(data => {
-      const { GBN } = data;
+      const {
+        GBN
+      } = data;
       let sensitiveMap = {};
-      this.selectedAttributes.forEach(({ attrName, sensitive }) => sensitiveMap[attrName] = sensitive);
+      this.selectedAttributes.forEach(({
+        attrName,
+        sensitive
+      }) => sensitiveMap[attrName] = sensitive);
 
       GBN.links.forEach(item => item.value = parseFloat(item.value));
       GBN.nodes.forEach(node => {
@@ -117,7 +173,8 @@ class AppStore {
       dataGBN.nodes = [];
       dataGBN.links = [];
       dataGBN.nullNodes = [];
-      let nullList = [], nodeList4links = [];
+      let nullList = [],
+        nodeList4links = [];
       for (let i = 0; i < GBN.nodes.length; i++) {
         nullList.push(false);
       }
@@ -136,21 +193,29 @@ class AppStore {
       }
       for (let i = 0; i < GBN.links.length; i++) {
 
-        let source = GBN.links[i].source, target = GBN.links[i].target;
+        let source = GBN.links[i].source,
+          target = GBN.links[i].target;
         for (let j = source; j >= 0; j--) {
           source = nullList[j] ? source : source - 1;
         }
         for (let j = target; j >= 0; j--) {
           target = nullList[j] ? target : target - 1;
         }
-        dataGBN.links.push({ source: source, target: target, value: GBN.links[i].value, cpt: GBN.links[i].cpt })
+        dataGBN.links.push({
+          source: source,
+          target: target,
+          value: GBN.links[i].value,
+          cpt: GBN.links[i].cpt
+        })
       }
 
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
         attr.utility = 1;
-        attr.sensitive = (this.selectedAttributes.find(({ attrName }) => attrName === attr.attrName) || {}).sensitive;
+        attr.sensitive = (this.selectedAttributes.find(({
+          attrName
+        }) => attrName === attr.attrName) || {}).sensitive;
 
         if (attr.type === 'numerical') {
           attr.breakPoints = [];
@@ -176,11 +241,11 @@ class AppStore {
     });
   }
 
-  @action setGraphLayout (layout) {
+  @action setGraphLayout(layout) {
     this.graphLayout = layout;
   }
 
-  @action getGraphLayout () {
+  @action getGraphLayout() {
     return this.graphLayout;
   }
 
@@ -210,7 +275,7 @@ class AppStore {
       //   pab0 = pa * (1 - cpt[2]),
       //   pa0b = pa0 * cpt[3],
       //   pa0b0 = pa0 * (1 - cpt[3]);
-      const value = cpt[2];//pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
+      const value = cpt[2]; //pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
       for (let i = 0; i < newGBN.links.length; i++) {
         if (
           oL[i].source === source &&
@@ -223,7 +288,7 @@ class AppStore {
         }
       }
       if (!flag)
-      oL.push({
+        oL.push({
           source: source,
           target: target,
           value: value,
@@ -332,7 +397,9 @@ class AppStore {
       item => item.attrName === attrName
     );
     if (index < 0) return;
-    const attr = Object.assign({}, this.selectedAttributes[index], { utility: value });
+    const attr = Object.assign({}, this.selectedAttributes[index], {
+      utility: value
+    });
     this.selectedAttributes.splice(index, 1, attr);
 
     const nodes = toJS(this.GBN.nodes);
@@ -343,7 +410,7 @@ class AppStore {
   }
 
   @action
-  editGBN() { 
+  editGBN() {
     let eventList = [];
     this.selectedAttributes.forEach(attr => {
       let e = {};
@@ -377,18 +444,26 @@ class AppStore {
 
   @action
   getRecList() {
-    const { GBN } = this;
+    const {
+      GBN
+    } = this;
     axios.post('/get_recommendation', {
       links: GBN.links,
-      utilityList: this.selectedAttributes.map(item => ({ attName: item.attrName, utility: item.utility })),
+      utilityList: this.selectedAttributes.map(item => ({
+        attName: item.attrName,
+        utility: item.utility
+      })),
       attributes: this.selectedAttributes.map(item => item.attrName)
     }).then(groups => {
       let sensitiveMap = {};
-      this.selectedAttributes.forEach(({ attrName, sensitive }) => sensitiveMap[attrName] = sensitive);
+      this.selectedAttributes.forEach(({
+        attrName,
+        sensitive
+      }) => sensitiveMap[attrName] = sensitive);
 
       groups.forEach(g => {
         let id = 0;
-        
+
         g.localGBN.nodes.map(node => {
           let newId = id++;
           let oldId = node.eventNo;
@@ -444,7 +519,7 @@ class AppStore {
 
   @action getResult() {
     let options = [];
-    this.recSelectedList.forEach((selectArray, index) =>{
+    this.recSelectedList.forEach((selectArray, index) => {
       let gSel, flag;
       flag = true;
       selectArray.forEach((s, idx) => {
@@ -453,7 +528,10 @@ class AppStore {
       });
 
       if (flag) {
-        options.push({ flag, no: gSel });
+        options.push({
+          flag,
+          no: gSel
+        });
         return;
       }
 
@@ -526,18 +604,43 @@ class AppStore {
     let sgTotal = 0
 
     this.subgroupRecSelectedList.filter(sug => sug.group === group)
-      .map(({ select, records }) => {
+      .map(({
+        select,
+        records
+      }) => {
         selList[select] += records.length;
         sgTotal += records.length;
       });
-    
+
     selList[this.groupSelectList[group]] = total - sgTotal;
-    
+
     for (let i = 0; i < selList.length; ++i) {
       selList[i] = parseFloat((selList[i] / total).toFixed(2));
     }
-    
+
     this.recSelectedList.splice(group, 1, selList);
+  }
+  @action
+  setModel(model, options) {
+    axios.post('/get_test', null, {
+      params: {
+        method: JSON.stringify(model),
+        options: JSON.stringify(options),
+      }
+    }).then(data => {
+      let comparison = [];
+      for (let i = 0; i < data.length; i++) {
+        let o = {};
+        o.eventName = data[i].eveName;
+        o.oriD = data[i].frequency,
+        o.oriC = data[i].oriD.TP + data[i].oriD.NP;
+        o.oriT = data[i].oriD.TP;
+        o.proC = data[i].proD.TP +data[i].proD.NP;
+        o.proT = data[i].proD.TP;
+        comparison.push(o);
+      }
+      this.comparison = comparison;
+    })
   }
 }
 

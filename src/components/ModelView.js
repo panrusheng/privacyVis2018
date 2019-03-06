@@ -10,43 +10,43 @@ const Option = Select.Option;
 @observer
 export default class ModelView extends React.Component {
   state = {
-    model: 'knn',
+    model: 'KNN',
     options: {
-      crossValidate: 0, distanceWeighting: 0, k: 1, meanSquared: 0,
-      searchAlgorithm: 0, distanceFunction: 0,
+      crossValidate: false, distanceWeighting: 0, k: 1, meanSquared: false,
+      searchAlgorithm: 'LinearNNSearch', distanceFunction: 'EculideanDistance',
     }
   };
 
   constructor(props) {
     super(props);
-
+    this.submit = this.submit.bind(this);
     this.changeModel = this.changeModel.bind(this);
   }
 
   changeModel(model) {
     let options;
     switch (model) {
-      case 'knn': {
+      case 'KNN': {
         options = {
-          crossValidate: 0, distanceWeighting: 0, k: 1, meanSquared: 0,
-          searchAlgorithm: 0, distanceFunction: 0,
+          crossValidate: false, distanceWeighting: 0, k: 1, meanSquared: false,
+          searchAlgorithm: 'LinearNNSearch', distanceFunction: 'EculideanDistance',
         };
         break;
       }
-      case 'bn': {
-        options = { searchAlgorithm: 'k2' };
+      case 'bayesianNetwork': {
+        options = { searchAlgorithm: 'K2' };
         break;
       }
-      case 'svm': {
+      case 'SVM': {
         options = { kernelType: 0, degree: 3, gamma: this.props.store.selectedAttributes.length > 0 ?  parseFloat((1/this.props.store.selectedAttributes.length).toFixed(2)) : 1 , coef0: 0 };
         break;
       }
-      case 'dt': {
-        options =  { unpruned: 0, confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: 1,
-          reducedErrorPruning: 0, MDLCorrection: 1, collapseTree: 1, subtreeRaising: 1 };
+      case 'decisionTree': {
+        options =  { unpruned: false, confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: false,
+          reducedErrorPruning: false, MDLCorrection: true, collapseTree: true, subtreeRaising: true };
         break;
       }
-      case 'rf': {
+      case 'randomForest': {
         options = { maxDepth: 0 };        
         break;
       }
@@ -195,23 +195,23 @@ export default class ModelView extends React.Component {
 
   renderPanel(model) {
     switch(model) {
-      case "bn": return (<div className="model-panel">
+      case "bayesianNetwork": return (<div className="model-panel">
         <div className="model-unit" key="bn-1">
           <span className="label">Search algorithm: </span>
           <Select value={this.state.options.searchAlgorithm} style={{ width: 270 }} onChange={value => this.handleOptionUpdate('searchAlgorithm', value)}>
-            <Option value="k2">K2</Option>
-            <Option value="gs">Genetic Search</Option>
-            <Option value="hc">Hill Climber</Option>
-            <Option value="lhc">LAGD Hill Climber</Option>
-            <Option value="lcs">Local Score Search</Option>
-            <Option value="rhc">Repeated Hill Climber</Option>
-            <Option value="sa">Simulated Annealing</Option>
-            <Option value="ts">Tabu Search</Option>
-            <Option value="tan">Transductive Adversarial Networks</Option>
+            <Option value="K2">K2</Option>
+            <Option value="GeneticSearch">Genetic Search</Option>
+            <Option value="HillClimber">Hill Climber</Option>
+            <Option value="LAGDHillClimber">LAGD Hill Climber</Option>
+            <Option value="LocalScoreSearchAlgorithm">Local Score Search</Option>
+            <Option value="RepeatedHillClimber">Repeated Hill Climber</Option>
+            <Option value="SimulatedAnnealing">Simulated Annealing</Option>
+            <Option value="TabuSearch">Tabu Search</Option>
+            <Option value="TAN">Transductive Adversarial Networks</Option>
           </Select>
         </div>
       </div>);
-      case "svm": return (
+      case "SVM": return (
       <div className="model-panel">
         <div className="model-unit" key="svm-1">
           <span className="label" style={{ width: 75}}>Kernel type:</span>
@@ -235,20 +235,20 @@ export default class ModelView extends React.Component {
           <InputNumber value={this.state.options.coef0} onChange={value => this.handleOptionUpdate('coef0', value)} min={0} max={5} step={0.01} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
-      case "rf": return (
+      case "randomForest": return (
       <div className="model-panel">
         <div className="model-unit" key="rf-1">
           <span className="label">Max depth:</span>
           <InputNumber value={this.state.options.maxDepth} onChange={value => this.handleOptionUpdate('maxDepth', value)} min={0} max={10} defaultValue={0} step={1} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
-      case "knn": return (
+      case "KNN": return (
       <div className="model-panel">
         <div className="model-unit" key="knn-1">
           <span className="label" style={{"minWidth": 125}}>Cross Validate:</span>
           <Select value={this.state.options.crossValidate} onChange={value => this.handleOptionUpdate('crossValidate', value)} style={{ width: 100}}>
-            <Option value={1}>True</Option>
-            <Option value={0}>False</Option>
+            <Option value={true}>True</Option>
+            <Option value={false}>False</Option>
           </Select>
         </div>
         <div className="model-unit" key="knn-2">
@@ -266,38 +266,38 @@ export default class ModelView extends React.Component {
         <div className="model-unit" key="knn-4">
           <span className="label" style={{"minWidth": 100}}>Mean squared:</span>
           <Select  value={this.state.options.meanSquared} onChange={value => this.handleOptionUpdate('meanSquared', value)}>
-            <Option value={1}>True</Option>
-            <Option value={0}>False</Option>
+            <Option value={true}>True</Option>
+            <Option value={false}>False</Option>
           </Select>
         </div>
         <div className="model-unit" key="knn-5">
           <span className="label" style={{"minWidth": 125}}>Distance Function:</span>
           <Select  value={this.state.options.distanceFunction} onChange={value => this.handleOptionUpdate('distanceFunction', value)} style={{ width: 220}}>
-            <Option value={0}>Eculidean Distance</Option>
-            <Option value={1}>Filtered Distance</Option>
-            <Option value={2}>Chebyshev Distance</Option>
-            <Option value={3}>Manhattan Distance</Option>
-            <Option value={4}>Minkowski Distance</Option>  
+            <Option value={'EculideanDistance'}>Eculidean Distance</Option>
+            <Option value={'FilteredDistance'}>Filtered Distance</Option>
+            <Option value={'ChebyshevDistance'}>Chebyshev Distance</Option>
+            <Option value={'ManhattanDistance'}>Manhattan Distance</Option>
+            <Option value={'MinkowskiDistance'}>Minkowski Distance</Option>  
           </Select>
         </div>
         <div className="model-unit" key="knn-6">
           <span className="label" style={{"minWidth": 125}}>Search Algorithm:</span>
           <Select  value={this.state.options.searchAlgorithm} onChange={value => this.handleOptionUpdate('searchAlgorithm', value)} style={{ width: 220}}>
-            <Option value={0}>Linear NN Search</Option>
-            <Option value={1}>Ball Tree</Option>
-            <Option value={2}>Cover Tree</Option>
-            <Option value={3}>Filtered Neighbour Search</Option>
-            <Option value={4}>KDTree</Option>  
+            <Option value={'LinearNNSearch'}>Linear NN Search</Option>
+            <Option value={'BallTree'}>Ball Tree</Option>
+            <Option value={'CoverTree'}>Cover Tree</Option>
+            <Option value={'FilteredNeighbourSearch'}>Filtered Neighbour Search</Option>
+            <Option value={'KDTree'}>KDTree</Option>  
           </Select>
         </div>
       </div>);
-      case "dt": return (
+      case "decisionTree": return (
         <div className="model-panel">
           <div className="model-unit" key="dt-7">
             <span className="label" style={{"minWidth": 147}}>Unpruned:</span>
             <Select  value={this.state.options.unpruned} onChange={value => this.handleOptionUpdate('unpruned', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="dt-8">
@@ -311,36 +311,36 @@ export default class ModelView extends React.Component {
           <div className="model-unit" key="dt-1">
             <span className="label" style={{"minWidth": 147}}>Laplace smoothing:</span>
             <Select  value={this.state.options.laplaceSmoothing} onChange={value => this.handleOptionUpdate('laplaceSmoothing', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="23-1">
             <span className="label" style={{"minWidth": 147}}>Reduced error pruning:</span>
             <Select  value={this.state.options.reducedErrorPruning} onChange={value => this.handleOptionUpdate('reducedErrorPruning', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
           <div className="model-unit"  key="1-1">
             <span className="label" style={{"minWidth": 147}}>MDL correction:</span>
             <Select  value={this.state.options.MDLCorrection} onChange={value => this.handleOptionUpdate('MDLCorrection', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="2-1">
             <span className="label" style={{"minWidth": 147}}>Collapse tree:</span>
             <Select  value={this.state.options.collapseTree} onChange={value => this.handleOptionUpdate('collapseTree', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="3-1">
             <span className="label" style={{"minWidth": 147}}>Subtree raising:</span>
             <Select  value={this.state.options.subtreeRaising} onChange={value => this.handleOptionUpdate('subtreeRaising', value)} style={{ width: 75}}>
-              <Option value={1}>True</Option>
-              <Option value={0}>False</Option>
+              <Option value={true}>True</Option>
+              <Option value={false}>False</Option>
             </Select>
           </div>
         </div>);
@@ -348,7 +348,7 @@ export default class ModelView extends React.Component {
   }
 
   submit() {
-
+    this.props.store.setModel(this.state.model, this.state.options);
   }
 
   render() {
@@ -365,11 +365,11 @@ export default class ModelView extends React.Component {
                   <div>
                   <span className="label">Model: </span>
                   <Select defaultValue={ this.state.model } id="modelSelect" style={{ width: 220 }} onChange={this.changeModel}>
-                    <Option value="bn">Bayesian Network</Option>
-                    <Option value="svm">Support Vector Machine</Option>
-                    <Option value="rf">Random Forest</Option>
-                    <Option value="dt">Decision Tree</Option>
-                    <Option value="knn">K-nearest Neighbors</Option>
+                    <Option value="bayesianNetwork">Bayesian Network</Option>
+                    <Option value="SVM">Support Vector Machine</Option>
+                    <Option value="randomForest">Random Forest</Option>
+                    <Option value="decisionTree">Decision Tree</Option>
+                    <Option value="KNN">K-nearest Neighbors</Option>
                   </Select>
                   </div>
                   <Button className='model-submit' style={{width: 100}} onClick={this.submit}>Submit</Button>
