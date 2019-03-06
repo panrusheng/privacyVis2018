@@ -492,7 +492,7 @@ class AppStore {
       for (let i = 0; i < recList.rec.length; i++) {
         if (recList.rec[i].length === 0) recSelectedList.push([]);
         else {
-          let rec = [1];
+          let rec = [groups[i].records.length];
           for (let j = 1; j < recList.rec[i].length; j++) {
             rec.push(0);
           }
@@ -622,9 +622,9 @@ class AppStore {
 
     selList[this.groupSelectList[group]] = total - sgTotal;
 
-    for (let i = 0; i < selList.length; ++i) {
-      selList[i] = parseFloat((selList[i] / total).toFixed(2));
-    }
+    // for (let i = 0; i < selList.length; ++i) {
+      // selList[i] = parseFloat((selList[i] / total).toFixed(2));
+    // }
 
     this.recSelectedList.splice(group, 1, selList);
   }
