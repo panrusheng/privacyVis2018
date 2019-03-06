@@ -10,6 +10,7 @@ import { InputNumber, Button } from 'antd';
 import * as d3 from 'd3';
 import leftIcon from '../../assets/image/left-arrow.svg';
 import rightIcon from '../../assets/image/right-arrow.svg';
+import { toJS } from 'mobx';
 // import { toJS } from 'mobx';
 
 @inject(['store'])
@@ -230,12 +231,18 @@ export default class AttrInitialize extends React.Component {
               <div className="chart" key={attr.attrName}>
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
+                  {attr.sensitive?(
                   <div className="form-block">
-                    <p style={{ margin: 1 }}>Utility value</p>
-                    <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                    <p style={{color: '#FE2901', 'font-size': 25}}>Sensitive</p>
+                  </div>
+                  ):(
+                    <div className="form-block">
+                      <p style={{ margin: 1 }}>Utility value</p>
+                      <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                       this.handleUtilityChange(attr.attrName, e)
                     } />
                   </div>
+                  )}
                 </div>
                 {this.renderAttr(attr)}
               </div>
