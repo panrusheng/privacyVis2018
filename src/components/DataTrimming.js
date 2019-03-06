@@ -9,6 +9,7 @@ import NumeTrim from './DataTrim/NumeTrim';
 import CateTrim from './DataTrim/CateTrim';
 import leftIcon from '../assets/image/left-arrow.svg';
 import rightIcon from '../assets/image/right-arrow.svg';
+import SlashIcon from '../assets/image/stripe.png'
 @inject(['store'])
 @observer
 export default class DistTrimming extends React.Component {
@@ -172,7 +173,7 @@ export default class DistTrimming extends React.Component {
             <label>Current distribution</label>
           </div>
           <div className='trim-legend-unit'>
-            <div className="trim-trim" />
+            <div className="trim-trim" style={{backgroundImage: `url(${SlashIcon})`}}/>
             <label>Suggested removal parts</label>
           </div>
         </div>

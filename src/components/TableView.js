@@ -5,7 +5,7 @@ import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
 import { toJS, values, set } from 'mobx';
-import SlashIcon from '../assets/image/slash.png'
+import SlashIcon from '../assets/image/stripe.png'
 import * as d3 from 'd3';
 
 const DESC = -1;

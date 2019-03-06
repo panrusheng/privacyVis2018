@@ -114,7 +114,7 @@
         pointer-events: none; }
       .table-view .table .table-body .table-cell {
         box-shadow: 1px 1px 0px rgba(153, 153, 153, 0.2);
-        height: 15px; }
+        height: 5px; }
       .table-view .table .table-body .table-row.group .table-cell {
         height: 30px; }
       .table-view .table .table-body .table-row.risk .table-cell {
@@ -174,7 +174,7 @@
         bottom: 0;
         z-index: -1; }
         .table-view .table .table-cell .bg.del {
-          background-size: 100% 100%; }
+          background-size: 15px 15px; }
       .table-view .table .table-cell.select-row {
         cursor: crosshair;
         height: 10px; }

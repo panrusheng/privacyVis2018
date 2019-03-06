@@ -203,7 +203,7 @@ class AppStore {
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
-        attr.utility = 1;
+        attr.utility = 0.5;
         attr.sensitive = (this.selectedAttributes.find(({
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;

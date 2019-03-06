@@ -91,11 +91,7 @@
     .trim-trim {
       width: 20px;
       height: 20px;
-      background: repeating-linear-gradient(
-        -45deg,
-        #d0e0f0,
-        #d0e0f0 4px,
-        #333 1px,
-        #333 5px);
+      background-color: #d0e0f0;
+      background-size: 20px;
     }
   }

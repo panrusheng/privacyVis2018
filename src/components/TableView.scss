@@ -164,7 +164,7 @@
 
             .table-cell {
                 box-shadow: 1px 1px 0px rgba($color: #999999, $alpha: 0.2);
-                height: 15px;
+                height: 5px;
             }
 
             .table-row.group {
@@ -253,7 +253,7 @@
                 bottom: 0;
                 z-index: -1;
                 &.del {
-                    background-size: 100% 100%;
+                    background-size: 15px 15px;
                 }
             }
             width: 60px;
