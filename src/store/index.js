@@ -431,6 +431,10 @@ class AppStore {
   @action
   setSystemStage(stage) {
     this.systemStage = stage;
+
+    if (stage === 2) {
+      this.getResult();
+    }
   }
 
   @action
@@ -515,14 +519,31 @@ class AppStore {
       let flag = true;
       let selectionList = [];
 
+      if (this.recList.rec[index].length === 0) {
+        options.push({
+          flag,
+          no: 0,
+        });
+        return;
+      }
+      
       for (let i = 0; i < this.recList.rec[index].length; ++i) selectionList.push([]);
+
+      let spRecords = new Set();
 
       this.subgroupRecSelectedList.filter(({ records, group, select }) => {
         if (group === index) {
           flag = false;
           selectionList[select].push(...records);
+          spRecords = new Set([...spRecords, ...records]);
         }
       });
+
+      this.dataGroups[index].records.forEach(({id}) => {
+        if (!spRecords.has(id)) {
+          selectionList[groupSelect].push(id);
+        }
+      })
 
       if (flag) {
         options.push({
@@ -610,6 +631,11 @@ class AppStore {
 
   @action
   setModel(model, options) {
+    for (let key in options) {
+      if (options[key] === 'true') options[key] = true;
+      if (options[key] === 'false') options[key] = false;
+    }
+
     axios.post('/get_test', null, {
       params: {
         method: JSON.stringify(model),

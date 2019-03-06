@@ -233,7 +233,7 @@ export default class AttrInitialize extends React.Component {
                   <div className="title">{attr.attrName}</div>
                   {attr.sensitive?(
                   <div className="form-block">
-                    <p style={{color: '#FE2901', 'font-size': 25}}>Sensitive</p>
+                    <p style={{color: '#FE2901', 'fontSize': 25}}>Sensitive</p>
                   </div>
                   ):(
                     <div className="form-block">

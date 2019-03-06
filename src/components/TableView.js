@@ -103,25 +103,22 @@ export default class TableView extends React.Component {
   removeDupSelection() {
     let rowSelection = [...this.state.rowSelection];
 
-
+    // remove if has been selected a new rec
     this.props.store.subgroupRecSelectedList.map(subg => {
       let idx = rowSelection.findIndex(item => item.id === subg.id);
       if (idx >= 0) rowSelection.splice(idx, 1);
     });
 
-    if (this.props.store.currentSubgroup) {
+    if (this.props.store.currentSubgroup &&
+      this.props.store.currentSubgroup.records.length === this.props.store.dataGroups[this.props.store.recNum].records.length) {
       let idx = rowSelection.findIndex(item => item.id === this.props.store.currentSubgroup.id);
       if (idx >= 0) rowSelection.splice(idx, 1);
+      this.props.store.currentSubgroup = null;
     }
 
     if (rowSelection.length !== this.state.rowSelection.length) {
       this.setState({ rowSelection });
     }
-
-    if (this.props.store.currentSubgroup &&
-      this.props.store.currentSubgroup.records.length === this.props.store.dataGroups[this.props.store.recNum].records.length) {
-        this.props.store.currentSubgroup = null;
-      }
   }
 
   orderedGroupRecords(group) {

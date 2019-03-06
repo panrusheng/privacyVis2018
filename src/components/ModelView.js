@@ -12,7 +12,7 @@ export default class ModelView extends React.Component {
   state = {
     model: 'KNN',
     options: {
-      crossValidate: false, distanceWeighting: 0, k: 1, meanSquared: false,
+      crossValidate: 'false', distanceWeighting: 0, k: 1, meanSquared: 'false',
       searchAlgorithm: 'LinearNNSearch', distanceFunction: 'EculideanDistance',
     }
   };
@@ -28,7 +28,7 @@ export default class ModelView extends React.Component {
     switch (model) {
       case 'KNN': {
         options = {
-          crossValidate: false, distanceWeighting: 0, k: 1, meanSquared: false,
+          crossValidate: 'false', distanceWeighting: 0, k: 1, meanSquared: 'false',
           searchAlgorithm: 'LinearNNSearch', distanceFunction: 'EculideanDistance',
         };
         break;
@@ -42,8 +42,8 @@ export default class ModelView extends React.Component {
         break;
       }
       case 'decisionTree': {
-        options =  { unpruned: false, confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: false,
-          reducedErrorPruning: false, MDLCorrection: true, collapseTree: true, subtreeRaising: true };
+        options =  { unpruned: 'false', confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: 'false',
+          reducedErrorPruning: 'false', MDLCorrection: 'true', collapseTree: 'true', subtreeRaising: 'true' };
         break;
       }
       case 'randomForest': {
@@ -247,8 +247,8 @@ export default class ModelView extends React.Component {
         <div className="model-unit" key="knn-1">
           <span className="label" style={{"minWidth": 125}}>Cross Validate:</span>
           <Select value={this.state.options.crossValidate} onChange={value => this.handleOptionUpdate('crossValidate', value)} style={{ width: 100}}>
-            <Option value={true}>True</Option>
-            <Option value={false}>False</Option>
+            <Option value={'true'}>True</Option>
+            <Option value={'false'}>False</Option>
           </Select>
         </div>
         <div className="model-unit" key="knn-2">
@@ -266,8 +266,8 @@ export default class ModelView extends React.Component {
         <div className="model-unit" key="knn-4">
           <span className="label" style={{"minWidth": 100}}>Mean squared:</span>
           <Select  value={this.state.options.meanSquared} onChange={value => this.handleOptionUpdate('meanSquared', value)}>
-            <Option value={true}>True</Option>
-            <Option value={false}>False</Option>
+            <Option value={'true'}>True</Option>
+            <Option value={'false'}>False</Option>
           </Select>
         </div>
         <div className="model-unit" key="knn-5">
@@ -296,8 +296,8 @@ export default class ModelView extends React.Component {
           <div className="model-unit" key="dt-7">
             <span className="label" style={{"minWidth": 147}}>Unpruned:</span>
             <Select  value={this.state.options.unpruned} onChange={value => this.handleOptionUpdate('unpruned', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="dt-8">
@@ -311,36 +311,36 @@ export default class ModelView extends React.Component {
           <div className="model-unit" key="dt-1">
             <span className="label" style={{"minWidth": 147}}>Laplace smoothing:</span>
             <Select  value={this.state.options.laplaceSmoothing} onChange={value => this.handleOptionUpdate('laplaceSmoothing', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="23-1">
             <span className="label" style={{"minWidth": 147}}>Reduced error pruning:</span>
             <Select  value={this.state.options.reducedErrorPruning} onChange={value => this.handleOptionUpdate('reducedErrorPruning', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
           <div className="model-unit"  key="1-1">
             <span className="label" style={{"minWidth": 147}}>MDL correction:</span>
             <Select  value={this.state.options.MDLCorrection} onChange={value => this.handleOptionUpdate('MDLCorrection', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="2-1">
             <span className="label" style={{"minWidth": 147}}>Collapse tree:</span>
             <Select  value={this.state.options.collapseTree} onChange={value => this.handleOptionUpdate('collapseTree', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
           <div className="model-unit" key="3-1">
             <span className="label" style={{"minWidth": 147}}>Subtree raising:</span>
             <Select  value={this.state.options.subtreeRaising} onChange={value => this.handleOptionUpdate('subtreeRaising', value)} style={{ width: 75}}>
-              <Option value={true}>True</Option>
-              <Option value={false}>False</Option>
+              <Option value={'true'}>True</Option>
+              <Option value={'false'}>False</Option>
             </Select>
           </div>
         </div>);
