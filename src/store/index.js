@@ -367,7 +367,7 @@ class AppStore {
 
     if (index < 0) return;
     const attr = toJS(this.selectedAttributes[index]);
-    attr.breakPoints = [...new Set([...attr.breakPoints, point])];
+    attr.breakPoints = [...new Set([...attr.breakPoints, parseFloat(point)])];
     this.selectedAttributes.splice(index, 1, attr);
     this.editGBN();
     this.updateEventUtility();
@@ -394,7 +394,7 @@ class AppStore {
     if (index < 0) return;
 
     const attr = Object.assign({}, this.selectedAttributes[index]);
-    attr.breakPoints.splice(pIndex, 1, [value]);
+    attr.breakPoints.splice(pIndex, 1, parseFloat(value));
     this.selectedAttributes.splice(index, 1, attr);
 
     this.updateEventUtility();
@@ -412,7 +412,24 @@ class AppStore {
     });
     this.selectedAttributes.splice(index, 1, attr);
 
-    this.updateEventUtility();
+    // this.updateEventUtility();
+    let data = attr.data || attr.groups;
+    let total = data.reduce((prev, curv) => prev + curv.value, 0);
+
+    let eventUtilityList = toJS(this.eventUtilityList);
+    let eventColorList = toJS(this.eventColorList);
+
+    for (const eventName in eventUtilityList) {
+      let a = eventName.split(':')[0];
+      if (a !== attrName) continue;
+      let utility = value * (total - eventUtilityList[eventName].count) / total;
+      eventUtilityList[eventName].utility = utility;
+      eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+      'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+    }
+
+    this.eventColorList = eventColorList;
+    this.eventUtilityList = eventUtilityList;
   }
 
   @action
@@ -707,7 +724,7 @@ class AppStore {
 
           let count = this.getCount(attr.data, rMin, rMax, rMin === labelMin);
           let utility = attr.utility * (total - count) / total;
-          eventUtilityList[id] = { utility: utility, min: rMin, max: rMax, includeMin: rMin === labelMin };
+          eventUtilityList[id] = { utility: utility, min: rMin, max: rMax, includeMin: rMin === labelMin, count };
           eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
           'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         };
@@ -717,7 +734,7 @@ class AppStore {
     this.selectedAttributes.forEach(attr => {
       const { attrName } = attr;
       if (attr.type === 'numerical') {
-        if (this.fromGBNNodes) return;
+        if (fromGBNNodes) return;
         let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
         let fixedSize;
         if (decimalCntMap.has(attrName)) fixedSize = decimalCntMap.get(attrName);
@@ -726,12 +743,15 @@ class AppStore {
           decimalCntMap.set(attrName, fixedSize);
         }
 
-        for (let i = 0; i < attr.breakPoints.length + 1; ++i) {
+        const breakPoints = toJS(attr.breakPoints)
+        breakPoints.sort((a, b) => a - b);
+
+        for (let i = 0; i < breakPoints.length + 1; ++i) {
           let min, max;
           if (i === 0) min = '-inf';
-          else min = getR(attr.breakPoints[i-1], labelMin, labelMax);
-          if (i === attr.breakPoints.length) max = 'inf';
-          else max = getR(attr.breakPoints[i], labelMin, labelMax);
+          else min = getR(breakPoints[i-1], labelMin, labelMax);
+          if (i === breakPoints.length) max = 'inf';
+          else max = getR(breakPoints[i], labelMin, labelMax);
 
           let eventName = attrName + ': ' + '(' + min + '~' + max + (max === 'inf' ? ')' : ']');
 
@@ -740,7 +760,7 @@ class AppStore {
 
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;
-          eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0 };
+          eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count };
           eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
@@ -752,6 +772,7 @@ class AppStore {
           eventUtilityList[id] = {
             id,
             utility: attr.utility * (total - value) / total,
+            count: value,
           };
           eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
           'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
