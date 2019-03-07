@@ -354,7 +354,11 @@ export default class AttrNetwork extends Component {
         sourceDetail
           .append('path')
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / sourceList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / sourceList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / sourceList.length + ',0')
-          .style('fill', dd => colorDic[dd])//nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88');
+          .style('fill', '#fff');
+        sourceDetail
+          .append('path')
+          .attr('d', (dd, i) => 'M' + (i * 2 * w) / sourceList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / sourceList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / sourceList.length + ',0')
+          .style('fill', dd => colorDic[dd]);//nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88');
         // .on('mouseover', dd => {
         //   const x = d3.event.x + 5,
         //     y = d3.event.y - 35;
@@ -391,7 +395,10 @@ export default class AttrNetwork extends Component {
 
         targetDetail.append('path')
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
-          .style('fill',  dd => colorDic[dd])//nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');
+          .style('fill',  '#fff');
+        targetDetail.append('path')
+          .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
+          .style('fill',  dd => colorDic[dd]);//nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');
         // .on('mouseover', dd => {
         //   const x = d3.event.x + 5,
         //     y = d3.event.y - 35;
@@ -549,16 +556,20 @@ export default class AttrNetwork extends Component {
           });
       });
     //nodes
-    g
+    let circle = g
       .append('g')
       .attr('class', 'n2d')
       .selectAll('circle')
       .data(nodes)
-      .enter()
-      .append('circle')
+      .enter();
+    circle.append('circle')
+      .attr('r', r)
+      .style('fill', '#fff')//(d.value < 0 ? '#FE2901' : '#7bbc88'))
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
+    circle.append('circle')
       .attr('r', r)
       .style('fill', d => colorDic[d.id])//(d.value < 0 ? '#FE2901' : '#7bbc88'))
-      .style('stroke-width', 3)
       .style('stroke', 'none')
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
