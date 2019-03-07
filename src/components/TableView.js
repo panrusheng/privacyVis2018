@@ -11,7 +11,7 @@ import * as d3 from 'd3';
 const DESC = -1;
 const ASC = 1;
 
-const CELL_HEIGHT = 15;
+const CELL_HEIGHT = 5;
 
 const cmp = function (a, b) {
   if (a > b) return 1;
