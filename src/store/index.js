@@ -398,13 +398,15 @@ class AppStore {
     });
     this.selectedAttributes.splice(index, 1, attr);
 
+    this.updateEventUtility();
     const nodes = toJS(this.GBN.nodes);
     nodes.forEach(node => {
-      if (node.attrName === attrName) node.value = value;
+      if (node.attrName === attrName) {
+        let utility = this.eventUtilityList.find(item => item.id === node.id).utility;
+        node.value = utility;
+      }
     });
     this.GBN.nodes = nodes;
-
-    this.updateEventUtility();
   }
 
   @action
@@ -724,8 +726,6 @@ class AppStore {
     });
 
     this.eventUtilityList = eventUtilityList;
-
-    console.log(this.eventUtilityList);
   }
 }
 
