@@ -1,7 +1,9 @@
 import React from 'react';
 import * as d3 from 'd3';
 import './Numerical.scss';
-import { toJS } from 'mobx';
+import {
+  toJS
+} from 'mobx';
 
 export default class Numerical extends React.Component {
   static defaultProps = {
@@ -23,7 +25,7 @@ export default class Numerical extends React.Component {
       height,
     } = this.props;
     if (!attr || !this.chartDom) return;
-    
+
     this.draw(this.chartDom, attr, width, height);
   }
 
@@ -61,12 +63,8 @@ export default class Numerical extends React.Component {
     const area = d3
       .area()
       .x0(0)
-      .x1(function (d) {
-        return xScale(d);
-      })
-      .y(function (d, i) {
-        return yScale(i);
-      })
+      .x1(d => xScale(d.v))
+      .y(d => yScale(d.i))
       .curve(d3.curveMonotoneY);
 
     const svg = d3
@@ -77,17 +75,23 @@ export default class Numerical extends React.Component {
 
     let breakIndex = 0;
     let lastHeight = 0;
+    let areaList = [],
+      breakList = [];
 
     for (let eventName in this.props.eventUtilityList) {
       let attrName = eventName.split(':')[0];
-      if(attrName !== attr.attrName) continue;
-      let { max, min, includeMin } = this.props.eventUtilityList[eventName];
+      if (attrName !== attr.attrName) continue;
+      let {
+        max,
+        min,
+        includeMin
+      } = this.props.eventUtilityList[eventName];
 
       let areaData = [];
       values.forEach((v, index) => {
-        if ((labels[index] > min || (includeMin && labels[index] === min) ) && labels[index] <= max) areaData.push(v);
+        if ((labels[index] > min || (includeMin && labels[index] === min)) && labels[index] <= max) areaData.push({v: v, i: index});
       });
-      
+
       let h;
 
       if (breakIndex < breakPoints.length) {
@@ -96,36 +100,50 @@ export default class Numerical extends React.Component {
       } else {
         h = height - 20 - lastHeight;
       }
+      areaList.push({
+        d: areaData,
+        sum: areaData.reduce((a, b) => a + (b.v || 0), 0),
+        name: eventName,
+        clipPath: attrName + breakIndex
+      });
+      breakList.push({
+        id: attrName + breakIndex,
+        y: lastHeight,
+        h: h
+      });
 
-      svg.append("defs")
-        .append('clipPath')
-        .attr("id", attrName + breakIndex)
-        .append('rect')
-        .attr('x', 0)
-        .attr('y', lastHeight)
-        .attr('width', width)
-        .attr('height', h);
+
       lastHeight += h;
-
-      svg.append('path')
-        .data([values])
-        .attr('d', area)
-        .attr('fill', this.props.eventColorList[eventName])
-        .attr('clip-path', `url(#${attrName + breakIndex})`)
-        .on('mouseover', () => {
-          const x = d3.event.x + 15,
+      breakIndex++;
+    }
+    svg.selectAll('breakpoints')
+      .data(breakList)
+      .enter()
+      .append("defs")
+      .append('clipPath')
+      .attr("id", d => d.id)
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', d => d.y)
+      .attr('width', width)
+      .attr('height', d => d.h);
+    svg.selectAll('numpath')
+      .data(areaList)
+      .enter()
+      .append('path')
+      .attr('d', d => area(d.d))
+      .style('fill', d => this.props.eventColorList[d.name])
+      .attr('clip-path', d => `url(#${d.clipPath})`)
+      .on('mouseover', d => {
+        const x = d3.event.x + 15,
           y = d3.event.y - 35;
-          let sum = areaData.reduce(function(sumCurrent, v){
-            return sumCurrent + v;
-           });
-        d3.select('.tooltip').html(eventName + ': ' + sum + '</br> Utility: ' 
-          + this.props.eventUtilityList[eventName].utility.toFixed(2))
+          console.log(d.sum);
+        d3.select('.tooltip').html(d.name + ': ' + d.sum + '</br> Utility: ' +
+            this.props.eventUtilityList[d.name].utility.toFixed(2))
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
-        });
-      breakIndex++;
-    }
+      });
 
     svg
       .selectAll('circle')
@@ -134,7 +152,9 @@ export default class Numerical extends React.Component {
       .append('circle')
       .attr('cx', d => xScale(d))
       .attr('cy', (d, i) => yScale(i))
-      .attr('r', d => { return d === 0 ? 0 : 2 })
+      .attr('r', d => {
+        return d === 0 ? 0 : 2
+      })
       // .style('stroke', '#1866BB')
       // .style('stroke-width', 2)
       .style('fill', '#1866BB')
@@ -156,12 +176,12 @@ export default class Numerical extends React.Component {
       .call(
         d3.axisLeft(
           d3
-            .scaleLinear()
-            .range([0, height - 20])
-            .domain([labelMin, labelMax])
+          .scaleLinear()
+          .range([0, height - 20])
+          .domain([labelMin, labelMax])
         )
       );
-  
+
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
         .append('marker')
@@ -209,19 +229,19 @@ export default class Numerical extends React.Component {
       .attr('class', 'break-point')
       .call(
         d3
-          .drag()
-          .on('drag', function (d, i) {
-            const [, y] = d3.mouse(dom);
-            let value = y / height;
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
+        .drag()
+        .on('drag', function (d, i) {
+          const [, y] = d3.mouse(dom);
+          let value = y / height;
+          if (value < 0) value = 0;
+          if (value > 1) value = 1;
 
-            chartThis.props.updateBreakPoint(
-              chartThis.props.attr.attrName,
-              i,
-              value
-            );
-          })
+          chartThis.props.updateBreakPoint(
+            chartThis.props.attr.attrName,
+            i,
+            value
+          );
+        })
       );
 
     svg
@@ -258,20 +278,20 @@ export default class Numerical extends React.Component {
       })
       .call(
         d3
-          .drag()
-          .on('drag', function (d, i) {
-            const [, y] = d3.mouse(dom);
-            let value = y / height;
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
+        .drag()
+        .on('drag', function (d, i) {
+          const [, y] = d3.mouse(dom);
+          let value = y / height;
+          if (value < 0) value = 0;
+          if (value > 1) value = 1;
 
-            chartThis.props.updateBreakPoint(
-              chartThis.props.attr.attrName,
-              i,
-              value
-            );
-          })
-          .on('end', this.props.editGBN)
+          chartThis.props.updateBreakPoint(
+            chartThis.props.attr.attrName,
+            i,
+            value
+          );
+        })
+        .on('end', this.props.editGBN)
       );
 
   }
@@ -317,15 +337,15 @@ export default class Numerical extends React.Component {
   }
 
   render() {
-    return (<div className="numerical-view">
+    return ( < div className = "numerical-view" >
       <
-        svg ref={
-          dom => (this.chartDom = dom)
-        }
-        onClick={
-          this.handleChartClick
-        }
-      /> </div>
+      svg ref = {
+        dom => (this.chartDom = dom)
+      }
+      onClick = {
+        this.handleChartClick
+      }
+      /> </div >
     );
   }
 }
