@@ -26,7 +26,7 @@ class AppStore {
   selectedAttributes = []; // selected attributes of the current data set
 
   @observable
-  systemStage = -1; //0 for attribute initialization, 1 for data process, 2 for result verification
+  systemStage = 2; //0 for attribute initialization, 1 for data process, 2 for result verification
 
   @observable
   dataGroups = [];
