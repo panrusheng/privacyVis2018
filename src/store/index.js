@@ -61,7 +61,7 @@ class AppStore {
   currentSubgroup = null;
 
   @observable
-  eventUtilityList = [];
+  eventUtilityList = {};
 
   @observable
   comparison = [{
@@ -231,8 +231,7 @@ class AppStore {
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
-
-
+    }).then(() => {
       this.updateEventUtility();
     });
   }
@@ -399,14 +398,6 @@ class AppStore {
     this.selectedAttributes.splice(index, 1, attr);
 
     this.updateEventUtility();
-    const nodes = toJS(this.GBN.nodes);
-    nodes.forEach(node => {
-      if (node.attrName === attrName) {
-        let utility = this.eventUtilityList.find(item => item.id === node.id).utility;
-        node.value = utility;
-      }
-    });
-    this.GBN.nodes = nodes;
   }
 
   @action
@@ -668,11 +659,12 @@ class AppStore {
 
   @action
   updateEventUtility() {
-    let eventUtilityList = [];
+    let eventUtilityList = {};
     let totalCntMap = new Map();
 
     this.GBN.nodes.forEach(({ id, attrName }) => {
       let attr = this.selectedAttributes.find(item => item.attrName === attrName);
+
       if (!attr) return;
 
       if (attr.type === 'numerical') {
@@ -696,12 +688,11 @@ class AppStore {
           }
         });
         
-        eventUtilityList.push({
-          id,
+        eventUtilityList[id] = {
           utility: attr.utility * (total - count) / total,
           min: rMin,
           max: rMax,
-        });
+        };
       };
     });
 
@@ -718,10 +709,10 @@ class AppStore {
           totalCntMap.set(attr.attrName, total);
         }
 
-        eventUtilityList.push({
+        eventUtilityList[id] = {
           id,
           utility: attr.utility * (total - value) / total,
-        });
+        };
       })
     });
 
