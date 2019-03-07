@@ -681,7 +681,7 @@ class AppStore {
   @action
   updateEventUtility(fromGBNNodes) {
     let eventUtilityList = {};
-    let eventColorList = {};
+    let eventColorList = toJS(this.eventColorList);
     let decimalCntMap = new Map();
     let total = 0;
     if (this.selectedAttributes.length >= 0) {
