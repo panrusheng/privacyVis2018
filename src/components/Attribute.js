@@ -210,7 +210,7 @@ export default class Attribute extends React.Component {
               </div>
               <div className='gbn-legend-unit'>
                 <div className="gbn-non" />
-                <label>Non-sensitive</label>
+                <label>Utility</label>
               </div>
               <div className='gbn-legend-unit'>
                 <div className="gbn-edge" />

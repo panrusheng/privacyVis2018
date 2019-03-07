@@ -208,12 +208,16 @@ class AppStore {
       }
 
       const selectedAttributes = [];
+      let eventColorList = toJS(this.eventColorList);
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
         attr.utility = 1;
         attr.sensitive = (this.selectedAttributes.find(({
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;
+        
+        eventColorList[attr.attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+        'rgba(' + this.nonSenColor.join(',') + ',' + (1 / 1.3 + 0.1) + ')';
 
         if (attr.type === 'numerical') {
           attr.breakPoints = [];
@@ -236,6 +240,7 @@ class AppStore {
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
+      this.eventColorList = eventColorList;
     }).then(() => {
       this.updateEventUtility();
     });
@@ -671,7 +676,7 @@ class AppStore {
   @action
   updateEventUtility() {
     let eventUtilityList = {};
-    let eventColorList = {};
+    let eventColorList = toJS(this.eventColorList);
     let totalCntMap = new Map();
 
     this.GBN.nodes.forEach(({
