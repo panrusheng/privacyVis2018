@@ -30,6 +30,7 @@ export default class RecView extends Component {
       num,
       change
     } = this.props;
+    const colorDic = this.props.store.eventColorList;
     if (data.nodes.length === 0) return;
     const margin = 20;
     const {
@@ -99,16 +100,21 @@ export default class RecView extends Component {
       .style('stroke-width', 2)
       .style('cursor', 'pointer');
 
-    g.append('g')
+    const circle = g.append('g')
       .attr('class', "rec-small-" + num)
       .selectAll('circle')
       .data(nodes)
-      .enter()
-      .append('circle')
+      .enter();
+    circle.append('circle')
+      .attr('r', d => d.del ? 8 : 6)
+      .style('fill', '#fff')
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y);
+    circle.append('circle')
       .attr('r', d => d.del ? 8 : 6)
       .style('fill', d => {
         if (d.del) return "#ccc";
-        return d.value < 0 ? '#FE2901' : '#7bbc88'
+        return colorDic[d.id];//d.value < 0 ? '#FE2901' : '#7bbc88'
       })
       .style('stroke-width', 3) //d => d.del ? 2 : 3)
       // .style('stroke-dasharray', d => d.del ? "2 2" : "1 0")

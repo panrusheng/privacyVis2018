@@ -62,6 +62,11 @@ class AppStore {
 
   @observable
   eventUtilityList = {};
+  @observable
+  eventColorList = {};
+
+  senColor = [254, 41, 1];
+  nonSenColor = [24, 102, 187];
 
   @observable
   comparison = [{
@@ -205,7 +210,7 @@ class AppStore {
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
-        attr.utility = 0.5;
+        attr.utility = 1;
         attr.sensitive = (this.selectedAttributes.find(({
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;
@@ -514,7 +519,7 @@ class AppStore {
 
   @action getResult() {
     let options = [];
-    
+
     this.groupSelectList.forEach((groupSelect, index) => {
       let flag = true;
       let selectionList = [];
@@ -526,12 +531,16 @@ class AppStore {
         });
         return;
       }
-      
+
       for (let i = 0; i < this.recList.rec[index].length; ++i) selectionList.push([]);
 
       let spRecords = new Set();
 
-      this.subgroupRecSelectedList.filter(({ records, group, select }) => {
+      this.subgroupRecSelectedList.filter(({
+        records,
+        group,
+        select
+      }) => {
         if (group === index) {
           flag = false;
           selectionList[select].push(...records);
@@ -539,7 +548,9 @@ class AppStore {
         }
       });
 
-      this.dataGroups[index].records.forEach(({id}) => {
+      this.dataGroups[index].records.forEach(({
+        id
+      }) => {
         if (!spRecords.has(id)) {
           selectionList[groupSelect].push(id);
         }
@@ -558,7 +569,7 @@ class AppStore {
         });
       }
     });
-  
+
     axios.post('/get_result', null, {
       params: {
         options: JSON.stringify(options),
@@ -623,7 +634,7 @@ class AppStore {
     selList[this.groupSelectList[group]] = total - sgTotal;
 
     // for (let i = 0; i < selList.length; ++i) {
-      // selList[i] = parseFloat((selList[i] / total).toFixed(2));
+    // selList[i] = parseFloat((selList[i] / total).toFixed(2));
     // }
 
     this.recSelectedList.splice(group, 1, selList);
@@ -647,9 +658,9 @@ class AppStore {
         let o = {};
         o.eventName = data[i].eveName;
         o.oriD = data[i].frequency,
-        o.oriC = data[i].oriD.TP + data[i].oriD.NP;
+          o.oriC = data[i].oriD.TP + data[i].oriD.NP;
         o.oriT = data[i].oriD.TP;
-        o.proC = data[i].proD.TP +data[i].proD.NP;
+        o.proC = data[i].proD.TP + data[i].proD.NP;
         o.proT = data[i].proD.TP;
         comparison.push(o);
       }
@@ -660,15 +671,21 @@ class AppStore {
   @action
   updateEventUtility() {
     let eventUtilityList = {};
+    let eventColorList = {};
     let totalCntMap = new Map();
 
-    this.GBN.nodes.forEach(({ id, attrName }) => {
+    this.GBN.nodes.forEach(({
+      id,
+      attrName,
+    }) => {
       let attr = this.selectedAttributes.find(item => item.attrName === attrName);
 
       if (!attr) return;
 
       if (attr.type === 'numerical') {
-        let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
+        let [labelMin, labelMax] = d3.extent(attr.data.map(({
+          label
+        }) => label));
         let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~')
         if (rMin === '-inf') rMin = labelMin;
         if (rMax === 'inf') rMax = labelMax;
@@ -682,24 +699,32 @@ class AppStore {
           totalCntMap.set(attrName, total);
         }
 
-        attr.data.forEach(({ label, value }) => {
+        attr.data.forEach(({
+          label,
+          value
+        }) => {
           if (label >= rMin && (label < rMax || (rMax === labelMax && label <= rMax))) {
             count += value;
           }
         });
-        
+        let utility = attr.utility * (total - count) / total;
         eventUtilityList[id] = {
-          utility: attr.utility * (total - count) / total,
+          utility: utility,
           min: rMin,
           max: rMax,
         };
+        eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+        'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
       };
     });
 
     this.selectedAttributes.forEach(attr => {
       if (attr.type === 'numerical') return;
 
-      attr.groups.forEach(({ name, value }) => {
+      attr.groups.forEach(({
+        name,
+        value
+      }) => {
         let id = attr.attrName + ": " + name;
         let total;
         if (totalCntMap.has(attr.attrName)) {
@@ -708,15 +733,19 @@ class AppStore {
           total = attr.groups.reduce((prev, curv) => prev + curv.value, 0);
           totalCntMap.set(attr.attrName, total);
         }
-
+        let utility = attr.utility * (total - value) / total;
         eventUtilityList[id] = {
           id,
           utility: attr.utility * (total - value) / total,
         };
+        eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+        'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
       })
     });
 
     this.eventUtilityList = eventUtilityList;
+    this.eventColorList = eventColorList;
+    console.log(eventColorList);
   }
 }
 
