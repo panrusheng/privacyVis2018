@@ -120,17 +120,19 @@ export default class DistTrimming extends React.Component {
         { label: 0.4, curV: 2, oriV: 2, triV: 2 },
         { label: 0.9, curV: 9, oriV: 10, triV: 7 }];
         return (
-          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} trimmed={attr.trimmed}/>
+          <NumeTrim data={data} {...attrSize} attrName={attr.attrName} trimmed={attr.trimmed}
+          colorDic={this.props.store.eventColorList}/>
         );
       }
       case 'categorical': {
         //const data = attr.group
-        const data = [{ name: 'Western', curV: 20, oriV: 21, triV: 16 },
-        { name: 'S.Eastern', curV: 10, oriV: 12, triV: 10 },
-        { name: 'N.Eastern', curV: 28, oriV: 34, triV: 20 },
-        { name: 'Belfast', curV: 3, oriV: 4, triV: 3 }];
+        const data = [{ name: 'fmp: yes', curV: 20, oriV: 21, triV: 16 },
+        { name: 'fmp: no', curV: 10, oriV: 12, triV: 10 },
+        { name: 'fmp: yes', curV: 28, oriV: 34, triV: 20 },
+        { name: 'fmp: no', curV: 3, oriV: 4, triV: 3 }];
         return (
-          <CateTrim {...attrSize} data={data} attrName={attr.attrName} trimmed={attr.trimmed}/>
+          <CateTrim {...attrSize} data={data} attrName={attr.attrName} trimmed={attr.trimmed}
+          colorDic={this.props.store.eventColorList}/>
         );
       }
       default:

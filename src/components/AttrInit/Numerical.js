@@ -111,7 +111,19 @@ export default class Numerical extends React.Component {
         .data([values])
         .attr('d', area)
         .attr('fill', this.props.eventColorList[eventName])
-        .attr('clip-path', `url(#${attrName + breakIndex})`);
+        .attr('clip-path', `url(#${attrName + breakIndex})`)
+        .on('mouseover', () => {
+          const x = d3.event.x + 15,
+          y = d3.event.y - 35;
+          let sum = areaData.reduce(function(sumCurrent, v){
+            return sumCurrent + v;
+           });
+        d3.select('.tooltip').html(eventName + ': ' + sum + '</br> Utility: ' 
+          + this.props.eventUtilityList[eventName].utility.toFixed(2))
+          .style('left', (x) + 'px')
+          .style('display', 'block')
+          .style('top', (y) + 'px');
+        });
       breakIndex++;
     }
 

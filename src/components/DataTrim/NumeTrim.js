@@ -153,7 +153,7 @@ export default class NumeTrim extends React.Component {
       .on('mouseover', (d) => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
+        d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');

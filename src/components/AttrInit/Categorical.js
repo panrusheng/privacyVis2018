@@ -24,6 +24,7 @@ export default class Categorical extends React.Component {
     const rectWidth = (height - 20) / data.length;
 
     let colorDic = this.props.eventColorList;
+    let uilityDic = this.props.eventUtilityList;
     
     svg
       .append('g')
@@ -48,7 +49,8 @@ export default class Categorical extends React.Component {
       .on('mouseover', d => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
-        d3.select('.tooltip').html(d.name + ': ' + d.value)
+        d3.select('.tooltip').html(d.name + ': ' + d.value + '</br> Utility: ' 
+          + uilityDic[attrName + ': ' + d.name].utility.toFixed(2))
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');

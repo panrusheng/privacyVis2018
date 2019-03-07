@@ -1,9 +1,9 @@
 import React from 'react';
 import * as d3 from 'd3';
-// import { toJS } from 'mobx';
+import { toJS } from 'mobx';
 
 export default class CateTrim extends React.Component {
-  draw(dom, data, width, height, margin, trimmed) {
+  draw(dom, data, width, height, margin, trimmed, colorDic) {
     if (height === 0) return;
     dom.innerHTML = '';
     const dataValue = data.map(item => item.oriV);
@@ -20,16 +20,16 @@ export default class CateTrim extends React.Component {
       .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 1.5) + ')');
     const rectWidth = (height - 20) / data.length;
 
-    if (d3.selectAll('#trim-stripe'.length === 0)) {
+    for (let i = 0; i < data.length; i++) {
       let pattern = svg.append('pattern')
-        .attr('id', 'trim-stripe')
+        .attr('id', 'trim-stripe'+ data[i].name.split(': ').join('-'))
         .attr('width', 4)
         .attr('height', 4)
         .attr('patternUnits', 'userSpaceOnUse');
       pattern.append('rect')
         .attr('width', 4)
         .attr('height', 4)
-        .style('fill', '#d0e0f0')
+        .style('fill', colorDic[data[i].name]);
       pattern.append('path')
         .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
         .style('stroke', '#333')
@@ -60,20 +60,24 @@ export default class CateTrim extends React.Component {
       .on('mouseout', () => {
         d3.select('.tooltip').style('display', 'none')
       });
-
+    
     rect.append('rect')
-      .style('fill', '#d0e0f0')
+      .style('fill', '#fff')
+      .attr('x', 0)
+      .attr('y', (d, i) => i * rectWidth)
+      .attr('height', rectWidth)
+      .attr('width', d => xScale(d.curV));
+    rect.append('rect')
+      .style('fill', d => colorDic[d.name])
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', 0)
-      .attr('y', (d, i) => {
-        return i * rectWidth;
-      })
+      .attr('y', (d, i) => i * rectWidth)
       .attr('height', rectWidth)
       .attr('width', d => xScale(d.curV));
     if (!trimmed)
       rect.append('rect')
-      .style('fill', 'url(#trim-stripe)')
+      .style('fill', d => 'url(#trim-stripe' + d.name.split(': ').join('-') + ')')
       .style('stroke', 'none')
       .attr('x', (d, i) => xScale(d.triV))
       .attr('y', (d, i) => {
@@ -148,11 +152,12 @@ export default class CateTrim extends React.Component {
       width,
       height,
       margin,
-      trimmed
+      trimmed,
+      colorDic
     } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin, trimmed);
+    this.draw(this.chartDom, data, width, height, margin, trimmed, colorDic);
   }
 
   componentDidUpdate() {
@@ -161,9 +166,10 @@ export default class CateTrim extends React.Component {
       width,
       height,
       margin,
-      trimmed
+      trimmed,
+      colorDic,
     } = this.props;
-    this.draw(this.chartDom, data, width, height, margin, trimmed);
+    this.draw(this.chartDom, data, width, height, margin, trimmed, colorDic);
   }
 
   render() {

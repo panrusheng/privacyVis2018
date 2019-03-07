@@ -73,7 +73,7 @@
         padding-left: 0; }
   .app .tooltip {
     border-radius: 5px;
-    height: 35px;
+    min-height: 35px;
     padding: 5px;
     background-color: #fff;
     pointer-events: none;
