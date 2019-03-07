@@ -199,6 +199,7 @@ export default class Attribute extends React.Component {
               canvas={canvas}
               filter={this.state.filterValue}
               nullList={data.nullNodes}
+              eventColorList={this.props.store.eventColorList}
             />
           </svg>
         </div>

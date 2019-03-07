@@ -7,7 +7,8 @@ import {
 import * as d3 from 'd3';
 // import { toJS } from 'mobx';
 import {
-  inject
+  inject,
+  observer
 } from 'mobx-react';
 @inject(['store'])
 export default class AttrNetwork extends Component {
@@ -19,6 +20,7 @@ export default class AttrNetwork extends Component {
   }
 
   componentDidUpdate() {
+    console.log('update');
     this.renderGraph(this.g, this.props);
   }
 
@@ -47,14 +49,12 @@ export default class AttrNetwork extends Component {
       legendWidth = 135,
       legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
       fontSize = 13,
-      colorDic = that.props.store.eventColorList,
+      colorDic = that.props.eventColorList,
       colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6', ];
       let cn = 0,
       colorMap = {},
       attrSet = {},
       hullList = [];
-      console.log(toJS(colorDic));
-
 
     const ScaleX = d3
       .scaleLinear()
@@ -389,6 +389,7 @@ export default class AttrNetwork extends Component {
           .selectAll('.triT')
           .data(targetList)
           .enter();
+
         targetDetail.append('path')
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
           .style('fill',  dd => colorDic[dd])//nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');

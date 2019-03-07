@@ -745,7 +745,6 @@ class AppStore {
 
     this.eventUtilityList = eventUtilityList;
     this.eventColorList = eventColorList;
-    console.log(eventColorList);
   }
 }
 
