@@ -137,7 +137,6 @@ export default class Numerical extends React.Component {
       .on('mouseover', d => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
-          console.log(d.sum);
         d3.select('.tooltip').html(d.name + ': ' + d.sum + '</br> Utility: ' +
             this.props.eventUtilityList[d.name].utility.toFixed(2))
           .style('left', (x) + 'px')
