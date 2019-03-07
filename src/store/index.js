@@ -60,6 +60,8 @@ class AppStore {
   @observable
   currentSubgroup = null;
 
+  @observable
+  eventUtilityList = [];
 
   @observable
   comparison = [{
@@ -229,6 +231,9 @@ class AppStore {
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
+
+
+      this.updateEventUtility();
     });
   }
 
@@ -398,6 +403,8 @@ class AppStore {
       if (node.attrName === attrName) node.value = value;
     });
     this.GBN.nodes = nodes;
+
+    this.updateEventUtility();
   }
 
   @action
@@ -655,6 +662,70 @@ class AppStore {
       }
       this.comparison = comparison;
     })
+  }
+
+  @action
+  updateEventUtility() {
+    let eventUtilityList = [];
+    let totalCntMap = new Map();
+
+    this.GBN.nodes.forEach(({ id, attrName }) => {
+      let attr = this.selectedAttributes.find(item => item.attrName === attrName);
+      if (!attr) return;
+
+      if (attr.type === 'numerical') {
+        let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
+        let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~')
+        if (rMin === '-inf') rMin = labelMin;
+        if (rMax === 'inf') rMax = labelMax;
+        let count = 0;
+        let total;
+
+        if (totalCntMap.has(attrName)) {
+          total = totalCntMap.get(attrName);
+        } else {
+          total = attr.data.reduce((prev, cur) => prev + cur.value, 0);
+          totalCntMap.set(attrName, total);
+        }
+
+        attr.data.forEach(({ label, value }) => {
+          if (label >= rMin && (label < rMax || (rMax === labelMax && label <= rMax))) {
+            count += value;
+          }
+        });
+        
+        eventUtilityList.push({
+          id,
+          utility: attr.utility * (total - count) / total,
+          min: rMin,
+          max: rMax,
+        });
+      };
+    });
+
+    this.selectedAttributes.forEach(attr => {
+      if (attr.type === 'numerical') return;
+
+      attr.groups.forEach(({ name, value }) => {
+        let id = attr.attrName + ": " + name;
+        let total;
+        if (totalCntMap.has(attr.attrName)) {
+          total = totalCntMap.get(attr.attrName);
+        } else {
+          total = attr.groups.reduce((prev, curv) => prev + curv.value, 0);
+          totalCntMap.set(attr.attrName, total);
+        }
+
+        eventUtilityList.push({
+          id,
+          utility: attr.utility * (total - value) / total,
+        });
+      })
+    });
+
+    this.eventUtilityList = eventUtilityList;
+
+    console.log(this.eventUtilityList);
   }
 }
 
