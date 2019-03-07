@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-function decimalPrecision(numbers) {
+export function decimalPrecision(numbers) {
     let res = 0;
 
     for (let number of numbers) {
@@ -36,15 +36,15 @@ export function dataPreprocess(data) {
 
     let index = 0;
     for (let i = 0; i < binNum; ++i) {
-        // [start, end) if i < binNum - 1
-        // [start, end] if i == binNum - 1
+        // [start, end] if i == 0
+        // (start, end] if i > 0
         let start = i * interval + labelMin;
         let end = (i + 1) * interval + labelMin;
         let label = ((start + end) / 2).toFixed(numD);
         let value = 0;
         while (index < data.length &&
-        ((i < binNum - 1 && data[index].label >= start && data[index].label < end) ||
-        (i === binNum - 1 && data[index].label >= start && data[index].label <= end ))) {
+        ((i === 0 && data[index].label >= start && data[index].label <= end) ||
+        (i > 0 && data[index].label > start && data[index].label <= end ))) {
             value += data[index].value;
             index++;
         }

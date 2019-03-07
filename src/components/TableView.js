@@ -651,7 +651,7 @@ export default class TableView extends React.Component {
               <div
                 className={'bg' + (del ? ' del' : '')}
                 style={{ 
-                  backgroundColor: utility < 0 ? 'white' : `rgba(33, 115, 50, ${utility / 1.3 + 0.1})`,
+                  backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
                   backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
               />

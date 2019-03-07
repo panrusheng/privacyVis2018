@@ -5,7 +5,7 @@ import {
 } from 'mobx';
 import axios from '../utils/axios.js';
 import {
-  dataPreprocess
+  dataPreprocess, decimalPrecision
 } from '../utils/preprocess.js';
 import * as d3 from 'd3';
 
@@ -216,7 +216,7 @@ class AppStore {
         }) => attrName === attr.attrName) || {}).sensitive;
 
         if (attr.type === 'numerical') {
-          attr.breakPoints = [];
+          attr.breakPoints = [0.5];
           attr.data = dataPreprocess(attr.data);
           attr.data.sort((a, b) => a.label - b.label);
         } else {
@@ -237,7 +237,7 @@ class AppStore {
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
     }).then(() => {
-      this.updateEventUtility();
+      this.updateEventUtility(true);
     });
   }
 
@@ -326,6 +326,7 @@ class AppStore {
     this.selectedAttributes[index] = attr;
 
     this.editGBN();
+    this.updateEventUtility();
   }
 
   @action
@@ -350,6 +351,7 @@ class AppStore {
     this.selectedAttributes[index] = attr;
 
     this.editGBN();
+    this.updateEventUtility();
   }
 
   @action
@@ -363,6 +365,7 @@ class AppStore {
     attr.breakPoints = [...new Set([...attr.breakPoints, point])];
     this.selectedAttributes.splice(index, 1, attr);
     this.editGBN();
+    this.updateEventUtility();
   }
 
   @action
@@ -375,6 +378,7 @@ class AppStore {
     attr.breakPoints.splice(pIndex, 1);
     this.selectedAttributes.splice(index, 1, attr);
     this.editGBN();
+    this.updateEventUtility();
   }
 
   @action
@@ -388,6 +392,7 @@ class AppStore {
     attr.breakPoints.splice(pIndex, 1, [value]);
     this.selectedAttributes.splice(index, 1, attr);
 
+    this.updateEventUtility();
     // this.editGBN();
   }
 
@@ -669,82 +674,98 @@ class AppStore {
   }
 
   @action
-  updateEventUtility() {
+  updateEventUtility(fromGBNNodes) {
     let eventUtilityList = {};
     let eventColorList = {};
-    let totalCntMap = new Map();
+    let decimalCntMap = new Map();
+    let total = 0;
+    if (this.selectedAttributes.length >= 0) {
+      let data  = this.selectedAttributes[0].data || this.selectedAttributes[0].groups;
+      if (data) total = data.reduce((prev, curv) => prev + curv.value, 0);
+    }
+    
+    if (total <= 0) return;
 
-    this.GBN.nodes.forEach(({
-      id,
-      attrName,
-    }) => {
-      let attr = this.selectedAttributes.find(item => item.attrName === attrName);
+    let getR = (ratio, min, max) => ((max - min) * ratio + min);
 
-      if (!attr) return;
+    if (fromGBNNodes) {
+      this.GBN.nodes.forEach(({ id, attrName, }) => {
+        let attr = this.selectedAttributes.find(item => item.attrName === attrName);
+        if (!attr) return;
+        if (attr.type === 'numerical') {
+          let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
+          let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~');
+          if (rMin === '-inf') rMin = labelMin;
+          if (rMax === 'inf') rMax = labelMax;
+          rMin = parseFloat(rMin);
+          rMax = parseFloat(rMax);
 
-      if (attr.type === 'numerical') {
-        let [labelMin, labelMax] = d3.extent(attr.data.map(({
-          label
-        }) => label));
-        let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~')
-        if (rMin === '-inf') rMin = labelMin;
-        if (rMax === 'inf') rMax = labelMax;
-        let count = 0;
-        let total;
-
-        if (totalCntMap.has(attrName)) {
-          total = totalCntMap.get(attrName);
-        } else {
-          total = attr.data.reduce((prev, cur) => prev + cur.value, 0);
-          totalCntMap.set(attrName, total);
-        }
-
-        attr.data.forEach(({
-          label,
-          value
-        }) => {
-          if (label >= rMin && (label < rMax || (rMax === labelMax && label <= rMax))) {
-            count += value;
-          }
-        });
-        let utility = attr.utility * (total - count) / total;
-        eventUtilityList[id] = {
-          utility: utility,
-          min: rMin,
-          max: rMax,
+          let count = this.getCount(attr.data, rMin, rMax, rMin === labelMin);
+          let utility = attr.utility * (total - count) / total;
+          eventUtilityList[id] = { utility: utility, min: rMin, max: rMax, includeMin: rMin === labelMin };
+          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+          'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         };
-        eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-        'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
-      };
-    });
+      });
+    }
 
     this.selectedAttributes.forEach(attr => {
-      if (attr.type === 'numerical') return;
-
-      attr.groups.forEach(({
-        name,
-        value
-      }) => {
-        let id = attr.attrName + ": " + name;
-        let total;
-        if (totalCntMap.has(attr.attrName)) {
-          total = totalCntMap.get(attr.attrName);
-        } else {
-          total = attr.groups.reduce((prev, curv) => prev + curv.value, 0);
-          totalCntMap.set(attr.attrName, total);
+      const { attrName } = attr;
+      if (attr.type === 'numerical') {
+        if (this.fromGBNNodes) return;
+        let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
+        let fixedSize;
+        if (decimalCntMap.has(attrName)) fixedSize = decimalCntMap.get(attrName);
+        else {
+          fixedSize = decimalPrecision(attr.data.map(({ label }) => label)) + 2;
+          decimalCntMap.set(attrName, fixedSize);
         }
-        let utility = attr.utility * (total - value) / total;
-        eventUtilityList[id] = {
-          id,
-          utility: attr.utility * (total - value) / total,
-        };
-        eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-        'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
-      })
+
+        for (let i = 0; i < attr.breakPoints.length + 1; ++i) {
+          let min, max;
+          if (i === 0) min = '-inf';
+          else min = getR(attr.breakPoints[i-1], labelMin, labelMax);
+          if (i === attr.breakPoints.length) max = 'inf';
+          else max = getR(attr.breakPoints[i], labelMin, labelMax);
+
+          let eventName = attrName + ': ' + '(' + min + '~' + max + (max === 'inf' ? ')' : ']');
+
+          if (min === '-inf') min = labelMin;
+          if (max === 'inf') max = labelMax;
+
+          let count = this.getCount(attr.data, min, max, i === 0);
+          let utility = attr.utility * (total - count) / total;
+          eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0 };
+          eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+        }
+
+      } else {
+        attr.groups.forEach(({ name, value }) => {
+          let id = attrName + ": " + name;
+          let utility = attr.utility * (total - value) / total;
+          eventUtilityList[id] = {
+            id,
+            utility: attr.utility * (total - value) / total,
+          };
+          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+          'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+        })
+      }
     });
 
     this.eventUtilityList = eventUtilityList;
     this.eventColorList = eventColorList;
+  }
+
+  getCount(data, min, max, includeMin) {
+    let cnt = 0;
+    data.forEach(({ label, value }) => {
+      if ((label > min || (includeMin && label === min)) && label <= max) {
+        cnt += value;
+      }
+    });
+    return cnt;
   }
 }
 

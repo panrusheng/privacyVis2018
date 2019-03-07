@@ -199,13 +199,21 @@ export default class AttrInitialize extends React.Component {
             updateBreakPoint={this.updateBreakPoint}
             editGBN={() => this.props.store.editGBN()}
             attr={attr}
+            eventUtilityList={this.props.store.eventUtilityList}
+            eventColorList={this.props.store.eventColorList}
             {...attrSize}
           />
         );
       }
       case 'categorical': {
         return (
-          <Categorical openMenu={this.openMenu} {...attrSize} attr={attr} />
+          <Categorical
+            openMenu={this.openMenu}
+            {...attrSize}
+            attr={attr}
+            eventUtilityList={this.props.store.eventUtilityList}
+            eventColorList={this.props.store.eventColorList}
+          />
         );
       }
       default:

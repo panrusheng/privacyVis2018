@@ -20,7 +20,6 @@ export default class AttrNetwork extends Component {
   }
 
   componentDidUpdate() {
-    console.log('update');
     this.renderGraph(this.g, this.props);
   }
 

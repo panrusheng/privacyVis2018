@@ -1,6 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import './Numerical.scss';
+import { toJS } from 'mobx';
 
 export default class Numerical extends React.Component {
   static defaultProps = {
@@ -74,12 +75,45 @@ export default class Numerical extends React.Component {
       .attr('height', height)
       .append('g');
 
+    let breakIndex = 0;
+    let lastHeight = 0;
 
-    svg
-      .append('path')
-      .data([values])
-      .attr('class', 'area')
-      .attr('d', area);
+    for (let eventName in this.props.eventUtilityList) {
+      let attrName = eventName.split(':')[0];
+      if(attrName !== attr.attrName) continue;
+      let { max, min, includeMin } = this.props.eventUtilityList[eventName];
+
+      let areaData = [];
+      values.forEach((v, index) => {
+        if ((labels[index] > min || (includeMin && labels[index] === min) ) && labels[index] <= max) areaData.push(v);
+      });
+      
+      let h;
+
+      if (breakIndex < breakPoints.length) {
+        //(d * ((height - 2) / height) * yScale(values.length - 1)) + 1
+        h = (breakPoints[breakIndex] * yScale(values.length - 1)) - lastHeight;
+      } else {
+        h = height - 20 - lastHeight;
+      }
+
+      svg.append("defs")
+        .append('clipPath')
+        .attr("id", attrName + breakIndex)
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', lastHeight)
+        .attr('width', width)
+        .attr('height', h);
+      lastHeight += h;
+
+      svg.append('path')
+        .data([values])
+        .attr('d', area)
+        .attr('fill', this.props.eventColorList[eventName])
+        .attr('clip-path', `url(#${attrName + breakIndex})`);
+      breakIndex++;
+    }
 
     svg
       .selectAll('circle')

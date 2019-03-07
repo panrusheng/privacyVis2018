@@ -23,14 +23,15 @@ export default class Categorical extends React.Component {
       .append('g');
     const rectWidth = (height - 20) / data.length;
 
+    let colorDic = this.props.eventColorList;
+    
     svg
       .append('g')
       .selectAll('rect')
       .data(data)
       .enter()
       .append('rect')
-      .style('fill', '#1866BB')
-      .style('fill-opacity', 0.2)
+      .style('fill', (d) => colorDic[attrName + ': ' + d.name])
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
