@@ -708,7 +708,7 @@ class AppStore {
     
     if (total <= 0) return;
 
-    let getR = (ratio, min, max) => ((max - min) * ratio + min);
+    let getR = (ratio, min, max) => parseFloat(((max - min) * ratio + min).toFixed(2))
 
     if (fromGBNNodes) {
       this.GBN.nodes.forEach(({ id, attrName, }) => {
