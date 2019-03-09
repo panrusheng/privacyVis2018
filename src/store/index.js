@@ -70,21 +70,21 @@ class AppStore {
 
   @observable
   comparison = [{
-      eventName: 'sen: true',
-      oriD: 0.7,
-      oriC: 0.65,
-      oriT: 0.8,
-      proC: 0.65,
-      proT: 0.3
-    },
-    {
-      eventName: 'sen: false',
-      oriD: 0.3,
-      oriC: 0.35,
-      oriT: 0.8,
-      proC: 0.35,
-      proT: 0.1
-    },
+    eventName: 'sen: true',
+    oriD: 0.7,
+    oriC: 0.65,
+    oriT: 0.8,
+    proC: 0.65,
+    proT: 0.3
+  },
+  {
+    eventName: 'sen: false',
+    oriD: 0.3,
+    oriC: 0.35,
+    oriT: 0.8,
+    proC: 0.35,
+    proT: 0.1
+  },
   ];
 
   @observable
@@ -206,7 +206,6 @@ class AppStore {
           cpt: GBN.links[i].cpt
         })
       }
-
       const selectedAttributes = [];
       let eventColorList = toJS(this.eventColorList);
       data.attributes.forEach(attr => {
@@ -215,14 +214,17 @@ class AppStore {
         attr.sensitive = (this.selectedAttributes.find(({
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;
-        
-        eventColorList[attr.attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-        'rgba(' + this.nonSenColor.join(',') + ',' + (1 / 1.3 + 0.1) + ')';
+
+        eventColorList[attr.attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+          'rgba(' + this.nonSenColor.join(',') + ',' + (1 / 1.3 + 0.1) + ')';
 
         if (attr.type === 'numerical') {
-          attr.breakPoints = [0.5];
-          attr.data = dataPreprocess(attr.data);
-          attr.data.sort((a, b) => a.label - b.label);
+          let min = attr.range[0], delta = (attr.range[1] - attr.range[0]) / (attr.list.length);
+          attr.breakPoints = attr.splitPoints.map((point) => {return (point - min) / (attr.range[1] - min);});
+          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
+          console.log(attr.breakPoints);
+          // attr.data = dataPreprocess(attr.data);
+          // attr.data.sort((a, b) => a.label - b.label);
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
@@ -424,8 +426,8 @@ class AppStore {
       if (a !== attrName) continue;
       let utility = value * (total - eventUtilityList[eventName].count) / total;
       eventUtilityList[eventName].utility = utility;
-      eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-      'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+      eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+        'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
     }
 
     this.eventColorList = eventColorList;
@@ -702,10 +704,10 @@ class AppStore {
     let decimalCntMap = new Map();
     let total = 0;
     if (this.selectedAttributes.length >= 0) {
-      let data  = this.selectedAttributes[0].data || this.selectedAttributes[0].groups;
+      let data = this.selectedAttributes[0].data || this.selectedAttributes[0].groups;
       if (data) total = data.reduce((prev, curv) => prev + curv.value, 0);
     }
-    
+
     if (total <= 0) return;
 
     let getR = (ratio, min, max) => parseFloat(((max - min) * ratio + min).toFixed(2))
@@ -717,16 +719,16 @@ class AppStore {
         if (attr.type === 'numerical') {
           let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
           let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~');
-          if (rMin === '-inf') rMin = labelMin;
-          if (rMax === 'inf') rMax = labelMax;
+          // if (rMin === '-inf') rMin = labelMin;
+          // if (rMax === 'inf') rMax = labelMax;
           rMin = parseFloat(rMin);
           rMax = parseFloat(rMax);
 
           let count = this.getCount(attr.data, rMin, rMax, rMin === labelMin);
           let utility = attr.utility * (total - count) / total;
           eventUtilityList[id] = { utility: utility, min: rMin, max: rMax, includeMin: rMin === labelMin, count };
-          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-          'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         };
       });
     }
@@ -749,7 +751,7 @@ class AppStore {
         for (let i = 0; i < breakPoints.length + 1; ++i) {
           let min, max;
           if (i === 0) min = '-inf';
-          else min = getR(breakPoints[i-1], labelMin, labelMax);
+          else min = getR(breakPoints[i - 1], labelMin, labelMax);
           if (i === breakPoints.length) max = 'inf';
           else max = getR(breakPoints[i], labelMin, labelMax);
 
@@ -761,7 +763,7 @@ class AppStore {
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;
           eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count };
-          eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
+          eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
 
@@ -774,8 +776,8 @@ class AppStore {
             utility: attr.utility * (total - value) / total,
             count: value,
           };
-          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' : 
-          'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
+          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         })
       }
     });
