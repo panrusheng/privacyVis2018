@@ -746,40 +746,40 @@ export default class AttrNetwork extends Component {
       });
 
     if (!merge) {
-      if (nullList.length > 0) {
-        let ListSvg = g.append('g')
-          .attr('class', 'n2d')
-          .attr('transform', 'translate(' + (ww - legendWidth - 21) + ',' + (hh - legendHH - 10) + ')');
-        ListSvg.append('rect')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('width', legendWidth + 20)
-          .attr('height', legendHH)
-          .attr('rx', 5)
-          .attr('ry', 5)
-          .style('fill', '#dedede')
-        // .style('stroke', '#ccc')
-        // .style('stroke-dasharray', '2 1');
-        ListSvg.append('text')
-          .attr('x', legendWidth / 2 + 10)
-          .attr('y', rowHeight - 10)
-          .style('font-size', 18)
-          .style('text-anchor', 'middle')
-          .text('Irrelevant events');
-        // ListSvg.append('line')
-        //   .attr('x1', 5)
-        //   .attr('x2', legendWidth - 5)
-        //   .attr('y1', rowHeight)
-        //   .attr('y2', rowHeight)
-        //   .style('stroke', '#ccc')
-        //   .style('stroke-dasharray', '5 5');
-      }
-      for (let i = 0; i < nullList.length; i++) {
-        let n = nullList[i];
-        n.x = ww - legendWidth + r + 11;
-        n.y = hh - legendHH + rowHeight * i + rowHeight + 10;
-        nodes.push(n);
-      }
+      // if (nullList.length > 0) {
+      //   let ListSvg = g.append('g')
+      //     .attr('class', 'n2d')
+      //     .attr('transform', 'translate(' + (ww - legendWidth - 21) + ',' + (hh - legendHH - 10) + ')');
+      //   ListSvg.append('rect')
+      //     .attr('x', 0)
+      //     .attr('y', 0)
+      //     .attr('width', legendWidth + 20)
+      //     .attr('height', legendHH)
+      //     .attr('rx', 5)
+      //     .attr('ry', 5)
+      //     .style('fill', '#dedede')
+      //   // .style('stroke', '#ccc')
+      //   // .style('stroke-dasharray', '2 1');
+      //   ListSvg.append('text')
+      //     .attr('x', legendWidth / 2 + 10)
+      //     .attr('y', rowHeight - 10)
+      //     .style('font-size', 18)
+      //     .style('text-anchor', 'middle')
+      //     .text('Irrelevant events');
+      //   // ListSvg.append('line')
+      //   //   .attr('x1', 5)
+      //   //   .attr('x2', legendWidth - 5)
+      //   //   .attr('y1', rowHeight)
+      //   //   .attr('y2', rowHeight)
+      //   //   .style('stroke', '#ccc')
+      //   //   .style('stroke-dasharray', '5 5');
+      // }
+      // for (let i = 0; i < nullList.length; i++) {
+      //   let n = nullList[i];
+      //   n.x = ww - legendWidth + r + 11;
+      //   n.y = hh - legendHH + rowHeight * i + rowHeight + 10;
+      //   nodes.push(n);
+      // }
 
     }
     //label

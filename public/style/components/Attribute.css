@@ -9,6 +9,19 @@
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border: solid 1px #999; }
+  .attribute-view .attr-network {
+    position: relative;
+    border-radius: 5px; }
+    .attribute-view .attr-network .irr-events {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background-color: #dedede;
+      padding: 15px; }
+      .attribute-view .attr-network .irr-events .irr {
+        text-align: left;
+        padding: 2px 0;
+        font-size: 13px; }
   .attribute-view .attr-operations {
     display: flex;
     justify-content: space-between; }

@@ -16,6 +16,25 @@
     border:solid 1px #999;
     // border-radius: 5px; 
   }
+
+  .attr-network {
+    position: relative;
+    border-radius: 5px;
+    .irr-events {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background-color: #dedede;
+      padding: 15px;
+      
+      .irr {
+        text-align: left;
+        padding: 2px 0;
+        font-size: 13px;
+      }
+    }
+  }
+
   .attr-operations {
     display: flex;
     justify-content: space-between;

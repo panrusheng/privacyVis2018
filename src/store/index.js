@@ -133,65 +133,8 @@ class AppStore {
         riskLimit: this.riskLimit,
       }
     }).then(data => {
-      const {
-        GBN
-      } = data;
-      let sensitiveMap = {};
-      this.selectedAttributes.forEach(({
-        attrName,
-        sensitive
-      }) => sensitiveMap[attrName] = sensitive);
+      const { dataGBN, nodeList4links } = this.processGBNData(data.GBN);
 
-      if (!GBN.links) GBN.links = [];
-      if (!GBN.nodes) GBN.nodes = [];
-
-      GBN.links.forEach(item => item.value = parseFloat(item.value));
-      GBN.nodes.forEach(node => {
-        node.attrName = node.attName;
-        node.value = sensitiveMap[node.attrName] ? -1 : 1;
-      });
-
-      GBN.nodes.sort((a, b) => a.eventNo - b.eventNo);
-
-      let dataGBN = {};
-      dataGBN.nodes = [];
-      dataGBN.links = [];
-      dataGBN.nullNodes = [];
-      let nullList = [],
-        nodeList4links = [];
-      for (let i = 0; i < GBN.nodes.length; i++) {
-        nullList.push(false);
-      }
-      for (let i = 0; i < GBN.links.length; i++) {
-        nullList[GBN.links[i].source] = true;
-        nullList[GBN.links[i].target] = true;
-      }
-
-      for (let i = 0; i < GBN.nodes.length; i++) {
-        if (nullList[i]) {
-          dataGBN.nodes.push(GBN.nodes[i]);
-          nodeList4links.push(i);
-        } else {
-          dataGBN.nullNodes.push(GBN.nodes[i]);
-        }
-      }
-      for (let i = 0; i < GBN.links.length; i++) {
-
-        let source = GBN.links[i].source,
-          target = GBN.links[i].target;
-        for (let j = source; j >= 0; j--) {
-          source = nullList[j] ? source : source - 1;
-        }
-        for (let j = target; j >= 0; j--) {
-          target = nullList[j] ? target : target - 1;
-        }
-        dataGBN.links.push({
-          source: source,
-          target: target,
-          value: GBN.links[i].value,
-          cpt: GBN.links[i].cpt
-        })
-      }
       const selectedAttributes = [];
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
@@ -224,6 +167,72 @@ class AppStore {
       this.nodeList4links = nodeList4links;
       this.updateEventUtility();
     });
+  }
+
+  processGBNData(GBN) {
+    let sensitiveMap = {};
+    this.selectedAttributes.forEach(({
+      attrName,
+      sensitive
+    }) => sensitiveMap[attrName] = sensitive);
+
+    if (!GBN.links) GBN.links = [];
+    if (!GBN.nodes) GBN.nodes = [];
+    
+    GBN.links = GBN.links.filter(l => !!l.value);
+
+    // GBN.links.forEach(item => item.value = parseFloat(item.value));
+    GBN.nodes.forEach(node => {
+      node.attrName = node.attName;
+      node.value = sensitiveMap[node.attrName] ? -1 : 1;
+    });
+
+    GBN.nodes.sort((a, b) => a.eventNo - b.eventNo);
+
+    let dataGBN = {};
+    dataGBN.nodes = [];
+    dataGBN.links = [];
+    dataGBN.nullNodes = [];
+    let nullList = [],
+      nodeList4links = [];
+    for (let i = 0; i < GBN.nodes.length; i++) {
+      nullList.push(false);
+    }
+    for (let i = 0; i < GBN.links.length; i++) {
+      nullList[GBN.links[i].source] = true;
+      nullList[GBN.links[i].target] = true;
+    }
+
+    for (let i = 0; i < GBN.nodes.length; i++) {
+      if (nullList[i]) {
+        dataGBN.nodes.push(GBN.nodes[i]);
+        nodeList4links.push(i);
+      } else {
+        dataGBN.nullNodes.push(GBN.nodes[i]);
+      }
+    }
+    for (let i = 0; i < GBN.links.length; i++) {
+
+      let source = GBN.links[i].source,
+        target = GBN.links[i].target;
+      for (let j = source; j >= 0; j--) {
+        source = nullList[j] ? source : source - 1;
+      }
+      for (let j = target; j >= 0; j--) {
+        target = nullList[j] ? target : target - 1;
+      }
+      dataGBN.links.push({
+        source: source,
+        target: target,
+        value: GBN.links[i].value,
+        cpt: GBN.links[i].cpt
+      })
+    }
+
+    return {
+      dataGBN,
+      nodeList4links,
+    }
   }
 
   @action setGraphLayout(layout) {
@@ -417,11 +426,11 @@ class AppStore {
     let eventList = [];
     this.selectedAttributes.forEach(attr => {
       let e = {};
-      e.attName = attr.attrName;
+      e.attrName = attr.attrName;
       if (attr.type === 'numerical') {
         const labels = attr.data.map(item => item.label);
-        const [lMin, lMax] = d3.extent(labels);
-        e.splitPoints = attr.breakPoints;
+        e.splitPoints = toJS(attr.breakPoints);
+        e.splitPoints.sort((a, b) => a - b);
       } else {
         e.groups = attr.groups.map(g => ({
           categories: g.categories.map(cat => cat.category),
@@ -433,8 +442,11 @@ class AppStore {
 
     axios.post('/edit_gbn', {
       events: eventList,
-    }).then(() => {
-      // todo
+    }).then((GBN) => {
+      const  { dataGBN, nodeList4links } = this.processGBNData(GBN);
+      this.GBN = dataGBN;
+      this.nodeList4links = nodeList4links;
+      this.updateEventUtility();
     });
   }
 
