@@ -69,23 +69,7 @@ class AppStore {
   nonSenColor = [24, 102, 187];
 
   @observable
-  comparison = [{
-    eventName: 'sen: true',
-    oriD: 0.7,
-    oriC: 0.65,
-    oriT: 0.8,
-    proC: 0.65,
-    proT: 0.3
-  },
-  {
-    eventName: 'sen: false',
-    oriD: 0.3,
-    oriC: 0.35,
-    oriT: 0.8,
-    proC: 0.35,
-    proT: 0.1
-  },
-  ];
+  comparison = [];
 
   @observable
   trimList = [];
@@ -123,8 +107,7 @@ class AppStore {
       k: 1,
       meanSquared: false,
       searchAlgorithm: "LinearNNSearch",
-      distanceFunction: "EculideanDistance"
-
+      distanceFunction: "EuclideanDistance"
     }
   }
 
@@ -158,6 +141,9 @@ class AppStore {
         attrName,
         sensitive
       }) => sensitiveMap[attrName] = sensitive);
+
+      if (!GBN.links) GBN.links = [];
+      if (!GBN.nodes) GBN.nodes = [];
 
       GBN.links.forEach(item => item.value = parseFloat(item.value));
       GBN.nodes.forEach(node => {
@@ -207,7 +193,6 @@ class AppStore {
         })
       }
       const selectedAttributes = [];
-      let eventColorList = toJS(this.eventColorList);
       data.attributes.forEach(attr => {
         attr.attrName = attr.attributeName;
         attr.utility = 1;
@@ -215,18 +200,12 @@ class AppStore {
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;
 
-        eventColorList[attr.attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
-          'rgba(' + this.nonSenColor.join(',') + ',' + (1 / 1.3 + 0.1) + ')';
-
         if (attr.type === 'numerical') {
           let data = attr.data[0];
           let range = JSON.parse(data.range);
-          let min = range[0], delta = (range[1] - range[0]) / (data.list.length);
-          attr.breakPoints = data.splitPoints.map((point) => {return (point - min) / (range[1] - min);});
+          let min = range[0], delta = (range[1] - range[0]) / (data.list.length - 1);
+          attr.breakPoints = data.splitPoints;
           attr.data = data.list.map((a, i) => {return {label: min + delta * i, value: a};})
-          console.log(attr.breakPoints);
-          // attr.data = dataPreprocess(attr.data);
-          // attr.data.sort((a, b) => a.label - b.label);
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
@@ -244,9 +223,7 @@ class AppStore {
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
-      this.eventColorList = eventColorList;
-    }).then(() => {
-      this.updateEventUtility(true);
+      this.updateEventUtility();
     });
   }
 
@@ -383,7 +360,7 @@ class AppStore {
       item => item.attrName === attrName
     );
     if (index < 0) return;
-    const attr = Object.assign({}, this.selectedAttributes[index]);
+    const attr = toJS(this.selectedAttributes[index]);
     attr.breakPoints.splice(pIndex, 1);
     this.selectedAttributes.splice(index, 1, attr);
     this.editGBN();
@@ -397,7 +374,7 @@ class AppStore {
     );
     if (index < 0) return;
 
-    const attr = Object.assign({}, this.selectedAttributes[index]);
+    const attr =toJS(this.selectedAttributes[index]);
     attr.breakPoints.splice(pIndex, 1, parseFloat(value));
     this.selectedAttributes.splice(index, 1, attr);
 
@@ -445,7 +422,7 @@ class AppStore {
       if (attr.type === 'numerical') {
         const labels = attr.data.map(item => item.label);
         const [lMin, lMax] = d3.extent(labels);
-        e.splitPoints = attr.breakPoints.map(p => p * (lMax - lMin) + lMin);
+        e.splitPoints = attr.breakPoints;
       } else {
         e.groups = attr.groups.map(g => ({
           categories: g.categories.map(cat => cat.category),
@@ -680,22 +657,11 @@ class AppStore {
 
     axios.post('/get_test', null, {
       params: {
-        method: JSON.stringify(model),
+        method: model,
         options: JSON.stringify(options),
       }
     }).then(data => {
-      let comparison = [];
-      for (let i = 0; i < data.length; i++) {
-        let o = {};
-        o.eventName = data[i].eveName;
-        o.oriD = data[i].frequency,
-          o.oriC = data[i].oriD.TP + data[i].oriD.NP;
-        o.oriT = data[i].oriD.TP;
-        o.proC = data[i].proD.TP + data[i].proD.NP;
-        o.proT = data[i].proD.TP;
-        comparison.push(o);
-      }
-      this.comparison = comparison;
+      this.comparison = data || [];
     })
   }
 
@@ -714,31 +680,9 @@ class AppStore {
 
     let getR = (ratio, min, max) => parseFloat(((max - min) * ratio + min).toFixed(2))
 
-    if (fromGBNNodes) {
-      this.GBN.nodes.forEach(({ id, attrName, }) => {
-        let attr = this.selectedAttributes.find(item => item.attrName === attrName);
-        if (!attr) return;
-        if (attr.type === 'numerical') {
-          let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
-          let [rMin, rMax] = id.slice(attrName.length + 3, -1).split('~');
-          // if (rMin === '-inf') rMin = labelMin;
-          // if (rMax === 'inf') rMax = labelMax;
-          rMin = parseFloat(rMin);
-          rMax = parseFloat(rMax);
-
-          let count = this.getCount(attr.data, rMin, rMax, rMin === labelMin);
-          let utility = attr.utility * (total - count) / total;
-          eventUtilityList[id] = { utility: utility, min: rMin, max: rMax, includeMin: rMin === labelMin, count };
-          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
-            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
-        };
-      });
-    }
-
     this.selectedAttributes.forEach(attr => {
       const { attrName } = attr;
       if (attr.type === 'numerical') {
-        if (fromGBNNodes) return;
         let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
         let fixedSize;
         if (decimalCntMap.has(attrName)) fixedSize = decimalCntMap.get(attrName);
@@ -752,15 +696,12 @@ class AppStore {
 
         for (let i = 0; i < breakPoints.length + 1; ++i) {
           let min, max;
-          if (i === 0) min = '-inf';
-          else min = getR(breakPoints[i - 1], labelMin, labelMax);
-          if (i === breakPoints.length) max = 'inf';
-          else max = getR(breakPoints[i], labelMin, labelMax);
+          if (i === 0) min = labelMin;
+          else min = breakPoints[i - 1];
+          if (i === breakPoints.length) max = labelMax;
+          else max = breakPoints[i];
 
-          let eventName = attrName + ': ' + '(' + min + '~' + max + (max === 'inf' ? ')' : ']');
-
-          if (min === '-inf') min = labelMin;
-          if (max === 'inf') max = labelMax;
+          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + min.toFixed(2) + '~' + max.toFixed(2) + ']';
 
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;

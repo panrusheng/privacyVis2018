@@ -43,9 +43,10 @@ export default class Numerical extends React.Component {
 
     const values = data.map(item => item.value);
     const labels = data.map(item => item.label);
-    const breakPoints = attr.breakPoints; // break points range from 0 to 1
     const [valueMin, valueMax] = d3.extent(values);
     const [labelMin, labelMax] = d3.extent(labels);
+    const lDiff = labelMax - labelMin;
+    const breakPoints = attr.breakPoints;
 
     dom.innerHTML = '';
     const xScale = d3
@@ -78,7 +79,13 @@ export default class Numerical extends React.Component {
     let breakIndex = 0;
     let lastHeight = 0;
 
-    for (let eventName in this.props.eventUtilityList) {
+    let eventNames = [];
+    for (let eventName in this.props.eventUtilityList) eventNames.push(eventName);
+    eventNames.sort((a, b) => this.props.eventUtilityList[a].min - this.props.eventUtilityList[b].min);
+    let sortedBreakPoints = toJS(attr.breakPoints).sort((a, b) => a - b);
+    
+    for (let i = 0; i < eventNames.length; ++i) {
+      let eventName = eventNames[i];
       let attrName = eventName.split(':')[0];
       if(attrName !== attr.attrName) continue;
       let { max, min, includeMin, count } = this.props.eventUtilityList[eventName];
@@ -90,9 +97,9 @@ export default class Numerical extends React.Component {
       
       let h;
 
-      if (breakIndex < breakPoints.length) {
+      if (breakIndex < sortedBreakPoints.length) {
         //(d * ((height - 2) / height) * yScale(values.length - 1)) + 1
-        h = (breakPoints[breakIndex] * yScale(values.length - 1)) - lastHeight;
+        h = (((sortedBreakPoints[breakIndex] - labelMin) / lDiff) * yScale(values.length - 1)) - lastHeight;
       } else {
         h = height - 20 - lastHeight;
       }
@@ -196,8 +203,8 @@ export default class Numerical extends React.Component {
       .append('line')
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', d => (d * ((height - 2) / height) * yScale(values.length - 1)) + 1)
-      .attr('y2', d => (d * ((height - 2) / height) * yScale(values.length - 1)) + 1)
+      .attr('y1', d => ((d - labelMin) / lDiff * ((height - 2) / height) * yScale(values.length - 1)) + 1)
+      .attr('y2', d => ((d - labelMin) / lDiff * ((height - 2) / height) * yScale(values.length - 1)) + 1)
       .style('stroke', '#333')
       .style('stroke-dasharray', '10 5')
       .attr('class', 'breakpoint')
@@ -212,7 +219,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [, y] = d3.mouse(dom);
-            let value = y / height;
+            let value = (y / height) * lDiff + labelMin;
             if (value < 0) value = 0;
             if (value > 1) value = 1;
 
@@ -232,9 +239,9 @@ export default class Numerical extends React.Component {
       .append('text')
       .attr('x', () => width - 6)
       .attr('y', d => {
-        return d * ((height - 2) / height) * yScale(values.length - 1) - 2;
+        return (d - labelMin) / lDiff * ((height - 2) / height) * yScale(values.length - 1) - 2;
       })
-      .text(d => (d * (labelMax - labelMin) + labelMin).toFixed(2))
+      .text(d => (d).toFixed(2))
       .style('text-anchor', 'end')
       .style('fill', '#333');
 
@@ -246,7 +253,7 @@ export default class Numerical extends React.Component {
       .append('circle')
       .attr('r', () => 5)
       .attr('cx', () => width)
-      .attr('cy', d => d * ((height - 2) / height) * yScale(values.length - 1))
+      .attr('cy', d => (d - labelMin) / lDiff * ((height - 2) / height) * yScale(values.length - 1))
       .attr('stroke', '#333')
       .attr('fill', '#fff')
       .attr('stroke-width', 2)
@@ -261,9 +268,10 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [, y] = d3.mouse(dom);
-            let value = y / height;
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
+            let value = (y / height) * lDiff + labelMin;
+
+            if (value < labelMin) value = labelMin;
+            if (value > labelMax) value = labelMax;
 
             chartThis.props.updateBreakPoint(
               chartThis.props.attr.attrName,
@@ -279,6 +287,7 @@ export default class Numerical extends React.Component {
   handleChartClick(e) {
     const type = e.target.tagName;
     let point;
+    const [ labelMin, labelMax ] = d3.extent(this.props.attr.data.map(({label}) => label));
 
     switch (type) {
       case 'path':
@@ -290,7 +299,7 @@ export default class Numerical extends React.Component {
             top
           } = e.target.getBoundingClientRect();
           const y = e.clientY - top;
-          point = y / height;
+          point = (y / height) * (labelMax - labelMin) + labelMin;
           break;
         }
       case 'svg':
@@ -299,7 +308,7 @@ export default class Numerical extends React.Component {
             height,
           } = this.props;
           const y = e.clientY - e.target.getBoundingClientRect().top;
-          point = y / height;
+          point = (y / height) * (labelMax - labelMin) + labelMin;
           break;
         }
       default:
@@ -308,9 +317,7 @@ export default class Numerical extends React.Component {
         }
     }
 
-    point = point.toFixed(2);
-
-    if (point > 0 && point < 1) {
+    if (point > labelMin && point < labelMax) {
       this.props.addBreakPoint &&
         this.props.addBreakPoint(this.props.attr.attrName, point);
     }

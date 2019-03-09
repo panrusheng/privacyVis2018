@@ -49,7 +49,7 @@ class App extends React.Component {
           <div className="col">
             { systemStage === 0 && <Attribute />}
             { systemStage === 1 && <RecView />}
-            { systemStage === 2 && <ModelView /> }
+            { systemStage === 2 && <ModelView comparison={this.props.store.comparison} /> }
           </div>
         </div>
         <div className='tooltip' style={{display: 'none', position: 'absolute'}}/>

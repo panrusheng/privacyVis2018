@@ -67,6 +67,27 @@
         .mod-mainContent {
             height: 710px;
             overflow-y: auto;
+            &::-webkit-scrollbar {
+                width: 8px;
+                border-radius: 4px;
+                position: absolute;
+                right: -8px;
+            }
+    
+            &::-webkit-scrollbar:horizontal {
+                height: 8px;
+            }
+             
+            &::-webkit-scrollbar-track {
+                border: 1px solid #ececec;
+                border-radius: 4px;
+            }
+             
+            &::-webkit-scrollbar-thumb {
+              background-color: darkgrey;
+              outline: 1px solid slategrey;
+              border-radius: 4px;
+            }
         }
         .single-event {
             height: 320px;
