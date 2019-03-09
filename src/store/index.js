@@ -201,11 +201,10 @@ class AppStore {
         }) => attrName === attr.attrName) || {}).sensitive;
 
         if (attr.type === 'numerical') {
-          let data = attr.data[0];
-          let range = JSON.parse(data.range);
-          let min = range[0], delta = (range[1] - range[0]) / (data.list.length - 1);
-          attr.breakPoints = data.splitPoints;
-          attr.data = data.list.map((a, i) => {return {label: min + delta * i, value: a};})
+          let range = attr.range
+          let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
+          attr.breakPoints = attr.splitPoints;
+          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
@@ -432,10 +431,8 @@ class AppStore {
       eventList.push(e);
     });
 
-    axios.post('/edit_gbn', null, {
-      params: {
-        events: JSON.stringify(eventList),
-      }
+    axios.post('/edit_gbn', {
+      events: eventList,
     }).then(() => {
       // todo
     });

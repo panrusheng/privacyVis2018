@@ -123,6 +123,7 @@ export default class AttrNetwork extends Component {
         if (pointCount === 1) return smoothHull1(polyPoints);
         if (pointCount === 2) return smoothHull2(polyPoints);
         polyPoints = d3.polygonHull(polyPoints);
+        pointCount = polyPoints.length;
 
         let hullPoints = polyPoints.map(function (point, index) {
           let pNext = polyPoints[(index + 1) % pointCount];
