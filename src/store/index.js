@@ -219,9 +219,11 @@ class AppStore {
           'rgba(' + this.nonSenColor.join(',') + ',' + (1 / 1.3 + 0.1) + ')';
 
         if (attr.type === 'numerical') {
-          let min = attr.range[0], delta = (attr.range[1] - attr.range[0]) / (attr.list.length);
-          attr.breakPoints = attr.splitPoints.map((point) => {return (point - min) / (attr.range[1] - min);});
-          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
+          let data = attr.data[0];
+          let range = JSON.parse(data.range);
+          let min = range[0], delta = (range[1] - range[0]) / (data.list.length);
+          attr.breakPoints = data.splitPoints.map((point) => {return (point - min) / (range[1] - min);});
+          attr.data = data.list.map((a, i) => {return {label: min + delta * i, value: a};})
           console.log(attr.breakPoints);
           // attr.data = dataPreprocess(attr.data);
           // attr.data.sort((a, b) => a.label - b.label);
