@@ -659,6 +659,8 @@ class AppStore {
 
   @action
   setModel(model, options) {
+    options = Object.assign({}, options);
+
     for (let key in options) {
       if (options[key] === 'true') options[key] = true;
       if (options[key] === 'false') options[key] = false;
