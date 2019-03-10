@@ -133,7 +133,7 @@ export default class LoadData extends React.Component {
                         </div>
                         { currentAttrList.map((attr, index) => (
                             <div className="attr-list-item">
-                                <div onClick={() => this.toggleCheck(index)} className="icon-button">{
+                                <div onClick={() => this.toggleCheck(index)} style={{cursor: 'pointer'}} className="icon-button">{
                                     //checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
                                     currentSelected[index] === 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] === 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
                                 }</div>
@@ -162,7 +162,7 @@ export default class LoadData extends React.Component {
                         </div>
                     </div>
                     <div className="load-panel">
-                        Risk Limit: <InputNumber value={this.props.store.riskLimit} step={0.1} min={0} max={1} onChange={val => this.props.store.riskLimit = val} />
+                        Risk Limit: <InputNumber value={this.props.store.riskLimit} step={0.05} min={0} max={1} onChange={val => this.props.store.riskLimit = val} />
                     </div>
                 </div>
             </Modal>
