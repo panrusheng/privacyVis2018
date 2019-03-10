@@ -350,8 +350,8 @@ export default class ModelView extends React.Component {
             </div>
             <div className="mod-mainContent">
               {this.props.comparison.map((d, i) => (
-                <div className="single-event" key={d.eventName}>
-                  <p className="event-title">{d.eventName}</p>
+                <div className="single-event" key={d.eveName}>
+                  <p className="event-title">{d.eveName}</p>
                   <div className="event-content">
                     <div className='mod-chart'>
                       <svg width={ww} height={hh} id={"bar-chart" + i}>
@@ -361,10 +361,10 @@ export default class ModelView extends React.Component {
                       <span className='report-title'>Report</span>
                       <ul className='report-list'>
                         <li>Original occurrence number is {d.frequency.toFixed(2)}.</li>
-                        <li>The specificity of original dataset is <span className='report-h'>{(d.oriD.specificity).toFixed(2)}.</span></li>
-                        <li>The specificity of processed dataset is <span className='report-h'>{(d.proD.specificity).toFixed(2)}.</span></li>
-                        <li>The sensitivity of original datasets is <span className='report-h'>{(d.oriD.sensitivity).toFixed(2)}.</span></li>
-                        <li>The sensitivity of processed datasets is <span className='report-h'>{(d.proD.sensitivity).toFixed(2)}.</span></li>
+                        <li>The specificity of original dataset is <span className='report-h'>{(d.oriD.specificity || 0).toFixed(2)}.</span></li>
+                        <li>The specificity of processed dataset is <span className='report-h'>{(d.proD.specificity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity of original datasets is <span className='report-h'>{(d.oriD.sensitivity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity of processed datasets is <span className='report-h'>{(d.proD.sensitivity || 0).toFixed(2)}.</span></li>
                       </ul>
                     </div>
                   </div>

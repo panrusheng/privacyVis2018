@@ -39,9 +39,16 @@ export default class Attribute extends React.Component {
         'link',
         d3
           .forceLink(links)
+<<<<<<< HEAD
           .distance(10)
           .strength(2)
           .iterations(2)
+=======
+          .distance(5)
+          .strength(0.5)
+          .iterations(1)
+          .id(d => d.eventNo)
+>>>>>>> 87c14f827ea67e5488b378744085bd716bb4c7d6
       )
       .force('x', d3.forceX())
       .force('y', d3.forceY())
