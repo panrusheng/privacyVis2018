@@ -585,10 +585,7 @@ class AppStore {
       let selectionList = [];
 
       if (this.recList.rec[index].length === 0) {
-        options.push({
-          flag,
-          no: 0,
-        });
+        options.push(null);
         return;
       }
 
@@ -630,12 +627,35 @@ class AppStore {
       }
     });
 
-    axios.post('/get_result', null, {
-      params: {
-        options: JSON.stringify(options),
-      }
+    axios.post('/get_result', {
+      options,
     }).then(data => {
-      // TODO
+      if (!data) data = [];
+      data.forEach(attr => {
+        attr.attrName = attr.attributeName;
+        attr.trimmed = false;
+        if (attr.type === 'numerical') {
+          let range = attr.range
+          let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
+          attr.breakPoints = attr.splitPoints;
+          attr.data = attr.list.map((a, i) => {
+            return {
+              label: min + delta * i,
+              ...a
+            };
+          });
+        } else {
+          attr.groups = [];
+          attr.data.forEach(d => {
+            attr.groups.push({
+              name: d.category,
+              ...d
+            });
+          });
+        }
+      });
+
+      this.trimList = data;      
     })
   }
 
