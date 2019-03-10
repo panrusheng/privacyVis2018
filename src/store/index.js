@@ -464,6 +464,7 @@ class AppStore {
       this.subgroupRecSelectedList = [];
       this.currentSubgroup = null;
       this.dataGroups = [];
+      this.recNum = 0;
     }
 
     if (stage === 2) {
