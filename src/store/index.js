@@ -454,6 +454,18 @@ class AppStore {
   setSystemStage(stage) {
     this.systemStage = stage;
 
+    if (stage === 0) {
+      this.recList = {
+        group: [],
+        rec: []
+      }
+      this.recSelectedList = [];
+      this.groupSelectList = [];
+      this.subgroupRecSelectedList = [];
+      this.currentSubgroup = null;
+      this.dataGroups = [];
+    }
+
     if (stage === 2) {
       this.getResult();
     }
