@@ -177,7 +177,9 @@ export default class DistTrimming extends React.Component {
             <label>Original distribution</label>
           </div>
           <div className='trim-legend-unit'>
-            <div className="trim-current" />
+            <div className="trim-current" >
+              <div className="trim-tt" style={{backgroundImage: `url(${SlashIcon})`}}/>
+            </div>
             <label>Current distribution</label>
           </div>
           <div className='trim-legend-unit'>

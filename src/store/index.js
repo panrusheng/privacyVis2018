@@ -723,6 +723,8 @@ class AppStore {
 
     this.selectedAttributes.forEach(attr => {
       const { attrName } = attr;
+      eventColorList[attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+      'rgba(' + this.nonSenColor.join(',') + ',' + (attr.utility / 1.3 + 0.1) + ')';
       if (attr.type === 'numerical') {
         let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
         let fixedSize;

@@ -87,11 +87,17 @@
       width: 20px;
       height: 20px;
       background-color: #d0e0f0;
+      .trim-tt {
+        margin-left: 10px;
+        width: 10px;
+        height: 20px;
+        background-size: 20px;
+      }
     }
     .trim-trim {
       width: 20px;
       height: 20px;
-      background-color: #d0e0f0;
+      // background-color: #d0e0f0;
       background-size: 20px;
     }
   }
