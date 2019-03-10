@@ -42,6 +42,7 @@ export default class Attribute extends React.Component {
           .distance(5)
           .strength(0.5)
           .iterations(1)
+          .id(d => d.eventNo)
       )
       .force('x', d3.forceX())
       .force('y', d3.forceY())

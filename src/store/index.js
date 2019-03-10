@@ -215,12 +215,12 @@ class AppStore {
 
       let source = GBN.links[i].source,
         target = GBN.links[i].target;
-      for (let j = source; j >= 0; j--) {
-        source = nullList[j] ? source : source - 1;
-      }
-      for (let j = target; j >= 0; j--) {
-        target = nullList[j] ? target : target - 1;
-      }
+      // for (let j = source; j >= 0; j--) {
+      //   source = nullList[j] ? source : source - 1;
+      // }
+      // for (let j = target; j >= 0; j--) {
+      //   target = nullList[j] ? target : target - 1;
+      // }
       dataGBN.links.push({
         source: source,
         target: target,

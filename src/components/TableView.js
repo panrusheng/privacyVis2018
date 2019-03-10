@@ -31,7 +31,7 @@ export default class TableView extends React.Component {
     unfoldedGroups: [],
     rowSelection: [], // selected rows id,
     foldState: [],
-    foldAll: false,
+    unfoldAll: false,
   };
 
   recNum = -1;
@@ -357,10 +357,11 @@ export default class TableView extends React.Component {
   }
 
   formatData() {
-    const { recList, groupSelectList, dataGroups, subgroupRecSelectedList } = toJS(this.props.store);
+    const { recList, groupSelectList, dataGroups, subgroupRecSelectedList, selectedAttributes } = toJS(this.props.store);
     
     const { mode, order, orderCol } = this.state;
-    const rows = [], columns = [];
+    const rows = [];
+    const columns = selectedAttributes.map(({ attrName }) => attrName);
 
     dataGroups.forEach((group, gindex) => {
       let deleteEventNos;
@@ -461,11 +462,6 @@ export default class TableView extends React.Component {
       }
     });
 
-    if (rows.length > 0) {
-      for (let a in rows[0].data) columns.push(a);
-    }
-
-
     if (orderCol) {
       if (mode === 1) {
         rows.sort((a, b) => {
@@ -507,28 +503,20 @@ export default class TableView extends React.Component {
 
   toggleGroup(g) {
     let foldState;
-    if (this.state.foldAll) {
-      foldState = new Array(this.props.store.dataGroups.length).fill(true);
+
+    foldState = [...this.state.foldState];
+
+    if (this.props.store.recNum !== g && !foldState[g]) {
+      // ignore
+    } else if (this.props.store.currentSubgroup && this.props.store.currentSubgroup.group === g) {
+      // ignore
     } else {
-      foldState = [...this.state.foldState];
+      foldState[g] = !foldState[g];
     }
 
-    foldState[g] = !foldState[g];
-    
-    if (!foldState[g]) {
-      this.props.store.recNum = g;
-    } else if (this.props.store.recNum !== g) {
-      this.props.store.recNum = g;
-      if (this.state.rowSelection.length > 0) this.setState({ rowSelection: [] });
-      return;
-    } else if (this.props.store.recNum === g && this.props.store.currentSubgroup && this.props.store.currentSubgroup.group === g) {
-      this.props.store.currentSubgroup = null;
-      if (this.state.rowSelection.length > 0) this.setState({ rowSelection: [] });
-      return;
-    }
-
+    this.props.store.recNum = g;
     this.props.store.currentSubgroup = null;
-    this.setState({ foldAll: false, foldState, rowSelection: [] });
+    this.setState({ rowSelection: [], foldState });
   }
 
   renderEmpty() {
@@ -572,6 +560,14 @@ export default class TableView extends React.Component {
     )
   }
 
+  toggleUnfoldAll(unfoldAll) {
+    let foldState = new Array(this.props.store.dataGroups.length).fill(false);
+    if (!unfoldAll) {
+      foldState[this.props.store.recNum] = this.state.foldState[this.props.store.recNum];
+    }
+    this.setState({ foldState, unfoldAll });
+  }
+
   renderTableHeaderLeft(rows) {
     const { mode, rowSelection } = this.state;
     let bodyHeight = 0;
@@ -585,7 +581,7 @@ export default class TableView extends React.Component {
           rows.map(({ id, extended, group, risk }) => {
             if (mode === 1) return (<div className="table-cell" key={`${id} ${group}`}>{id}</div>);
 
-            let folded = this.state.foldAll || this.state.foldState[id];
+            let folded = this.state.unfoldAll ? this.state.foldState[id] : (this.props.store.recNum !== id || this.state.foldState[id]);
             let height = folded ? 30 : 30 + extended.length * CELL_HEIGHT;
 
             let comps = [<div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>];
@@ -685,7 +681,8 @@ export default class TableView extends React.Component {
             const groupedRows = [];
             groupedRows.push(this.renderRow(row, columns, true));
             
-            let folded = this.state.foldAll || this.state.foldState[row.id];
+            let folded = this.state.unfoldAll ? this.state.foldState[row.id] : (this.props.store.recNum !== row.id || this.state.foldState[row.id]);
+            // let folded = !(this.state.unfoldAll && !this.state.foldState[row.id]) && !this.props.store.recNum === row.id;
             let currentSubgSelected = false;
             if (this.props.store.currentSubgroup &&
               this.props.store.subgroupRecSelectedList.find(item => item.id === this.props.store.currentSubgroup.id)) {
@@ -782,10 +779,10 @@ export default class TableView extends React.Component {
         <div className="table-title">
           <div className="view-title">Data Table View</div>
           <div className="operation">
-            <label>{this.state.foldAll? 'Unfold': 'Fold'} All Groups</label>
+            <label>{'Unfold'} All Groups</label>
             <Switch
-              checked={this.state.foldAll}
-              onChange={val => this.setState({ foldAll: val })}
+              checked={this.state.unfoldAll}
+              onChange={v => this.toggleUnfoldAll(v)}
             />
           </div>
         </div>
