@@ -522,6 +522,36 @@ class AppStore {
         }
       }
 
+      const typeMap = {};
+      this.selectedAttributes.forEach(({ attrName, type }) => typeMap[attrName] = type);
+
+      groups.forEach(g => {
+        g.records.forEach(({ data }) => {
+          data.forEach((atVal) => {
+            const { attName, value} = atVal;
+            let u = 0;
+          
+            if (typeMap[attName] === 'categorical') {
+              let eventName = attName + ': ' + value;
+              if (this.eventUtilityList[eventName]) {
+                u = this.eventUtilityList[eventName].utility;
+              }
+            } else {
+              for (const eventName in this.eventUtilityList) {
+                if (this.eventUtilityList[eventName].attrName !== attName) continue;
+                const { min, max, includeMin, utility } = this.eventUtilityList[eventName];
+                if ((value > min || (includeMin && value === min)) && value <= max) {
+                  u = utility;
+                  break;
+                }
+              }
+            }
+
+            atVal.utility = u;
+          });
+        })
+      });
+
       this.recSelectedList = recSelectedList;
       this.groupSelectList = new Array(groups.length).fill(0);
       this.dataGroups = groups.map(g => ({
@@ -716,7 +746,7 @@ class AppStore {
 
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;
-          eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count };
+          eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count, attrName };
           eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
@@ -729,6 +759,7 @@ class AppStore {
             id,
             utility: attr.utility * (total - value) / total,
             count: value,
+            attrName,
           };
           eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';

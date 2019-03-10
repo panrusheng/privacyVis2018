@@ -408,10 +408,9 @@ export default class TableView extends React.Component {
           }
 
           for (let a of rec.data) {
-            let eventName = a.attName + ': ' + a.value;
             r.data[a.attName] = {
               value: a.value,
-              utility: (this.props.store.eventUtilityList[eventName] || {utility: 0}).utility,
+              utility: a.utility,
               del: select === -1 ? deleteAttr.has(a.attName) :subgroupSelMap[select].deleteAttr.has(a.attName) ,
             };
           }
@@ -449,10 +448,9 @@ export default class TableView extends React.Component {
           }
 
           for (let a of rec.data) {
-            let eventName = a.attName + ': ' + a.value;
             er.data[a.attName] = {
               value: a.value,
-              utility: (this.props.store.eventUtilityList[eventName] || {utility: 0}).utility,
+              utility: a.utility,
               del: select === -1 ? deleteAttr.has(a.attName) :subgroupSelMap[select].deleteAttr.has(a.attName)
             }
           }
