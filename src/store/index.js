@@ -670,22 +670,6 @@ class AppStore {
       }
     }
     this.trimList = trimList;
-
-    this.setTrim();
-  }
-
-  @action
-  setTrim() {
-    let trimOption = {};
-    this.trimList.forEach(item => {
-      trimOption[item.attrName] = item.trimmed;
-    });
-
-    axios.post('/set_trim', null, {
-      params: {
-        options: JSON.stringify(trimOption),
-      }
-    });
   }
 
   @action
