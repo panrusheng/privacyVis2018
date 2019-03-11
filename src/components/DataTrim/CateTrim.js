@@ -22,7 +22,7 @@ export default class CateTrim extends React.Component {
 
     for (let i = 0; i < data.length; i++) {
       let pattern = svg.append('pattern')
-        .attr('id', 'trim-stripe'+ data[i].name.split(': ').join('-'))
+        .attr('id', 'trim-stripe'+ data[i].category)
         .attr('width', 4)
         .attr('height', 4)
         .attr('patternUnits', 'userSpaceOnUse');
@@ -52,7 +52,7 @@ export default class CateTrim extends React.Component {
       .on('mouseover', d => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(d.name + ': ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
+        d3.select('.tooltip').html(d.category + ': ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -77,7 +77,7 @@ export default class CateTrim extends React.Component {
       .attr('width', d => xScale(d.curV));
     if (!trimmed)
       rect.append('rect')
-      .style('fill', d => 'url(#trim-stripe' + d.name.split(': ').join('-') + ')')
+      .style('fill', d => 'url(#trim-stripe' + d.category + ')')
       .style('stroke', 'none')
       .attr('x', (d, i) => xScale(d.triV))
       .attr('y', (d, i) => {
@@ -133,7 +133,7 @@ export default class CateTrim extends React.Component {
       .attr('x', (d, i) => 10)
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
       .style('text-anchor', 'start')
-      .text(d => d.name);
+      .text(d => d.category);
 
     if (trimmed) {
       svg.append('rect')
