@@ -100,23 +100,23 @@ export default class NumeTrim extends React.Component {
         .style('stroke-width', 1);
     }
 
-    svg
-      .append('path')
-      .attr('d', area(curV))
-      .style('stroke', 'none')
-      .style('fill', trimmed? '#d0e0f0':'url(#trim-stripe)');
     // svg
     //   .append('path')
     //   .attr('d', areaNeg(curV))
     //   .style('stroke', 'none')
     //   .style('fill', 'url(#trim-stripe)');
     if (!trimmed) {
-      const triV = data.map(item => item.triV);
+      svg
+        .append('path')
+        .attr('d', area(curV))
+        .style('stroke', 'none')
+        .style('fill', 'url(#trim-stripe)');
+    }
+    const triV = data.map(item => item.triV);
       svg.append('path')
         .attr('d', area(triV))
         .style('stroke', 'none')
         .style('fill', '#d0e0f0');
-    }
     
     // svg.append('path')
     //   .attr('d', areaNeg(triV))

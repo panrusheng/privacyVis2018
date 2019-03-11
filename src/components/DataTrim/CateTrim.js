@@ -74,7 +74,7 @@ export default class CateTrim extends React.Component {
       .attr('x', 0)
       .attr('y', (d, i) => i * rectWidth)
       .attr('height', rectWidth)
-      .attr('width', d => xScale(d.curV));
+      .attr('width', d => trimmed? xScale(d.triV) : xScale(d.curV));
     if (!trimmed)
       rect.append('rect')
       .style('fill', d => 'url(#trim-stripe' + d.category + ')')
