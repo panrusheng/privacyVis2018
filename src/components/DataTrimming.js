@@ -146,7 +146,7 @@ export default class DistTrimming extends React.Component {
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
                   <div className="form-block">
-                    <Button onClick={() => this.trim(attr.attrName) }>Trim</Button>
+                    <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>
                   </div>
                 </div>
                 {this.renderAttr(attr)}

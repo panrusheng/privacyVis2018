@@ -492,9 +492,9 @@ export default class TableView extends React.Component {
     }
 
     d3.select('.tooltip').html(d)
-    .style('left', (e.clientX) + 'px')
+    .style('left', (e.clientX + 15) + 'px')
     .style('display', 'block')
-    .style('top', (e.clientY) + 'px');
+    .style('top', (e.clientY - 35) + 'px');
   }
 
   handleRemoveTooltip() {
