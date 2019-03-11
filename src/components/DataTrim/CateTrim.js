@@ -52,7 +52,7 @@ export default class CateTrim extends React.Component {
       .on('mouseover', d => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
-        d3.select('.tooltip').html(d.name + ': ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
+        d3.select('.tooltip').html(d.category + ': ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -133,7 +133,7 @@ export default class CateTrim extends React.Component {
       .attr('x', (d, i) => 10)
       .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
       .style('text-anchor', 'start')
-      .text(d => d.name);
+      .text(d => d.category);
 
     if (trimmed) {
       svg.append('rect')

@@ -644,15 +644,7 @@ class AppStore {
               ...a
             };
           });
-        } else {
-          attr.groups = [];
-          attr.data.forEach(d => {
-            attr.groups.push({
-              name: d.category,
-              ...d
-            });
-          });
-        }
+        } 
       });
 
       this.trimList = data;      

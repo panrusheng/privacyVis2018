@@ -150,7 +150,7 @@ export default class NumeTrim extends React.Component {
       // .style('stroke', '#1866BB')
       // .style('stroke-width', 2)
       .style('fill', '#1866BB')
-      .on('mouseover', (d) => {
+      .on('mouseover', d => {
         const x = d3.event.x + 15 - margin.left,
           y = d3.event.y - 35 - margin.top;
         d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
