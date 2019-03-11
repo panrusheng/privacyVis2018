@@ -733,6 +733,7 @@ class AppStore {
       params: {
         method: model,
         options: JSON.stringify(options),
+        trimList: this.trimList.filter(({ trimmed }) => trimmed).map(({ attrName }) => attrName),
       }
     }).then(data => {
       this.comparison = data || [];
