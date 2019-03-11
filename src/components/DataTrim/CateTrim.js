@@ -22,7 +22,7 @@ export default class CateTrim extends React.Component {
 
     for (let i = 0; i < data.length; i++) {
       let pattern = svg.append('pattern')
-        .attr('id', 'trim-stripe'+ data[i].name.split(': ').join('-'))
+        .attr('id', 'trim-stripe'+ data[i].category)
         .attr('width', 4)
         .attr('height', 4)
         .attr('patternUnits', 'userSpaceOnUse');
@@ -77,7 +77,7 @@ export default class CateTrim extends React.Component {
       .attr('width', d => xScale(d.curV));
     if (!trimmed)
       rect.append('rect')
-      .style('fill', d => 'url(#trim-stripe' + d.name.split(': ').join('-') + ')')
+      .style('fill', d => 'url(#trim-stripe' + d.category + ')')
       .style('stroke', 'none')
       .attr('x', (d, i) => xScale(d.triV))
       .attr('y', (d, i) => {
