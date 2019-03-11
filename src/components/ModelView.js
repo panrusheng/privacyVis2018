@@ -33,7 +33,7 @@ export default class ModelView extends React.Component {
         };
         break;
       }
-      case 'bayesianNetwork': {
+      case 'BayesianNetwork': {
         options = { searchAlgorithm: 'K2' };
         break;
       }
@@ -41,12 +41,12 @@ export default class ModelView extends React.Component {
         options = { kernelType: 0, degree: 3, gamma: this.props.store.selectedAttributes.length > 0 ?  parseFloat((1/this.props.store.selectedAttributes.length).toFixed(2)) : 1 , coef0: 0 };
         break;
       }
-      case 'decisionTree': {
+      case 'DecisionTree': {
         options =  { unpruned: 'false', confidenceThreshold: 0.25, minInstance: 2, laplaceSmoothing: 'false',
           reducedErrorPruning: 'false', MDLCorrection: 'true', collapseTree: 'true', subtreeRaising: 'true' };
         break;
       }
-      case 'randomForest': {
+      case 'RandomForest': {
         options = { maxDepth: 0 };        
         break;
       }
@@ -63,6 +63,7 @@ export default class ModelView extends React.Component {
       '(original dataset)', '#Positives', '(processed dataset)', '#True positives', '(processed dataset)'];
     for (let i = 0; i < comparison.length; i++) {
       const data = comparison[i];
+      d3.select('#bar-chart' + i).html('');
       const canvas = d3.select('#bar-chart' + i).append('g').attr('width', width).attr('height', height);
       const barChart = canvas.append('g').attr("transform", "translate(" + marginLeft + "," + margin + ")");
       const bars = [data.frequency, data.oriD.TP + data.oriD.FP, data.oriD.TP, data.proD.TP + data.proD.FP, data.proD.TP];
@@ -166,7 +167,7 @@ export default class ModelView extends React.Component {
 
   renderPanel(model) {
     switch(model) {
-      case "bayesianNetwork": return (<div className="model-panel">
+      case "BayesianNetwork": return (<div className="model-panel">
         <div className="model-unit" key="bn-1">
           <span className="label">Search algorithm: </span>
           <Select value={this.state.options.searchAlgorithm} style={{ width: 270 }} onChange={value => this.handleOptionUpdate('searchAlgorithm', value)}>
@@ -206,7 +207,7 @@ export default class ModelView extends React.Component {
           <InputNumber value={this.state.options.coef0} onChange={value => this.handleOptionUpdate('coef0', value)} min={0} max={5} step={0.01} style={{ width: 70, textAlign: 'left' }} />
         </div>
       </div>);
-      case "randomForest": return (
+      case "RandomForest": return (
       <div className="model-panel">
         <div className="model-unit" key="rf-1">
           <span className="label">Max depth:</span>
@@ -262,7 +263,7 @@ export default class ModelView extends React.Component {
           </Select>
         </div>
       </div>);
-      case "decisionTree": return (
+      case "DecisionTree": return (
         <div className="model-panel">
           <div className="model-unit" key="dt-7">
             <span className="label" style={{"minWidth": 147}}>Unpruned:</span>
@@ -336,10 +337,10 @@ export default class ModelView extends React.Component {
                   <div>
                   <span className="label">Model: </span>
                   <Select defaultValue={ this.state.model } id="modelSelect" style={{ width: 220 }} onChange={this.changeModel}>
-                    <Option value="bayesianNetwork">Bayesian Network</Option>
+                    <Option value="BayesianNetwork">Bayesian Network</Option>
                     <Option value="SVM">Support Vector Machine</Option>
-                    <Option value="randomForest">Random Forest</Option>
-                    <Option value="decisionTree">Decision Tree</Option>
+                    <Option value="RandomForest">Random Forest</Option>
+                    <Option value="DecisionTree">Decision Tree</Option>
                     <Option value="KNN">K-nearest Neighbors</Option>
                   </Select>
                   </div>
