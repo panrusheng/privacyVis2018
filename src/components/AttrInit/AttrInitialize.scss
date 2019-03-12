@@ -34,19 +34,37 @@
   }
   
   .attr-init {
-    display: flex;
-    overflow: visible;
+    overflow: auto;
     position: relative;
     height: 960px;
+    &::-webkit-scrollbar {
+      width: 8px;
+      border-radius: 4px;
+      position: absolute;
+      right: -8px;
+    }
+
+    &::-webkit-scrollbar:horizontal {
+        height: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        border: 1px solid #ececec;
+        border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+      border-radius: 4px;
+    }
     svg {
       overflow: visible;
     }
     .chart {
-      min-width: 200px;
-      max-width: 380px;
-      height: 950px;
       flex: 1;
       margin: 0 10px;
+      padding: 20px 0;
     }
 
     .attr-info {
@@ -59,6 +77,11 @@
 
       .form-block {
         padding: 5px 0;
+        display: flex;
+        justify-content: center;
+        p {
+          margin-right: 5px;
+        }
         .ant-checkbox-wrapper {
           margin-right: 5px;
         }

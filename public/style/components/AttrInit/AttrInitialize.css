@@ -26,18 +26,29 @@
     top: 530px;
     left: 905px; }
   .init-content .attr-init {
-    display: flex;
-    overflow: visible;
+    overflow: auto;
     position: relative;
     height: 960px; }
+    .init-content .attr-init::-webkit-scrollbar {
+      width: 8px;
+      border-radius: 4px;
+      position: absolute;
+      right: -8px; }
+    .init-content .attr-init::-webkit-scrollbar:horizontal {
+      height: 8px; }
+    .init-content .attr-init::-webkit-scrollbar-track {
+      border: 1px solid #ececec;
+      border-radius: 4px; }
+    .init-content .attr-init::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+      border-radius: 4px; }
     .init-content .attr-init svg {
       overflow: visible; }
     .init-content .attr-init .chart {
-      min-width: 200px;
-      max-width: 380px;
-      height: 950px;
       flex: 1;
-      margin: 0 10px; }
+      margin: 0 10px;
+      padding: 20px 0; }
     .init-content .attr-init .attr-info {
       height: 90px;
       text-align: center; }
@@ -45,7 +56,11 @@
         font-size: 24px;
         font-weight: 500; }
       .init-content .attr-init .attr-info .form-block {
-        padding: 5px 0; }
+        padding: 5px 0;
+        display: flex;
+        justify-content: center; }
+        .init-content .attr-init .attr-info .form-block p {
+          margin-right: 5px; }
         .init-content .attr-init .attr-info .form-block .ant-checkbox-wrapper {
           margin-right: 5px; }
         .init-content .attr-init .attr-info .form-block input {

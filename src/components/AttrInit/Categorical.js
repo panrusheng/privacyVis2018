@@ -11,17 +11,17 @@ export default class Categorical extends React.Component {
     dom.innerHTML = '';
     const dataValue = data.map(item => item.value);
     // const n = dataValue.length + 1;
-    const xScale = d3
+    const yScale = d3
       .scaleLinear()
       .domain([0, Math.max(...dataValue)])
-      .range([0, width]);
+      .range([0, height]);
 
     const svg = d3
       .select(dom)
       .attr('width', width)
       .attr('height', height)
       .append('g');
-    const rectWidth = (height - 20) / data.length;
+    const rectWidth = width / data.length;
 
     let colorDic = this.props.eventColorList;
     let uilityDic = this.props.eventUtilityList;
@@ -36,13 +36,13 @@ export default class Categorical extends React.Component {
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
-        return 0;
-      })
-      .attr('y', (d, i) => {
         return i * rectWidth;
       })
-      .attr('height', rectWidth)
-      .attr('width', d => xScale(d.value))
+      .attr('y', (d, i) => {
+        return height - yScale(d.value);
+      })
+      .attr('height', d => yScale(d.value))
+      .attr('width', rectWidth)
       .on('click', function (d, i) {
         openMenu && openMenu(data[i], attrName, d3.event);
       })
@@ -83,9 +83,9 @@ export default class Categorical extends React.Component {
     }
     svg.append('line')
       .attr('x1', 0)
-      .attr('x2', 0)
-      .attr('y1', 0)
-      .attr('y2', height - 2)
+      .attr('x2', width)
+      .attr('y1', height)
+      .attr('y2', height)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -99,8 +99,8 @@ export default class Categorical extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('x', (d, i) => 10)
-      .attr('y', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
+      .attr('y', (d, i) => height - yScale(d.value))
+      .attr('x', (d, i) => i * rectWidth + (rectWidth - 18) / 2)
       .style('text-anchor', 'start')
       .text(d => d.name);
   }
