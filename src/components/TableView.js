@@ -562,18 +562,16 @@ export default class TableView extends React.Component {
         <div className="table-header-desc">
           {columns.map(col => (
           <div className="attr-desc-chart table-cell">
-            <svg height={190} width='calc(100% - 10px)'>
-                {
-                  // barList.map((bar) => { return
-                  // (<g>
-                  //   <rect width={bar.width} height={bar.height} y={190 - bar.height}
-                  //   style={{fill: this.props.store.eventColorList[bar.name]}}/>
-                  //   <rect width={bar.width} height={190} 
-                  //   style={{opacity: 0, cursor: "pointer"}} onClick={sortByDelete(col)} onMouseOver={toolTip}
-                  //   onMouseOut={toolTip}/>
-                  // </g>)})
-                }
-            </svg>
+              {
+                // barList.map((bar) => { return
+                // (<div height={190} width='calc(100% - 10px)'>
+                //   <div width={bar.width} height={bar.height} y={190 - bar.height}
+                //   style={{backgroundColor: this.props.store.eventColorList[bar.name]}}/>
+                //   <div width={bar.width} height={190} 
+                //   style={{opacity: 0, cursor: "pointer"}} onClick={sortByDelete(col)} onMouseOver={toolTip}
+                //   onMouseOut={toolTip}/>
+                // </div>)})
+              }
           </div>
           ))}
         </div>
