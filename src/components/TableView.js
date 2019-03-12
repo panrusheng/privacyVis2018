@@ -535,7 +535,7 @@ export default class TableView extends React.Component {
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
         </div>
-        <div className="wrapper" style={{ maxHeight: 'calc(100% - 55px)' }}>
+        <div className="wrapper" style={{ maxHeight: 'calc(100% - 255px)' }}>
           {this.renderTableHeaderLeft(rows)}
           {this.renderTableBody(rows, columns)}
         </div>
@@ -546,17 +546,37 @@ export default class TableView extends React.Component {
   renderTableHeaderTop(columns) {
     const { order, orderCol } = this.state;
     return (
-      <div
-        className="table-header top"
-        ref={dom => this.topHeader = dom}
-        onScroll={e => this.syncScroll(e, 'top')}
-      >
-        {columns.map(col => (
-          <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
-            {col}
-            {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
+      <div style={{minWidth: 878}}>
+        <div
+          className="table-header top"
+          ref={dom => this.topHeader = dom}
+          onScroll={e => this.syncScroll(e, 'top')}
+        >
+          {columns.map(col => (
+            <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
+              {col}
+              {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
+            </div>
+          ))}
+        </div>
+        <div className="table-header-desc">
+          {columns.map(col => (
+          <div className="attr-desc-chart table-cell">
+            <svg height={190} width='calc(100% - 10px)'>
+                {
+                  // barList.map((bar) => { return
+                  // (<g>
+                  //   <rect width={bar.width} height={bar.height} y={190 - bar.height}
+                  //   style={{fill: this.props.store.eventColorList[bar.name]}}/>
+                  //   <rect width={bar.width} height={190} 
+                  //   style={{opacity: 0, cursor: "pointer"}} onClick={sortByDelete(col)} onMouseOver={toolTip}
+                  //   onMouseOut={toolTip}/>
+                  // </g>)})
+                }
+            </svg>
           </div>
-        ))}
+          ))}
+        </div>
       </div>
     )
   }
@@ -626,8 +646,11 @@ export default class TableView extends React.Component {
     const { mode } = this.state;
 
     return (
+      <div>
       <div className="table-header top-left" onClick={this.switchMode}>
         {mode === 1 ? 'ID' : 'Group'}
+      </div>
+      <div className="table-attr-desc">Desc</div>
       </div>
     )
   }
@@ -652,7 +675,8 @@ export default class TableView extends React.Component {
                 className={'bg' + (del ? ' del' : '')}
                 style={{ 
                   backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
-                  backgroundImage: del ? `url(${StripeIcon})` : undefined,
+                  backgroundSize: 'contain',
+                  backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
               />
             </div>
