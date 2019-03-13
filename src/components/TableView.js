@@ -710,7 +710,7 @@ export default class TableView extends React.Component {
       .on('mouseover', d => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
-        d3.select('.tooltip').html('Event: ' + d.eventName + ': ')
+        d3.select('.tooltip').html(d.eventName)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
