@@ -29,7 +29,7 @@ export default class AttrNetwork extends Component {
       canvas,
       data,
       filter,
-      nullList
+      // nullList
     } = this.props;
     if (data.nodes.length === 0) return;
     let {
@@ -40,13 +40,13 @@ export default class AttrNetwork extends Component {
       nodes,
       links
     } = data;
-    nullList = nullList ? nullList : [];
+    // nullList = nullList ? nullList : [];
     const margin = 100,
       merge = 'child' in nodes[0],
       r = merge ? 10 : 8,
       rowHeight = 30,
-      legendWidth = 135,
-      legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
+      // legendWidth = 135,
+      // legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
       fontSize = 13,
       colorDic = that.props.eventColorList,
       colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6', ];
@@ -569,6 +569,7 @@ export default class AttrNetwork extends Component {
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
     circle.append('circle')
+      .attr('class', merge ? 'attrNodes' : 'eventNodes')
       .attr('r', r)
       .style('fill', d => colorDic[d.id])//(d.value < 0 ? '#FE2901' : '#7bbc88'))
       .style('stroke', 'none')
@@ -598,7 +599,10 @@ export default class AttrNetwork extends Component {
         })
       )
       .on('mouseover', (d, i) => {
-        if ((addlink.attr('source-index') === '-1') || (addlink.attr('target-index') !== '-1')) return;
+        if ((addlink.attr('source-index') === '-1') || (addlink.attr('target-index') !== '-1')) {
+          d3.selectAll('.eventSets').style('stroke', dd => ifAinB(d.id, dd.list) ? '#1866bb' : 'none');
+          return;
+        }
         const startY = d.y;
         const startX = d.x;
         const sourceID = parseInt(addlink.attr('source-index'));
@@ -743,9 +747,16 @@ export default class AttrNetwork extends Component {
                 }
               });
           });
+      })
+      .on('mouseout', () => {      
+        d3.selectAll('.eventSets').style('stroke', 'none');
+      })
+      .on('click', d => {
+        if (merge) return;
+        this.props.changeState(d.id);
       });
 
-    if (!merge) {
+    // if (!merge) {
       // if (nullList.length > 0) {
       //   let ListSvg = g.append('g')
       //     .attr('class', 'n2d')
@@ -781,7 +792,7 @@ export default class AttrNetwork extends Component {
       //   nodes.push(n);
       // }
 
-    }
+    // }
     //label
     g
       .append('g')
@@ -797,6 +808,13 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', d => (d.x < ww - 60 ? 'start' : 'end'))
       .text(d => d.id)
       .style('fill', '#333');
+      
+    function ifAinB(a, b) {
+      for (let i = 0; i < b.length; i++) {
+        if (a === b[i]) return true;
+      }
+      return false;
+    }  
   }
 
   render() {

@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import './Attribute.scss';
 import '../components/AttrView/AttrNetwork';
 import AttrNetwork from '../components/AttrView/AttrNetwork';
+import CoCircle from '../components/AttrView/CoCircle';
 import { inject, observer } from 'mobx-react';
 import { toJS } from 'mobx';
 @inject(['store'])
@@ -11,8 +12,14 @@ import { toJS } from 'mobx';
 export default class Attribute extends React.Component {
   state = {
     mergeAttribute: false,
-    filterValue: 0
+    filterValue: 0,
+    selectEvent: null
   };
+
+  constructor(props) {
+    super(props);
+    this.changeState = this.changeState.bind(this);
+  }
 
   handleTabChange(dataset, domID) {
     this.props.store.getAttrList(dataset).then(attributes => {
@@ -62,6 +69,13 @@ export default class Attribute extends React.Component {
 
     return { nodes: nodes, links: links };
   }
+
+  changeState(event) {
+    this.setState({
+      selectEvent: event
+    });
+  }
+
   mergeGraph (layout, n, l) {
     let attrN = [],
     attrL = [],
@@ -162,9 +176,9 @@ export default class Attribute extends React.Component {
   render() {
     // this.props.store.getGBN();
     let data = toJS(this.props.store.GBN); // deep copy
-    let canvas;
+    let canvasA = { ww: 940, hh: 800 };
+    let canvasB = { ww: 940, hh: 60 };
     const filterRange = d3.extent(data.links, d => d.value);
-    canvas = { ww: 940, hh: 860 };
     let layout = this.forceDirected(data.nodes, data.links);
     this.props.store.setGraphLayout(this.mergeGraph(layout, data.nodes, data.links));
     if (this.state.mergeAttribute) {
@@ -194,21 +208,31 @@ export default class Attribute extends React.Component {
           </div>
         </div>
         <div className="attr-network">
-          <svg width={canvas.ww} height={canvas.hh}>
+          <svg width={canvasA.ww} height={canvasA.hh}>
             <AttrNetwork
               data={layout}
-              canvas={canvas}
+              canvas={canvasA}
               filter={this.state.filterValue}
               nullList={data.nullNodes}
               eventColorList={this.props.store.eventColorList}
+              change={this.changeState}
             />
           </svg>
-          <div className="irr-events">
+          {(data.nullNodes.length)?(<div className="irr-events">
             <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
             <div className="irr-li">
               { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }
             </div>
-          </div>
+          </div>):(<div />)}
+        </div>
+        <div className="correlation-chart">
+          <svg width={canvasB.ww} height={canvasB.hh}>
+            {/* <CoCircle
+              data={this.props.store.sensitiveCorrelation[this.state.selectEvent]}
+              eventName={this.state.selectEvent}
+              canvas={canvasB}
+            /> */}
+          </svg>
         </div>
         <div className="gbn-legend">
               <div className='gbn-legend-unit'>
