@@ -47,17 +47,19 @@ export default class Numerical extends React.Component {
     const [labelMin, labelMax] = d3.extent(labels);
     const lDiff = labelMax - labelMin;
     const breakPoints = attr.breakPoints;
+    const marginAxis = 15, marginLeft = 30;
+    const chartWidth = width - marginAxis - marginLeft;
 
     dom.innerHTML = '';
     const xScale = d3
       .scaleLinear()
       .domain([0, labels.length - 1])
-      .range([0, width]);
+      .range([0, chartWidth]);
 
     const yScale = d3
       .scaleLinear()
       .domain([0, valueMax])
-      .range([height, 0]);
+      .range([height, marginAxis]);
 
     const area = d3
       .area()
@@ -75,7 +77,8 @@ export default class Numerical extends React.Component {
       .select(dom)
       .attr('width', width)
       .attr('height', height)
-      .append('g');
+      .append('g')
+      .attr('transform', 'translate(' + marginLeft + ', 0)');
 
     let breakIndex = 0;
     let lastWidth = 0;
@@ -94,9 +97,9 @@ export default class Numerical extends React.Component {
       let w;
 
       if (breakIndex < sortedBreakPoints.length) {
-        w = (((sortedBreakPoints[breakIndex] - labelMin) / lDiff) * width) - lastWidth;
+        w = (((sortedBreakPoints[breakIndex] - labelMin) / lDiff) * chartWidth) - lastWidth;
       } else {
-        w = width - lastWidth;
+        w = chartWidth - lastWidth;
       }
 
       svg.append("defs")
@@ -158,13 +161,24 @@ export default class Numerical extends React.Component {
         d3.axisBottom(
           d3
           .scaleLinear()
-          .range([0, width])
+          .range([0, width - marginAxis - marginLeft])
           .domain([labelMin, labelMax])
         )
       ).attr('x1', 0)
       .attr('y1', height)
-      .attr('x2', width)
+      .attr('x2', chartWidth + marginAxis)
       .attr('y2', height)
+
+    svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      // .attr("transform", "translate(0," + height + ")")
+      .call(
+        d3.axisLeft(yScale)
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', 0)
+      .attr('y2', 0)
   
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
@@ -182,9 +196,17 @@ export default class Numerical extends React.Component {
     }
     svg.append('line')
       .attr('x1', 0)
-      .attr('x2', width)
+      .attr('x2', chartWidth + marginAxis)
       .attr('y1', height)
       .attr('y2', height)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+    svg.append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', height)
+      .attr('y2', 0)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -200,8 +222,8 @@ export default class Numerical extends React.Component {
       .append('line')
       .attr('y1', 0)
       .attr('y2', height)
-      .attr('x1', d => ((d - labelMin) / lDiff * ((width - 2) / width) * xScale(values.length - 1)) + 1)
-      .attr('x2', d => ((d - labelMin) / lDiff * ((width - 2) / width) * xScale(values.length - 1)) + 1)
+      .attr('x1', d => ((d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1)) + 1)
+      .attr('x2', d => ((d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1)) + 1)
       .style('stroke', '#333')
       .style('stroke-dasharray', '10 5')
       .attr('class', 'breakpoint')
@@ -216,7 +238,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [x] = d3.mouse(dom);
-            let value = (x / width) * lDiff + labelMin;
+            let value = (x / chartWidth) * lDiff + labelMin;
             if (value < 0) value = 0;
             if (value > 1) value = 1;
 
@@ -236,10 +258,10 @@ export default class Numerical extends React.Component {
       .append('text')
       .attr('y', () => 6)
       .attr('x', d => {
-        return (d - labelMin) / lDiff * ((width - 2) / width) * xScale(values.length - 1) - 6;
+        return (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 8;
       })
       .text(d => (d).toFixed(2))
-      .style('text-anchor', 'end')
+      .style('text-anchor', 'start')
       .style('fill', '#333');
 
     svg
@@ -250,7 +272,7 @@ export default class Numerical extends React.Component {
       .append('circle')
       .attr('r', () => 5)
       .attr('cy', 0)
-      .attr('cx', d => (d - labelMin) / lDiff * ((width - 2) / width) * xScale(values.length - 1))
+      .attr('cx', d => (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 2)
       .attr('stroke', '#333')
       .attr('fill', '#fff')
       .attr('stroke-width', 2)
@@ -265,7 +287,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [x, y] = d3.mouse(dom);
-            let value = (x / width) * lDiff + labelMin;
+            let value = (x / (chartWidth)) * lDiff + labelMin;
 
             if (value < labelMin) value = labelMin;
             if (value > labelMax) value = labelMax;
