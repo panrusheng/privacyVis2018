@@ -357,7 +357,7 @@ export default class Numerical extends React.Component {
 }
 
 Numerical.defaultProps = {
-  width: 300,
+  width: 280,
   height: 900,
   breakPoints: [],
 };

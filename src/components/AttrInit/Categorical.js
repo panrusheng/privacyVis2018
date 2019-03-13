@@ -153,6 +153,6 @@ export default class Categorical extends React.Component {
 }
 
 Categorical.defaultProps = {
-  width: 300,
+  width: 280,
   height: 900,
 };

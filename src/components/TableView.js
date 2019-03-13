@@ -667,7 +667,8 @@ export default class TableView extends React.Component {
   renderBarChart(data, col, width) {
     const { eventColorList } = this.props.store;
     
-    const height = 200;
+    const height = 190;
+    let mWidth = width - 10;
 
     let svg = d3.select('#barchart-' + col);
     svg.html('');
@@ -675,26 +676,27 @@ export default class TableView extends React.Component {
     let xScale = d3
       .scaleLinear()
       .domain([0, 1])
-      .range([0, width]);
+      .range([0, mWidth]);
     let yScale = d3
       .scaleLinear()
       .domain([0, 1])
       .range([height, 0]);
     
     svg.attr('width', width)
-      .attr('height', height);
+      .attr('height', height + 10);
 
     let xSum = 0;
   
-    svg
+    let RectList = svg
       .append('g')
+      .attr('transform', 'translate(5, 5)')
       .selectAll('rect')
       .data(data)
-      .enter()
-      .append('rect')
+      .enter();
+    RectList.append('rect')
       .style('fill', d => eventColorList[d.eventName])
       .attr('x', (d) => {
-        let x = xSum * width
+        let x = xSum * mWidth
         xSum += d.width;
         return x;
       })
@@ -702,11 +704,29 @@ export default class TableView extends React.Component {
         return height - d.height * height;
       })
       .attr('width', d => {
-        return d.width * width;
+        return d.width * mWidth;
       })
       .attr('height', d => {
         return d.height * height;
+      });
+    xSum = 0;
+    RectList.append('rect')
+      .style('opacity', 0)
+      .attr('x', (d) => {
+        let x = xSum * mWidth
+        xSum += d.width;
+        return x;
       })
+      .attr('y', d => {
+        return 0;
+      })
+      .attr('width', d => {
+        return d.width * mWidth;
+      })
+      .attr('height', d => {
+        return height;
+      })
+      .style('cursor', 'pointer')
       .on('mouseover', d => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
@@ -875,18 +895,18 @@ export default class TableView extends React.Component {
           )
         }
   
-        // let delFlag = false, utility = row.extended[0].data[col].utility;
-        // for (let i = 0; i < row.extended.length; i++) {
-        //   if (row.extended[i].data[col].del) {
-        //     delFlag = true;
-        //     break;
-        //   }
-        // }
+        let delFlag = false, utility = row.extended[0].data[col].utility;
+        for (let i = 0; i < row.extended.length; i++) {
+          if (row.extended[i].data[col].del) {
+            delFlag = true;
+            break;
+          }
+        }
         return (
           <div className="table-cell em" key={col} style={{ 
-            // backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+            backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
             backgroundSize: 'contain',
-            // backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
+            backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
           }}>
             {data[col]}
           </div>

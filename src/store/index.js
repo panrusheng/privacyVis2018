@@ -170,10 +170,9 @@ class AppStore {
       for (let i = 0; i < data.GBN.nodes.length; i++) {
         if (data.GBN.nodes[i].value < 0) this.sensitiveEventList.push(data.GBN.nodes[i].id);
       }
-
       this.selectedAttributes = selectedAttributes;
-      this.GBN = dataGBN;
       this.sensitiveCorrelation = data.correlations;
+      this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
       this.updateEventUtility();
     });

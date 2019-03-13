@@ -228,6 +228,7 @@ export default class Attribute extends React.Component {
         <div className="correlation-chart">
           <svg width={canvasB.ww} height={canvasB.hh}>
             <CoCircle
+              coData={this.props.store.sensitiveCorrelation}
               eventName={this.state.selectEvent}
               canvas={canvasB}
             />

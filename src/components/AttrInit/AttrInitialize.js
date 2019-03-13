@@ -66,7 +66,7 @@ export default class AttrInitialize extends React.Component {
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
-    let height = 250;
+    let height = 200;
     let width = w - 40;
 
     if (
@@ -266,7 +266,7 @@ export default class AttrInitialize extends React.Component {
           >
             {selectedAttributes.filter(attr => attr.type === 'numerical').map(attr => (
               <div className="chart" key={attr.attrName}>
-                <div className="attr-info" style={attr.type === 'numerical' ? { display:  'flex', justifyContent: 'center',
+                <div className="attr-info" style={attr.type === 'numerical' ? { height: 45, display:  'flex', justifyContent: 'center',
                   alignItems: 'center' } : undefined}>
                   <div className="title"
                   style={attr.type === 'numerical' ? {
@@ -279,7 +279,7 @@ export default class AttrInitialize extends React.Component {
                   </div>
                   ):(
                     <div className="form-block">
-                      <div style={{ margin: 1, display: 'flex', alignItems: 'center' }}>Utility value:</div>
+                      <div style={{ margin: 5, display: 'flex', alignItems: 'center' }}>Utility:</div>
                       <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                       this.handleUtilityChange(attr.attrName, e)
                     } />
@@ -301,7 +301,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       ):(
                         <div className="form-block">
-                          <p style={{ margin: 1 }}>Utility value</p>
+                          <p style={{ margin: 5 }}>Utility:</p>
                           <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                           this.handleUtilityChange(attr.attrName, e)
                         } />

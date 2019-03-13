@@ -21,18 +21,19 @@ export default class AttrNetwork extends Component {
     this.renderGraph = this.renderGraph.bind(this);
   }
   componentDidMount() {
-    if (this.props.store.sensitiveCorrelation)
+    if (this.props.coData)
       this.renderGraph(this.g, this.props);
   }
 
   componentDidUpdate() {
-    if (this.props.store.sensitiveCorrelation)
+    if (this.props.coData)
       this.renderGraph(this.g, this.props);
   }
 
   renderGraph(gDOM) {
     const that = this;
     let {
+      coData,
       canvas,
       eventName
     } = this.props;
@@ -41,7 +42,7 @@ export default class AttrNetwork extends Component {
       hh
     } = canvas;
     eventName = (eventName === null) ? this.props.store.sensitiveEventList[0] : eventName;
-    const corData = this.props.store.sensitiveCorrelation[eventName];
+    const corData = coData[eventName];
 
     const {
       pro,
@@ -52,7 +53,7 @@ export default class AttrNetwork extends Component {
     const marginX = 50,
       marginY = 20,
       r = 10;
-    let range = d3.extent(data, d => d.correlations);
+    let range = d3.extent(data, d => d.cor);
     if (that.state.showP) {
       range[0] = (range[0] > pro) ? pro : range[0];
       range[1] = (range[1] < pro) ? pro : range[1];
@@ -67,7 +68,7 @@ export default class AttrNetwork extends Component {
       .range([marginX, ww - 3 * marginX]);
     let dataList = [];
     for (let i = 0; i < data.length; i++) {
-      let p = data[i].correlations;
+      let p = data[i].cor;
       if (p <= pro + riskLimit && p >= pro - riskLimit) continue;
       let x = ScaleX(p),
         y = r + Math.random() * (hh - 2 * marginY),
@@ -89,7 +90,6 @@ export default class AttrNetwork extends Component {
       .select(gDOM)
       .attr('width', ww)
       .attr('height', hh);
-
     d3.selectAll('.cor-chart').remove();
     g.append('g')
       .attr('class', 'cor-chart')
