@@ -5,7 +5,8 @@ import DescIcon from '../assets/image/desc.svg';
 import './TableView.scss';
 import { Switch } from 'antd';
 import { toJS, values, set } from 'mobx';
-import SlashIcon from '../assets/image/stripe.png'
+import StripeIcon from '../assets/image/stripe.png';
+import SlashIcon from '../assets/image/slash.png'
 import * as d3 from 'd3';
 
 const DESC = -1;
@@ -534,7 +535,7 @@ export default class TableView extends React.Component {
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
         </div>
-        <div className="wrapper" style={{ maxHeight: 'calc(100% - 55px)' }}>
+        <div className="wrapper" style={{ maxHeight: 'calc(100% - 255px)' }}>
           {this.renderTableHeaderLeft(rows)}
           {this.renderTableBody(rows, columns)}
         </div>
@@ -545,17 +546,35 @@ export default class TableView extends React.Component {
   renderTableHeaderTop(columns) {
     const { order, orderCol } = this.state;
     return (
-      <div
-        className="table-header top"
-        ref={dom => this.topHeader = dom}
-        onScroll={e => this.syncScroll(e, 'top')}
-      >
-        {columns.map(col => (
-          <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
-            {col}
-            {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
+      <div style={{minWidth: 878}}>
+        <div
+          className="table-header top"
+          ref={dom => this.topHeader = dom}
+          onScroll={e => this.syncScroll(e, 'top')}
+        >
+          {columns.map(col => (
+            <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
+              {col}
+              {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
+            </div>
+          ))}
+        </div>
+        <div className="table-header-desc">
+          {columns.map(col => (
+          <div className="attr-desc-chart table-cell">
+              {
+                // barList.map((bar) => { return
+                // (<div height={190} width='calc(100% - 10px)'>
+                //   <div width={bar.width} height={bar.height} y={190 - bar.height}
+                //   style={{backgroundColor: this.props.store.eventColorList[bar.name]}}/>
+                //   <div width={bar.width} height={190} 
+                //   style={{opacity: 0, cursor: "pointer"}} onClick={sortByDelete(col)} onMouseOver={toolTip}
+                //   onMouseOut={toolTip}/>
+                // </div>)})
+              }
           </div>
-        ))}
+          ))}
+        </div>
       </div>
     )
   }
@@ -583,8 +602,11 @@ export default class TableView extends React.Component {
 
             let folded = this.state.unfoldAll ? this.state.foldState[id] : (this.props.store.recNum !== id || this.state.foldState[id]);
             let height = folded ? 30 : 30 + extended.length * CELL_HEIGHT;
-
-            let comps = [<div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} key={"r" + id} onClick={() => this.toggleGroup(id)}>G{id + 1}</div>];
+            let comps = [<div className={'table-cell em group'} style={{backgroundColor: risk?'rgba(254, 41, 1, '+ (0.1 + risk * 2) +')': 'none'}} 
+              key={"r" + id} onClick={() => this.toggleGroup(id)}>
+              G{id + 1}
+                {this.props.store.recList.rec[id].length > 1?<div className="left-triangle"/>:<div />}
+              </div>];
 
             if (!folded) {
               comps.push(<div className="scroll-wrapper" data={id} key={'w' + id}>
@@ -622,8 +644,11 @@ export default class TableView extends React.Component {
     const { mode } = this.state;
 
     return (
+      <div>
       <div className="table-header top-left" onClick={this.switchMode}>
         {mode === 1 ? 'ID' : 'Group'}
+      </div>
+      <div className="table-attr-desc">Desc</div>
       </div>
     )
   }
@@ -631,7 +656,7 @@ export default class TableView extends React.Component {
   renderRow(row, columns, isGroup = false, groupId, seqId) {
     return (<div
       className={`table-row ${isGroup ? 'group' : ''}`} 
-      style={isGroup?{backgroundColor: row.risk?'rgba(254, 41, 1, '+ (0.1 + row.risk * 2) +')': 'none'}:{}}
+      // style={isGroup?{backgroundColor: row.risk?'rgba(254, 41, 1, '+ (0.1 + row.risk * 2) +')': 'none'}:{}}
       key={`${isGroup ? '' : groupId} ${row.id}`}
       onMouseDown={e => !isGroup && seqId !== undefined && this.handleRowSelMouseDown(e, groupId, seqId)}
       onContextMenu={e => {e.preventDefault(); e.stopPropagation();}}
@@ -648,14 +673,26 @@ export default class TableView extends React.Component {
                 className={'bg' + (del ? ' del' : '')}
                 style={{ 
                   backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+                  backgroundSize: 'contain',
                   backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
               />
             </div>
           )
         }
+        let delFlag = false, utility = row.extended[0].data[col].utility;
+        for (let i = 0; i < row.extended.length; i++) {
+          if (row.extended[i].data[col].del) {
+            delFlag = true;
+            break;
+          }
+        }
         return (
-          <div className="table-cell em" key={col}>
+          <div className="table-cell em" key={col} style={{ 
+            backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+            backgroundSize: 'contain',
+            backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
+          }}>
             {data[col]}
           </div>
         );

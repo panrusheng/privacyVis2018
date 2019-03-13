@@ -66,16 +66,10 @@ export default class AttrInitialize extends React.Component {
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
-    let width = Math.ceil(w / count);
-    if (width < 200 || !width) {
-      width = 200;
-    } else if (width > 320) {
-      width = 320;
-    }
-
-    width -= 35; //for margin
-
-    const height = Math.ceil(h - 130);
+    let height = Math.floor(h / count);
+    if (height < 300) height = 300;
+    else if (height > 400) height = 400;
+    let width = w - 40;
 
     if (
       height === this.state.attrSize.height &&
@@ -187,13 +181,34 @@ export default class AttrInitialize extends React.Component {
     if (moveLeft === 0) d3.select('.init-left').attr('class', 'init-left init-stop');
   }
 
-  renderAttr(attr) {
+  getCatePerRow() {
+    const { selectedAttributes } = this.props.store;
+    let result = [];
+    const cateAttrs = toJS(selectedAttributes).filter(({ type }) => type === 'categorical');
+    
+    // todo: optimize
+    cateAttrs.sort((a, b) => a.groups.length - b.groups.length);
+
+    for (let i = 0; i < cateAttrs.length; ++i) {
+      if (!(i%2)) {
+        result.push([cateAttrs[i]]);
+        if (i + 1 < cateAttrs.length) {
+          result[result.length - 1].push(cateAttrs[i + 1]);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  renderAttr(attr, width) {
     const { attrSize } = this.state;
 
     switch (attr.type) {
       case 'numerical': {
         return (
           <Numerical
+            key={attr.attrName}
             addBreakPoint={this.addBreakPoint}
             removeBreakPoint={this.removeBreakPoint}
             updateBreakPoint={this.updateBreakPoint}
@@ -208,8 +223,10 @@ export default class AttrInitialize extends React.Component {
       case 'categorical': {
         return (
           <Categorical
+            key={attr.attrName}
             openMenu={this.openMenu}
             {...attrSize}
+            width={width}
             attr={attr}
             eventUtilityList={this.props.store.eventUtilityList}
             eventColorList={this.props.store.eventColorList}
@@ -225,6 +242,8 @@ export default class AttrInitialize extends React.Component {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
     const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 35) > 940;
+
+    const rowCate = this.getCatePerRow();
     return (
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>
@@ -235,7 +254,7 @@ export default class AttrInitialize extends React.Component {
               if (dom) this.wrapper = dom;
             }}
           >
-            {selectedAttributes.map(attr => (
+            {selectedAttributes.filter(attr => attr.type === 'numerical').map(attr => (
               <div className="chart" key={attr.attrName}>
                 <div className="attr-info">
                   <div className="title">{attr.attrName}</div>
@@ -255,6 +274,30 @@ export default class AttrInitialize extends React.Component {
                 {this.renderAttr(attr)}
               </div>
             ))}
+            { rowCate.map((row, idx) => (
+              <div key={idx} style={{ display: 'flex' }}>
+                { row.map((attr) => (
+                  <div className="chart" key={attr.attrName}>
+                    <div className="attr-info">
+                      <div className="title">{attr.attrName}</div>
+                      {attr.sensitive?(
+                      <div className="form-block">
+                        <p style={{color: '#FE2901', 'fontSize': 25}}>Sensitive</p>
+                      </div>
+                      ):(
+                        <div className="form-block">
+                          <p style={{ margin: 1 }}>Utility value</p>
+                          <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
+                          this.handleUtilityChange(attr.attrName, e)
+                        } />
+                      </div>
+                      )}
+                    </div>
+                    {this.renderAttr(attr, this.state.attrSize.width / row.length)}
+                  </div>
+                )) }
+              </div>
+            )) }
             <ContextMenu
               id="merge-panel-menu"
               onShow={() => {
@@ -278,8 +321,6 @@ export default class AttrInitialize extends React.Component {
               <div />
             </ContextMenuTrigger>
           </div>
-          {flag ? (<input className="init-left" onClick={this.scrollLeft} type="image" src={leftIcon}/>) : (null)}
-          {flag ? (<input className="init-right" onClick={this.scrollRight} type="image" src={rightIcon} />) : (null)}
         </div>
       </div>
     );
