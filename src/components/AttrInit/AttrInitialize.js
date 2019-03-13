@@ -66,9 +66,7 @@ export default class AttrInitialize extends React.Component {
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
-    let height = Math.floor(h / count);
-    if (height < 300) height = 300;
-    else if (height > 400) height = 400;
+    let height = 250;
     let width = w - 40;
 
     if (
@@ -183,22 +181,34 @@ export default class AttrInitialize extends React.Component {
 
   getCatePerRow() {
     const { selectedAttributes } = this.props.store;
-    let result = [];
     const cateAttrs = toJS(selectedAttributes).filter(({ type }) => type === 'categorical');
-    
-    // todo: optimize
-    cateAttrs.sort((a, b) => a.groups.length - b.groups.length);
+    let binMax = 10;
+    const binTotal = cateAttrs.reduce((p, v) => p + v.groups.length, 0);
+    let rows = [];
 
-    for (let i = 0; i < cateAttrs.length; ++i) {
-      if (!(i%2)) {
-        result.push([cateAttrs[i]]);
-        if (i + 1 < cateAttrs.length) {
-          result[result.length - 1].push(cateAttrs[i + 1]);
-        }
-      }
+    for (let i =0 ; i < Math.ceil(binTotal / cateAttrs.length); ++i) {
+      rows.push({ total: 0, attrs: [] });
     }
+  
+    cateAttrs.forEach((attr) => {
+      let max = -1;
+      let t = -1;
+      for (let i = 0; i < rows.length; ++i) {
+        if (rows[i].total + attr.groups.length <= binMax && binMax - rows[i].total - attr.groups.length > max) {
+          max = binMax - rows[i].total - attr.groups.length;
+          t = i;
+        } 
+      }
 
-    return result;
+      if (t < 0) {
+        rows.push({ attrs: [attr], total: attr.groups.length });
+      } else {
+        rows[t].attrs.push(attr);
+        rows[t].total += attr.groups.length;
+      }
+    })
+
+    return rows.filter(r => r.total > 0).map(({ attrs }) => attrs);
   }
 
   renderAttr(attr, width) {
@@ -256,15 +266,20 @@ export default class AttrInitialize extends React.Component {
           >
             {selectedAttributes.filter(attr => attr.type === 'numerical').map(attr => (
               <div className="chart" key={attr.attrName}>
-                <div className="attr-info">
-                  <div className="title">{attr.attrName}</div>
+                <div className="attr-info" style={attr.type === 'numerical' ? { display:  'flex', justifyContent: 'center',
+                  alignItems: 'center' } : undefined}>
+                  <div className="title"
+                  style={attr.type === 'numerical' ? {
+                    marginRight: 15,
+                    display: 'flex',
+                    alignItems: 'center'} : undefined} >{attr.attrName}</div>
                   {attr.sensitive?(
-                  <div className="form-block">
-                    <p style={{color: '#FE2901', 'fontSize': 25}}>Sensitive</p>
+                  <div className="form-block" style={{color: '#FE2901', 'fontSize': 25}}>
+                    Sensitive
                   </div>
                   ):(
                     <div className="form-block">
-                      <p style={{ margin: 1 }}>Utility value</p>
+                      <div style={{ margin: 1, display: 'flex', alignItems: 'center' }}>Utility value:</div>
                       <InputNumber value={attr.utility} min={0} max={1} defaultValue={0} step={0.05} style={{ width: 70, textAlign: 'left' }} onChange={e =>
                       this.handleUtilityChange(attr.attrName, e)
                     } />
@@ -293,7 +308,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       )}
                     </div>
-                    {this.renderAttr(attr, this.state.attrSize.width / row.length)}
+                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 20)}
                   </div>
                 )) }
               </div>
