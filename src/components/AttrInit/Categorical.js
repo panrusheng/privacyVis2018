@@ -10,7 +10,7 @@ export default class Categorical extends React.Component {
     const openMenu = this.props.openMenu;
     dom.innerHTML = '';
     const dataValue = data.map(item => item.value);
-    const marginAxis = 15, marginLeft = 30, chargWidth = width - marginAxis - marginLeft;
+    const marginAxis = 15, marginLeft = 30, chartWidth = width - marginAxis - marginLeft;
     // const n = dataValue.length + 1;
     const yScale = d3
       .scaleLinear()
@@ -23,7 +23,7 @@ export default class Categorical extends React.Component {
       .attr('height', height)
       .append('g')
       .attr('transform', 'translate(' + marginLeft + ', 0)');
-    const rectWidth = (chargWidth) / data.length;
+    const rectWidth = (chartWidth) / data.length;
 
     let colorDic = this.props.eventColorList;
     let uilityDic = this.props.eventUtilityList;
@@ -35,6 +35,7 @@ export default class Categorical extends React.Component {
       .enter()
       .append('rect')
       .style('fill', (d) => colorDic[attrName + ': ' + d.name])
+      .style('opacity', attr.sensitive? 0.5 : "")
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
@@ -49,9 +50,10 @@ export default class Categorical extends React.Component {
         openMenu && openMenu(data[i], attrName, d3.event);
       })
       .on('mouseover', d => {
+        if (attr.sensitive) return;
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
-        d3.select('.tooltip').html('Utility of' + d.name + ': ' + uilityDic[attrName + ': ' + d.name].utility.toFixed(2))
+        d3.select('.tooltip').html('Utility of ' + d.name + ': ' + uilityDic[attrName + ': ' + d.name].utility.toFixed(2))
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -96,7 +98,7 @@ export default class Categorical extends React.Component {
     }
     svg.append('line')
       .attr('x1', 0)
-      .attr('x2', chargWidth + marginAxis)
+      .attr('x2', chartWidth + marginAxis)
       .attr('y1', height)
       .attr('y2', height)
       .attr('marker-end', 'url(#biggerArrow)')
@@ -120,10 +122,18 @@ export default class Categorical extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
+      .attr('y', height + 5)
+      .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
+      .style('text-anchor', 'middle')
+      .text(d => d.name);
+    svgText.append('text')
+      .attr('class', 'label')
+      .style('fill', '#333')
+      .attr('dominant-baseline', 'text-before-edge')
       .attr('y', (d, i) => height - yScale(d.value))
       .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
       .style('text-anchor', 'middle')
-      .text(d => d.name + ': ' + d.value);;
+      .text(d => d.value);
   }
 
   componentDidMount() {

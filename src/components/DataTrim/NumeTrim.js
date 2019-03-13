@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-// import { toJS } from 'mobx';
+import { toJS } from 'mobx';
 
 export default class NumeTrim extends React.Component {
   constructor(props) {
@@ -13,13 +13,12 @@ export default class NumeTrim extends React.Component {
       data,
       width,
       height,
-      margin,
       trimmed,
       attrName
     } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin, attrName, trimmed);
+    this.draw(this.chartDom, data, width, height, attrName, trimmed);
   }
 
   componentDidUpdate() {
@@ -27,42 +26,45 @@ export default class NumeTrim extends React.Component {
       data,
       width,
       height,
-      margin,
       attrName,
       trimmed
     } = this.props;
     if (!data || !this.chartDom) return;
 
-    this.draw(this.chartDom, data, width, height, margin, attrName, trimmed);
+    this.draw(this.chartDom, data, width, height, attrName, trimmed);
   }
 
-  draw(dom, data, width, height, margin, attrName, trimmed) {
+  draw(dom, data, width, height, attrName, trimmed) {
     const oriV = data.map(item => item.oriV);
     const curV = data.map(item => item.curV);
     const labels = data.map(item => item.label);
+    const marginAxis = 15, marginLeft = 30;
+    const chartWidth = width - marginAxis - marginLeft;
     dom.innerHTML = '';
+
     const xScale = d3
       .scaleLinear()
-      .domain([0, Math.max(...oriV)])
-      .range([0, width - 25]);
+      .domain([0, labels.length - 1])
+      .range([0, chartWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, data.length - 1])
-      .range([0, height - 20]);
+      .domain([0, Math.max(...oriV)])
+      .range([height, marginAxis]);
 
     const line = d3
       .line()
-      .x(d => xScale(d))
-      .y((d, i) => yScale(i))
-      .curve(d3.curveMonotoneY);
+      .x((d, i) => xScale(i))
+      .y(d => yScale(d))
+      .curve(d3.curveMonotoneX);
 
     const area = d3
       .area()
       .x0(0)
-      .x1(d => xScale(d))
-      .y((d, i) => yScale(i))
-      .curve(d3.curveMonotoneY);
+      .y0(height)
+      .x((d, i) => xScale(i))
+      .y1(d => yScale(d))
+      .curve(d3.curveMonotoneX);
 
     // const lineNeg = d3
     //   .line()
@@ -79,10 +81,10 @@ export default class NumeTrim extends React.Component {
 
     const svg = d3
       .select(dom)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('width', width)
+      .attr('height', height)
       .append('g')
-      .attr('transform', 'translate(' + (margin.left + 25) + ',' + (margin.top * 1.5) + ')');
+      .attr('transform', 'translate(' + marginLeft + ', 0)');
 
     if (d3.selectAll('#trim-stripe'.length === 0)) {
       let pattern = svg.append('pattern')
@@ -144,15 +146,15 @@ export default class NumeTrim extends React.Component {
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', d => xScale(d.oriV))
-      .attr('cy', (d, i) => yScale(i))
+      .attr('cy', d => yScale(d.oriV))
+      .attr('cx', (d, i) => xScale(i))
       .attr('r', d => {return d.oriV === 0 ? 0: 2})
       // .style('stroke', '#1866BB')
       // .style('stroke-width', 2)
       .style('fill', '#1866BB')
       .on('mouseover', d => {
-        const x = d3.event.x + 15 - margin.left,
-          y = d3.event.y - 35 - margin.top;
+        const x = d3.event.x + 15 - marginLeft,
+          y = d3.event.y - 35;
         d3.select('.tooltip').html(attrName + '(' + d.label + '): ' + d.oriV + '/' + d.curV + '/' + trimmed ? '' : d.triV)
           .style('left', (x) + 'px')
           .style('display', 'block')
@@ -162,19 +164,31 @@ export default class NumeTrim extends React.Component {
         d3.select('.tooltip').style('display', 'none')
       });
 
-    const axisElem = svg
+    svg
       .append('g')
       .attr('class', 'axis-ver')
+      .attr("transform", "translate(0," + height + ")")
       .call(
-        d3.axisLeft(
+        d3.axisBottom(
           d3
-            .scaleLinear()
-            .range([0, height - 20])
-            .domain([Math.min(...labels), Math.max(...labels)])
+          .scaleLinear()
+          .range([0, width - marginAxis - marginLeft])
+          .domain(d3.extent(labels))
         )
-      )
-      .attr('transform', `translate(0, 0)`);
-    axisElem.select('.domain').attr('transform', 'translate(-3, 0)');
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', chartWidth + marginAxis)
+      .attr('y2', height)
+    svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      // .attr("transform", "translate(0," + height + ")")
+      .call(
+        d3.axisLeft(yScale)
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', 0)
+      .attr('y2', 0)
 
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
@@ -192,9 +206,17 @@ export default class NumeTrim extends React.Component {
     }
     svg.append('line')
       .attr('x1', 0)
+      .attr('x2', chartWidth + marginAxis)
+      .attr('y1', height)
+      .attr('y2', height)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+    svg.append('line')
+      .attr('x1', 0)
       .attr('x2', 0)
-      .attr('y1', 0)
-      .attr('y2', height - 2)
+      .attr('y1', height)
+      .attr('y2', 0)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -203,7 +225,7 @@ export default class NumeTrim extends React.Component {
       svg.append('rect')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', width)
+      .attr('width', chartWidth)
       .attr('height', height)
       .style('fill', '#333')
       .style('opacity', 0.1);
@@ -211,7 +233,8 @@ export default class NumeTrim extends React.Component {
   }
 
   render() {
-    return (<div className="numerical-view">
+    return (<div className="numerical-view" style={{width: 800,
+      textAlign: "center"}}>
       <
         svg ref={
           dom => (this.chartDom = dom)
@@ -224,10 +247,4 @@ export default class NumeTrim extends React.Component {
 NumeTrim.defaultProps = {
   width: 300,
   height: 900,
-  margin: {
-    top: 10,
-    right: 10,
-    bottom: 10,
-    left: 10
-  },
 };

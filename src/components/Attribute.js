@@ -37,7 +37,12 @@ export default class Attribute extends React.Component {
       .attr('class', 'lodDisable');
   }
   forceDirected(n, l) {
-    const links = l;
+    let links = [];
+    for (let i = 0; i < l.length; i++) {
+      let ll = toJS(l[i]);
+      ll.value = ll.value - ll.cpt[1];
+      links.push(ll);
+    }
     const nodes = n;
     let simulation = d3
       .forceSimulation(nodes)
@@ -178,7 +183,7 @@ export default class Attribute extends React.Component {
     let data = toJS(this.props.store.GBN); // deep copy
     let canvasA = { ww: 940, hh: 800 };
     let canvasB = { ww: 940, hh: 60 };
-    const filterRange = d3.extent(data.links, d => d.value);
+    const filterRange = [0, d3.max(toJS(data.links), d => Math.abs(d.value - d.cpt[1]))];
     let layout = this.forceDirected(data.nodes, data.links);
     this.props.store.setGraphLayout(this.mergeGraph(layout, data.nodes, data.links));
     if (this.state.mergeAttribute) {
@@ -189,15 +194,15 @@ export default class Attribute extends React.Component {
         <div className="title">Inference Simulation View</div>
         <div className="attr-operations">
           <div className="operation">
-            <span className="label">Correlation filter:</span>
+            <span className="label">Edge filter:</span>
             <Slider
               min={filterRange[0]}
               max={filterRange[1]}
-              step={0.05}
+              step={0.01}
               onChange={value => this.setState({ filterValue: value })}
               value={this.state.filterValue}
             />
-            <span style = {{marginRight: 250}}>1</span>
+            <span style = {{marginRight: 250}}>{filterRange[1] ? filterRange[1].toFixed(2) : 1}</span>
           </div>
           <div className="operation r5">
             <span className="label">Merge by attributes:</span>
@@ -244,8 +249,15 @@ export default class Attribute extends React.Component {
                 <label>Utility</label>
               </div>
               <div className='gbn-legend-unit'>
-                <div className="gbn-edge" />
-                <label>P(Target|Source)</label>
+                <div className="gbn-edge-o" />
+                <label>|P(Target|Source) - P(Target)|</label>
+              </div>
+              <div className='gbn-legend-unit'>
+                <div className="gbn-edge-np" />
+                <div className="gbn-edge-np-label">
+                  <label>+</label>
+                  <label>-</label>
+                </div>
               </div>
             </div>
       </div>

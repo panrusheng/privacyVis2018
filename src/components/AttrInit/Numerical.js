@@ -114,9 +114,11 @@ export default class Numerical extends React.Component {
       svg.append('path')
         .data([values])
         .attr('d', area)
-        .attr('fill', this.props.eventColorList[eventName])
+        .style('fill', this.props.eventColorList[eventName])
+        .style('opacity', attr.sensitive? 0.5 : "")
         .attr('clip-path', `url(#${attrName + breakIndex})`)
         .on('mouseover', () => {
+          if (attr.sensitive) return;
           const x = d3.event.x + 15,
             y = d3.event.y - 35;
           d3.select('.tooltip')

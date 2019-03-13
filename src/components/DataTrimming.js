@@ -16,8 +16,8 @@ export default class DistTrimming extends React.Component {
   constructor(props) {
     super(props);
     this.setSize = this.setSize.bind(this);
-    this.scrollLeft = this.scrollLeft.bind(this);
-    this.scrollRight = this.scrollRight.bind(this);
+    // this.scrollLeft = this.scrollLeft.bind(this);
+    // this.scrollRight = this.scrollRight.bind(this);
     this.trim = this.trim.bind(this);
   }
 
@@ -38,7 +38,7 @@ export default class DistTrimming extends React.Component {
 
   componentDidUpdate() {
     this.setSize();
-    this.scrollLeft();
+    // this.scrollLeft();
   }
 
   componentWillUnmount() {
@@ -54,16 +54,18 @@ export default class DistTrimming extends React.Component {
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     const { height: h, width: w } = dom.getBoundingClientRect();
-    let width = Math.ceil(w / count);
-    if (width < 200 || !width) {
-      width = 200;
-    } else if (width > 320) {
-      width = 320;
-    }
+    let height = 200;
+    let width = w - 40;
+    // let width = Math.ceil(w / count);
+    // if (width < 200 || !width) {
+    //   width = 200;
+    // } else if (width > 320) {
+    //   width = 320;
+    // }
 
-    width -= 35; //for margin
+    // width -= 35; //for margin
 
-    const height = Math.ceil(h - 90);
+    // const height = Math.ceil(h - 90);
 
     if (
       height === this.state.attrSize.height &&
@@ -83,35 +85,67 @@ export default class DistTrimming extends React.Component {
     this.props.store.trim(attrName);
   }
 
-  scrollRight() {
-    let x = parseInt(d3.select('.attr-trim').style('left'));
-    if (!x) {
-      d3.select('.attr-trim').style('left', 0);
-      x = 0;
+  // scrollRight() {
+  //   let x = parseInt(d3.select('.attr-trim').style('left'));
+  //   if (!x) {
+  //     d3.select('.attr-trim').style('left', 0);
+  //     x = 0;
+  //   }
+  //   const w = this.state.attrSize.width;
+  //   const count = (this.props.store.selectedAttributes || []).length;
+  //   const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 40);
+  //   const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
+  //   d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
+  //   d3.select('.trim-left').attr('class', 'trim-left');
+  //   if (moveLeft === maxDistance) d3.select('.trim-right').attr('class', 'trim-right trim-stop');
+  // }
+
+  // scrollLeft() {
+  //   let x = parseInt(d3.select('.attr-trim').style('left'));
+  //   if (!x) {
+  //     d3.select('.attr-trim').style('left', 0);
+  //     x = 0;
+  //   }
+  //   const w = this.state.attrSize.width;
+  //   const moveLeft = (x + w >= 0) ? 0 : (x + w);
+  //   d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
+  //   d3.select('.trim-right').attr('class', 'trim-right');
+  //   if (moveLeft === 0) d3.select('.trim-left').attr('class', 'trim-left trim-stop');
+  // }
+
+  getCatePerRow() {
+    const { trimList } = this.props.store;
+    const cateAttrs = toJS(trimList).filter(({ type }) => type === 'categorical');
+    let binMax = 10;
+    const binTotal = cateAttrs.reduce((p, v) => p + v.data.length, 0);
+    let rows = [];
+
+    for (let i =0 ; i < Math.ceil(binTotal / cateAttrs.length); ++i) {
+      rows.push({ total: 0, attrs: [] });
     }
-    const w = this.state.attrSize.width;
-    const count = (this.props.store.selectedAttributes || []).length;
-    const maxDistance = parseInt(d3.select('.trim-content').style('width')) - count * (w + 40);
-    const moveLeft = (x - w >= maxDistance) ? x - w : maxDistance;
-    d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-left').attr('class', 'trim-left');
-    if (moveLeft === maxDistance) d3.select('.trim-right').attr('class', 'trim-right trim-stop');
+  
+    cateAttrs.forEach((attr) => {
+      let max = -1;
+      let t = -1;
+      for (let i = 0; i < rows.length; ++i) {
+        if (rows[i].total + attr.data.length <= binMax && binMax - rows[i].total - attr.data.length > max) {
+          max = binMax - rows[i].total - attr.data.length;
+          t = i;
+        } 
+      }
+
+      if (t < 0) {
+        rows.push({ attrs: [attr], total: attr.data.length });
+      } else {
+        rows[t].attrs.push(attr);
+        rows[t].total += attr.data.length;
+      }
+    })
+
+    return rows.filter(r => r.total > 0).map(({ attrs }) => attrs);
   }
 
-  scrollLeft() {
-    let x = parseInt(d3.select('.attr-trim').style('left'));
-    if (!x) {
-      d3.select('.attr-trim').style('left', 0);
-      x = 0;
-    }
-    const w = this.state.attrSize.width;
-    const moveLeft = (x + w >= 0) ? 0 : (x + w);
-    d3.select('.attr-trim').transition().style('left', moveLeft + 'px').duration(200);
-    d3.select('.trim-right').attr('class', 'trim-right');
-    if (moveLeft === 0) d3.select('.trim-left').attr('class', 'trim-left trim-stop');
-  }
-
-  renderAttr(attr) {
+  renderAttr(attr, width) {
     const { attrSize } = this.state;
 
     switch (attr.type) {
@@ -123,7 +157,7 @@ export default class DistTrimming extends React.Component {
       }
       case 'categorical': {
         return (
-          <CateTrim {...attrSize} data={attr.data} attrName={attr.attrName} trimmed={attr.trimmed} />
+          <CateTrim {...attrSize} width={width} data={attr.data} attrName={attr.attrName} trimmed={attr.trimmed} />
         );
       }
       default:
@@ -133,7 +167,8 @@ export default class DistTrimming extends React.Component {
 
   render() {
     const trimList = toJS(this.props.store.trimList);
-    const flag = (trimList || []).length * (this.state.attrSize.width + 35) > 940;
+    // const flag = (trimList || []).length * (this.state.attrSize.width + 35) > 940;
+    const rowCate = this.getCatePerRow();
     return (
       <div className="data-trim-view">
         <div className="view-title">Data Trimming View</div>
@@ -141,10 +176,10 @@ export default class DistTrimming extends React.Component {
           <div className="attr-trim" ref={dom => {
             if (dom) this.wrapper = dom;
           }}>
-            {trimList.map(attr => (
+            {trimList.filter(attr => attr.type === 'numerical').map(attr => (
               <div className="chart" key={'trim-' + attr.attrName}>
                 <div className="attr-info">
-                  <div className="title">{attr.attrName}</div>
+                  <div className="title" >{attr.attrName}</div>
                   <div className="form-block">
                     <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>
                   </div>
@@ -152,9 +187,22 @@ export default class DistTrimming extends React.Component {
                 {this.renderAttr(attr)}
               </div>
             ))}
+            {rowCate.map((row, idx) => (
+              <div key={idx} style={{ display: 'flex' }}>
+                { row.map((attr) => (
+                  <div className="chart" key={'trim-' + attr.attrName}>
+                    <div className="attr-info">
+                      <div className="title">{attr.attrName}</div>
+                      <div className="form-block">
+                        <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>
+                      </div>
+                    </div>
+                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 20)}
+                  </div>
+                )) }
+              </div>
+            )) }
           </div>
-          {flag ? (<input className="trim-left" onClick={this.scrollLeft} type="image" src={leftIcon}/>) : (null)}
-          {flag ? (<input className="trim-right" onClick={this.scrollRight} type="image" src={rightIcon} />) : (null)}
         </div>
         <div className="trim-legend">
           <div className='trim-legend-unit'>

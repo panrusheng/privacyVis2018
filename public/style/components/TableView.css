@@ -70,19 +70,12 @@
     .table-view .table .table-header-desc {
       display: flex;
       height: 200px; }
-      .table-view .table .table-header-desc .table-cell {
-        height: 200px;
-        min-width: 60px; }
     .table-view .table .table-attr-desc {
       height: 200px;
       background-color: #bbb;
       color: white;
       font-size: 18px;
       padding: 80px 10px; }
-    .table-view .table .attr-desc-chart {
-      padding: 5px;
-      height: 200px;
-      border-left: solid 1px #ececec; }
     .table-view .table .table-header.left {
       overflow-y: hidden;
       margin-bottom: 8px;

@@ -34,23 +34,50 @@
     }
     
     .attr-trim {
-      display: flex;
-      overflow: visible;
+      overflow: auto;
       position: relative;
       height: 890px;
+      &::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 4px;
+        position: absolute;
+        right: -8px;
+      }
+  
+      &::-webkit-scrollbar:horizontal {
+          height: 8px;
+      }
+      &::-webkit-scrollbar-track {
+        border: 1px solid #ececec;
+        border-radius: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+        border-radius: 4px;
+      }
+      svg {
+        overflow: visible;
+      }
       .chart {
-        min-width: 200px;
-        max-width: 380px;
-        height: 880px;
         flex: 1;
+        margin: 0 10px;
+        padding: 20px 0;
       }
     
       .attr-info {
-        height: 60px;
         text-align: center;
+        height: 45; 
+        display:  flex;
+        justify-content: center;
+        align-items: center;
         .title {
+          margin-right: 5px;
+          display: 'flex';
+          align-items: center;
           font-size: 24px;
-        font-weight: 500;
+          font-weight: 500;
         }
     
         .form-block {

@@ -86,7 +86,7 @@
     justify-content: space-around;
     .gbn-legend-unit{
       display: flex;
-      width: 170px;
+      min-width: 50px;
       height: 20px;
       label {
         line-height: 15px;
@@ -105,11 +105,27 @@
       height: 10px;
       background-image: linear-gradient(to right, rgba(24,102,187,0.1) , rgba(24,102,187,1));
     }
-    .gbn-edge {
+    .gbn-edge-o {
       width: 50px;
       margin-top: 5px;
       height: 10px;
       background-image: linear-gradient(to right, rgba(102,102,102,0) , rgba(102,102,102,1));
+    }
+    .gbn-edge-np {
+      width: 50px;
+      margin-top: 5px;
+      height: 10px;
+      border-top: solid 2px #aaa;
+      border-bottom: dashed 2px #aaa;
+    }
+    .gbn-edge-np-label {
+      height: 30px;
+      flex-direction: column;
+      display: flex;
+      label {
+        line-height: 9px;
+        font-size: 20px;
+      }
     }
   }
 }

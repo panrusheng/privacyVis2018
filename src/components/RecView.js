@@ -118,8 +118,14 @@ export default class RecView extends React.Component {
   }
 
   forceDirected(n, l) {
-    const links = l;
+    // let links = [];
+    // for (let i = 0; i < l.length; i++) {
+    //   let ll = toJS(l[i]);
+    //   ll.value = ll.value - ll.cpt[1];
+    //   links.push(ll);
+    // }
     const nodes = n;
+    const links = l;
     let layout = this.props.store.getGraphLayout();
     let simulation = d3
       .forceSimulation(nodes)

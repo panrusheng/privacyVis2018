@@ -52,6 +52,8 @@ export default class RecView extends Component {
       .scaleLinear()
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + marginY, hh - marginY]);
+
+    const linkOpacity = d3.scaleLinear().domain([0, d3.max(links, d => Math.abs(d.value))]).range([0, 1]);
     let delList = [];
     let triangleList,
       removeTri = [],
@@ -165,13 +167,14 @@ export default class RecView extends Component {
       .data(links)
       .enter()
       .append('line')
-      .style('opacity', d => d.value)
+      .style('opacity', d => linkOpacity(Math.abs(d.value)))
       .attr('x1', d => nodes[d.source.index].x)
       .attr('y1', d => nodes[d.source.index].y)
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
+      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '2 2')
       .style('stroke-width', 3)
       .style('cursor', 'pointer');
 

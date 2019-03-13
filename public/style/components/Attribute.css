@@ -56,7 +56,7 @@
     justify-content: space-around; }
     .attribute-view .gbn-legend .gbn-legend-unit {
       display: flex;
-      width: 170px;
+      min-width: 50px;
       height: 20px; }
       .attribute-view .gbn-legend .gbn-legend-unit label {
         line-height: 15px;
@@ -71,8 +71,21 @@
       margin-top: 5px;
       height: 10px;
       background-image: linear-gradient(to right, rgba(24, 102, 187, 0.1), #1866bb); }
-    .attribute-view .gbn-legend .gbn-edge {
+    .attribute-view .gbn-legend .gbn-edge-o {
       width: 50px;
       margin-top: 5px;
       height: 10px;
       background-image: linear-gradient(to right, rgba(102, 102, 102, 0), #666666); }
+    .attribute-view .gbn-legend .gbn-edge-np {
+      width: 50px;
+      margin-top: 5px;
+      height: 10px;
+      border-top: solid 2px #aaa;
+      border-bottom: dashed 2px #aaa; }
+    .attribute-view .gbn-legend .gbn-edge-np-label {
+      height: 30px;
+      flex-direction: column;
+      display: flex; }
+      .attribute-view .gbn-legend .gbn-edge-np-label label {
+        line-height: 9px;
+        font-size: 20px; }

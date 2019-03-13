@@ -679,7 +679,7 @@ class AppStore {
     let trimList = [...this.trimList];
     for (let i = 0; i < trimList.length; i++) {
       if (trimList[i].attrName === attrName) {
-        trimList[i].trimmed = true;
+        trimList[i].trimmed = !trimList[i].trimmed;
         break;
       }
     }

@@ -65,6 +65,8 @@ export default class AttrNetwork extends Component {
       .domain(d3.extent(nodes, d => d.y))
       .range([0 + margin, hh - margin]);
 
+    const linkOpacity = d3.scaleLinear().domain([0, d3.max(links, d => Math.abs(d.value))]).range([0, 1]);
+
     for (let i = 0; i < nodes.length; i++) {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
@@ -245,7 +247,7 @@ export default class AttrNetwork extends Component {
       .attr('target-index', -1)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-dasharray', '10 5')
+      .style('stroke-dasharray', '2 2')
       .style('stroke-width', 3);
     //links
     g
@@ -255,13 +257,14 @@ export default class AttrNetwork extends Component {
       .data(links)
       .enter()
       .append('line')
-      .style('opacity', d => (d.value >= filter ? d.value : 0))
+      .style('opacity', d => (Math.abs(d.value) >= filter ? linkOpacity(Math.abs(d.value)) : 0))
       .attr('x1', d => nodes[d.source.index].x)
       .attr('y1', d => nodes[d.source.index].y)
       .attr('x2', d => nodes[d.target.index].x)
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
+      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '8 4')
       .style('stroke-width', 3) //d => merge ? 3 : 1 + d.cpt[2] * 3)
       .style('cursor', 'pointer')
       .on('click', d => {
@@ -331,7 +334,8 @@ export default class AttrNetwork extends Component {
             let y = ifFlip ? 3 + triH - l / 2 : l / 2 - (3 + triH);
             return ('M' + (ifFlip ? x1 - w : w - x1) + ',' + y + 'L' + (ifFlip ? x2 - w : w - x2) + ',' + (-y));
           })
-          .style('opacity', dd => dd.value)
+          .style('opacity', dd => linkOpacity(Math.abs(dd.value)))
+          .style('stroke-dasharray', dd => dd.value > 0 ? '1 0': '8 4')
           .style('stroke', '#666')
           .attr('marker-end', 'url(#arrow-detail)')
           .style('stroke-width', 2);

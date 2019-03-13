@@ -372,6 +372,7 @@ export default class TableView extends React.Component {
       orderCol,
       order: this.state.order === DESC ? ASC : DESC,
       rowSelection: [],
+      topDelEvent: null,
     })
   }
 
@@ -711,7 +712,8 @@ export default class TableView extends React.Component {
       });
     xSum = 0;
     RectList.append('rect')
-      .style('opacity', 0)
+      .attr('class', 'state-bar')
+      .style('fill-opacity', 0)
       .attr('x', (d) => {
         let x = xSum * mWidth
         xSum += d.width;
@@ -727,6 +729,8 @@ export default class TableView extends React.Component {
         return height;
       })
       .style('cursor', 'pointer')
+      .style('stroke-width', 3)
+      .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : 'none')
       .on('mouseover', d => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
@@ -739,7 +743,7 @@ export default class TableView extends React.Component {
         d3.select('.tooltip').style('display', 'none')
       })
       .on('click', (d) => {
-        this.setState({ topDelEvent: d.eventName });
+        this.setState({ topDelEvent: d.eventName, orderCol: undefined });
       })
   }
 
@@ -786,7 +790,7 @@ export default class TableView extends React.Component {
       </div>
         <div className="table-header-desc">
           {columns.map(col => (
-            <svg id={'barchart-' + col}></svg>
+            <svg id={'barchart-' + col} style={ {borderRight: "1px solid #ccc"}}></svg>
           ))}
         </div>
       </div>
