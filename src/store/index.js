@@ -581,13 +581,13 @@ class AppStore {
       });
 
       this.recSelectedList = recSelectedList;
-      this.groupSelectList = new Array(groups.length).fill(0);
       this.dataGroups = groups.map(g => ({
         id: g.id,
         records: g.records || [],
         data: g.data,
         risk: g.risk,
       }));
+      this.groupSelectList = new Array(groups.length).fill(0);
     })
   }
 

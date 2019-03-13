@@ -33,6 +33,7 @@ export default class TableView extends React.Component {
     rowSelection: [], // selected rows id,
     foldState: [],
     unfoldAll: false,
+    topDelEvent: null,
   };
 
   recNum = -1;
@@ -73,7 +74,8 @@ export default class TableView extends React.Component {
       this.setState({ foldState });
     }
 
-    this.adjustTableSize();
+    let adjusted =  this.adjustTableSize();
+    this.drawBarChart(adjusted);
   }
 
   componentDidUpdate() {
@@ -83,13 +85,27 @@ export default class TableView extends React.Component {
       this.setState({ foldState });
     }
 
-    this.adjustTableSize();
+    let adjusted = this.adjustTableSize();
     this.removeDupSelection();
     // this.removeSelectedRowSelection();
+    this.drawBarChart(adjusted);
   }
 
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.handleRowSelMouseUp);
+  }
+
+
+  drawBarChart(adjusted) {
+    let barList = this.getBarList();
+    const { columns } = this.cachedData;
+    let width = (879 - (adjusted ? 8 : 0)) / columns.length;
+    
+    if (width < 60) width = 60;
+
+    columns.forEach((col, index) => {
+      this.renderBarChart(barList[index], col, width);
+    });
   }
 
   removeSelectedRowSelection() {
@@ -315,12 +331,14 @@ export default class TableView extends React.Component {
       this.leftHeader.style.marginBottom = 0;
     } else {
       this.leftHeader.style.marginBottom = '8px';
+      return true;
     }
 
     if (clientHeight >= scrollHeight) {
       this.topHeader.style.marginRight = 0;
     } else {
       this.topHeader.style.marginRight = '8px';
+      return true;
     }
   }
 
@@ -372,6 +390,17 @@ export default class TableView extends React.Component {
       let deleteAttr = new Set(recList.group[gindex].nodes
         .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)
         .map(n => n.id.substring(0, n.id.indexOf(':'))));
+      
+      let top = false;
+
+      if (this.state.topDelEvent) {
+        recList.group[gindex].nodes
+          .filter(n => deleteEventNos.dL.findIndex(no => no === n.eventNo) >= 0)
+          .forEach(n => {
+            if (n.id === this.state.topDelEvent)
+              top = true;
+          });
+      }
 
       let subgroupSelMap = {};
       subgroupRecSelectedList.map(item => {
@@ -381,6 +410,15 @@ export default class TableView extends React.Component {
             let delAtts = new Set(recList.group[gindex].nodes
               .filter(n => delNos.findIndex(no => no === n.eventNo) >= 0)
               .map(n => n.id.substring(0, n.id.indexOf(':'))));
+            
+            if (this.state.topDelEvent) {
+              recList.group[gindex].nodes
+              .filter(n => delNos.findIndex(no => no === n.eventNo) >= 0)
+              .forEach(n => {
+                if (n.id === this.state.topDelEvent)
+                  top = true;
+              });
+            }
 
             subgroupSelMap[item.select] = {
               records: new Set(),
@@ -423,6 +461,7 @@ export default class TableView extends React.Component {
         r.id = group.id;
         r.extended = [];
         r.data = group.data;
+        r.top = top;
         // r.noRisk = this.props.store.recList.rec[group.id] && this.props.store.recList.rec[group.id].length === 0;
         r.risk = 0;
         if (this.props.store.recList.rec[group.id].length > 0)
@@ -477,6 +516,10 @@ export default class TableView extends React.Component {
       }
     }
 
+    if (mode !== 1 && this.state.topDelEvent) {
+      rows.sort((a, b) => b.top - a.top);
+    }
+
     return {
       columns,
       rows,
@@ -520,6 +563,166 @@ export default class TableView extends React.Component {
     this.setState({ rowSelection: [], foldState });
   }
 
+  getBarList() {
+    const { columns, rows } = this.cachedData;
+    const { mode } = this.state;
+    const { eventUtilityList, selectedAttributes, dataGroups, subgroupRecSelectedList, groupSelectList, recList } = this.props.store;
+    const eventCntMap = {};
+    const deleteEventMap = {};
+    let total = 0;
+    let totalAfterDel = {};
+
+    for (let eventName in eventUtilityList) {
+      let attrName = eventName.split(': ')[0];
+      let att = selectedAttributes.find(item => item.attrName === attrName);
+      let cnt = 0;
+
+      rows.forEach(row => {
+        let data = [];
+        if (mode === 1) {
+          data.push(row.data);
+        } else {
+          data.push(...row.extended.map((e) => e.data));
+        }
+
+        total += data.length;
+        
+        data.forEach(d => {
+          if (!d[attrName]) return;
+          let value = d[attrName].value;
+          if (att.type === 'numerical') {
+            let min = parseFloat(eventName.split(': ')[1].split(/[\[\]\(~]/g)[1]);
+            let max = parseFloat(eventName.split(': ')[1].split(/[\[\]\(~]/g)[2]);
+            let includeMin = eventName.split(': ')[1][0] === '[';
+
+            if (value <= max && (value > min || (value === min && includeMin))) {
+              cnt++;
+            }
+          } else {
+            if (value === eventName.split(': ')[1]) {
+              cnt++;
+            }
+          }
+        })
+      });
+
+      eventCntMap[eventName] = cnt;
+    }
+
+    columns.forEach(col => totalAfterDel[col] = total);
+
+    groupSelectList.forEach((groupSelect, index) => {
+      if (recList.rec[index].length === 0) return;
+      let nodesMap = {};
+      recList.group[index].nodes.forEach((n) => { nodesMap[n.eventNo] = n.id });
+      let spCnt = 0;
+      subgroupRecSelectedList.forEach(sub => {
+        if (sub.group !== index) return;
+        let dL = recList.rec[index][sub.select].dL;
+        spCnt += sub.records.length;
+
+        dL.forEach(del => {
+          let eventName = nodesMap[del];
+          totalAfterDel[eventName.split(': ')[0]]--;
+          if (!deleteEventMap[eventName]) deleteEventMap[eventName] = 0;
+          deleteEventMap[eventName]++;
+        })
+      });
+
+      let dL = recList.rec[index][groupSelect].dL;
+      
+      dL.forEach(del => {
+        let eventName = nodesMap[del];
+        totalAfterDel[eventName.split(': ')[0]] -= dataGroups[index].records.length - spCnt;
+        if (!deleteEventMap[eventName]) deleteEventMap[eventName] = 0;
+        deleteEventMap[eventName] += dataGroups[index].records.length - spCnt;
+      });
+    });
+
+    let barList = [];
+    for (let attrName of columns) {
+      let barChart = [];
+      let tot = 0;
+      for (let eventName in eventCntMap) {
+        if (eventName.split(': ')[0] !== attrName) continue;
+        barChart.push({
+          eventName,
+          width: eventCntMap[eventName],
+          height: (eventCntMap[eventName] - (deleteEventMap[eventName] || 0)) / eventCntMap[eventName],
+          count: eventCntMap[eventName],
+          deleted: deleteEventMap[eventName] || 0,
+        });
+
+        tot += eventCntMap[eventName];
+      }
+
+      barChart.forEach(b => b.width /= tot);
+
+      barList.push(barChart);
+    }
+
+    return barList;
+  }
+
+  renderBarChart(data, col, width) {
+    const { eventColorList } = this.props.store;
+    
+    const height = 200;
+
+    let svg = d3.select('#barchart-' + col);
+    svg.html('');
+
+    let xScale = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([0, width]);
+    let yScale = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([height, 0]);
+    
+    svg.attr('width', width)
+      .attr('height', height);
+
+    let xSum = 0;
+  
+    svg
+      .append('g')
+      .selectAll('rect')
+      .data(data)
+      .enter()
+      .append('rect')
+      .style('fill', d => eventColorList[d.eventName])
+      .attr('x', (d) => {
+        let x = xSum * width
+        xSum += d.width;
+        return x;
+      })
+      .attr('y', d => {
+        return height - d.height * height;
+      })
+      .attr('width', d => {
+        return d.width * width;
+      })
+      .attr('height', d => {
+        return d.height * height;
+      })
+      .on('mouseover', d => {
+        const x = d3.event.x + 15,
+          y = d3.event.y - 35;
+        d3.select('.tooltip').html('Event: ' + d.eventName + ': ')
+          .style('left', (x) + 'px')
+          .style('display', 'block')
+          .style('top', (y) + 'px');
+      })
+      .on('mouseout', () => {
+        d3.select('.tooltip').style('display', 'none')
+      })
+      .on('click', (d) => {
+        this.setState({ topDelEvent: d.eventName });
+      })
+  }
+
   renderEmpty() {
     return <div>No Attribute</div>;
   }
@@ -545,34 +748,25 @@ export default class TableView extends React.Component {
 
   renderTableHeaderTop(columns) {
     const { order, orderCol } = this.state;
+    const barList = this.getBarList();
+
     return (
-      <div style={{minWidth: 878}}>
-        <div
-          className="table-header top"
-          ref={dom => this.topHeader = dom}
-          onScroll={e => this.syncScroll(e, 'top')}
-        >
-          {columns.map(col => (
-            <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
-              {col}
-              {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
-            </div>
-          ))}
-        </div>
+      <div
+        className="table-header top"
+        ref={dom => this.topHeader = dom}
+        onScroll={e => this.syncScroll(e, 'top')}
+      >
+        <div className="table-row">
+        {columns.map(col => (
+          <div className="table-cell" key={"c" +col} onClick={() => this.setOrder(col)}>
+            {col}
+            {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
+          </div>
+        ))}
+      </div>
         <div className="table-header-desc">
           {columns.map(col => (
-          <div className="attr-desc-chart table-cell">
-              {
-                // barList.map((bar) => { return
-                // (<div height={190} width='calc(100% - 10px)'>
-                //   <div width={bar.width} height={bar.height} y={190 - bar.height}
-                //   style={{backgroundColor: this.props.store.eventColorList[bar.name]}}/>
-                //   <div width={bar.width} height={190} 
-                //   style={{opacity: 0, cursor: "pointer"}} onClick={sortByDelete(col)} onMouseOver={toolTip}
-                //   onMouseOut={toolTip}/>
-                // </div>)})
-              }
-          </div>
+            <svg id={'barchart-' + col}></svg>
           ))}
         </div>
       </div>
@@ -680,18 +874,19 @@ export default class TableView extends React.Component {
             </div>
           )
         }
-        let delFlag = false, utility = row.extended[0].data[col].utility;
-        for (let i = 0; i < row.extended.length; i++) {
-          if (row.extended[i].data[col].del) {
-            delFlag = true;
-            break;
-          }
-        }
+  
+        // let delFlag = false, utility = row.extended[0].data[col].utility;
+        // for (let i = 0; i < row.extended.length; i++) {
+        //   if (row.extended[i].data[col].del) {
+        //     delFlag = true;
+        //     break;
+        //   }
+        // }
         return (
           <div className="table-cell em" key={col} style={{ 
-            backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+            // backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
             backgroundSize: 'contain',
-            backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
+            // backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
           }}>
             {data[col]}
           </div>

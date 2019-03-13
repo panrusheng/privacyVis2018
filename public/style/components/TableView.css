@@ -45,13 +45,11 @@
       border: 2px solid #0f6fd6;
       width: 100%; }
     .table-view .table .table-header.top {
-      display: flex;
       overflow-x: hidden;
       margin-right: 8px;
-      background-color: #bbb;
       color: white;
       font-size: 18px;
-      height: 40px;
+      height: 240px;
       flex: 1; }
       .table-view .table .table-header.top::-webkit-scrollbar {
         height: 0px;
@@ -62,6 +60,8 @@
       .table-view .table .table-header.top img {
         width: 18px;
         max-height: 40px; }
+      .table-view .table .table-header.top .table-row {
+        background-color: #bbb; }
       .table-view .table .table-header.top .table-cell {
         cursor: pointer;
         height: 40px;
@@ -69,8 +69,7 @@
         min-width: 60px; }
     .table-view .table .table-header-desc {
       display: flex;
-      height: 200px;
-      margin-right: 8px; }
+      height: 200px; }
       .table-view .table .table-header-desc .table-cell {
         height: 200px;
         min-width: 60px; }

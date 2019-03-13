@@ -227,10 +227,10 @@ export default class Attribute extends React.Component {
         </div>
         <div className="correlation-chart">
           <svg width={canvasB.ww} height={canvasB.hh}>
-            <CoCircle
+            {/* <CoCircle
               eventName={this.state.selectEvent}
               canvas={canvasB}
-            />
+            /> */}
           </svg>
         </div>
         <div className="gbn-legend">

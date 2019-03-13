@@ -79,13 +79,11 @@
 
 
         .table-header.top {
-            display: flex;
             overflow-x: hidden;
             margin-right: 8px;
-            background-color: #bbb;
             color: white;
             font-size: 18px;
-            height: 40px;
+            height: 240px;
             flex: 1;
 
             &::-webkit-scrollbar {
@@ -97,7 +95,10 @@
                 width: 18px;
                 max-height: 40px;
             }
+            .table-row {
 
+                background-color: #bbb;
+            }
             .table-cell {
                 cursor: pointer;
                 height: 40px;
@@ -108,7 +109,6 @@
         .table-header-desc {
             display: flex;
             height: 200px;
-            margin-right: 8px;
             .table-cell {
                 height: 200px;
                 min-width: 60px;
