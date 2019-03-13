@@ -66,7 +66,7 @@ class AppStore {
   eventColorList = {};
 
   @observable
-  sensitiveCorrelation = {}
+  sensitiveCorrelation = false;
 
   senColor = [254, 41, 1];
   nonSenColor = [24, 102, 187];
@@ -79,6 +79,8 @@ class AppStore {
 
   @observable
   recNum = 0;
+
+  sensitiveEventList = [];
 
   gbnSearchAlgorithm = 'K2';
   modelOption = {
@@ -164,9 +166,14 @@ class AppStore {
 
         selectedAttributes.push(attr);
       });
+      this.sensitiveEventList = [];
+      for (let i = 0; i < data.GBN.nodes.length; i++) {
+        if (data.GBN.nodes[i].value < 0) this.sensitiveEventList.push(data.GBN.nodes[i].id);
+      }
 
       this.selectedAttributes = selectedAttributes;
       this.GBN = dataGBN;
+      this.sensitiveCorrelation = data.correlations;
       this.nodeList4links = nodeList4links;
       this.updateEventUtility();
     });
@@ -445,11 +452,16 @@ class AppStore {
 
     axios.post('/edit_gbn', {
       events: eventList,
-    }).then((GBN) => {
-      const  { dataGBN, nodeList4links } = this.processGBNData(GBN);
+    }).then((data) => {
+      const  { dataGBN, nodeList4links } = this.processGBNData(data.GBN);
       this.GBN = dataGBN;
       this.nodeList4links = nodeList4links;
       this.updateEventUtility();
+      this.sensitiveCorrelation = data.correlations;
+      this.sensitiveEventList = [];
+      for (let i = 0; i < dataGBN.nodes.length; i++) {
+        if (dataGBN.nodes[i].value < 0) this.sensitiveEventList.push(dataGBN.nodes[i].id);
+      }
     });
   }
 

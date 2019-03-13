@@ -20,7 +20,7 @@ export default class Attribute extends React.Component {
     super(props);
     this.changeState = this.changeState.bind(this);
   }
-
+  
   handleTabChange(dataset, domID) {
     this.props.store.getAttrList(dataset).then(attributes => {
       this.setState({ attributes }, () => {
@@ -227,11 +227,10 @@ export default class Attribute extends React.Component {
         </div>
         <div className="correlation-chart">
           <svg width={canvasB.ww} height={canvasB.hh}>
-            {/* <CoCircle
-              data={this.props.store.sensitiveCorrelation[this.state.selectEvent]}
+            <CoCircle
               eventName={this.state.selectEvent}
               canvas={canvasB}
-            /> */}
+            />
           </svg>
         </div>
         <div className="gbn-legend">

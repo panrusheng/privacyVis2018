@@ -573,6 +573,7 @@ export default class AttrNetwork extends Component {
       .attr('r', r)
       .style('fill', d => colorDic[d.id])//(d.value < 0 ? '#FE2901' : '#7bbc88'))
       .style('stroke', 'none')
+      .style('stroke-width', 2)
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .style('cursor', merge ? 'arrow' : 'crosshair')
@@ -601,6 +602,7 @@ export default class AttrNetwork extends Component {
       .on('mouseover', (d, i) => {
         if ((addlink.attr('source-index') === '-1') || (addlink.attr('target-index') !== '-1')) {
           d3.selectAll('.eventSets').style('stroke', dd => ifAinB(d.id, dd.list) ? '#1866bb' : 'none');
+          d3.selectAll('.eventNodes').style('stroke', dd => (dd === d) ? '#333' : 'none');
           return;
         }
         const startY = d.y;
@@ -750,10 +752,11 @@ export default class AttrNetwork extends Component {
       })
       .on('mouseout', () => {      
         d3.selectAll('.eventSets').style('stroke', 'none');
+        d3.selectAll('.eventNodes').style('stroke', 'none');
       })
       .on('click', d => {
         if (merge) return;
-        this.props.changeState(d.id);
+        that.props.change(d.id);
       });
 
     // if (!merge) {
