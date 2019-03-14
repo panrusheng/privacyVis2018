@@ -104,7 +104,8 @@ export default class TableView extends React.Component {
     
     const width = (widthSvg - 60) / columns.length;
     const height = 200;
-    let mWidth = width - 10
+    let margin = (width - 160) > 0 ? width - 160 : 0;
+    let mWidth = width - margin;
     let mHeight = height - 50;
 
     let svg = d3.select('#header-barchart');
@@ -155,7 +156,7 @@ export default class TableView extends React.Component {
       let data = barList[i];
       let xSum = 0;
       let rectList = recGroup.append('g')
-        .attr('transform', `translate(${5 + i * width}, 15)`)
+        .attr('transform', `translate(${margin / 2 + i * width}, 15)`)
         .selectAll('rect')
         .data(data)
         .enter();
