@@ -174,7 +174,7 @@ export default class RecView extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '2 2')
+      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '8 4')
       .style('stroke-width', 3)
       .style('cursor', 'pointer');
 

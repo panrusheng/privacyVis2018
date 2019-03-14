@@ -48,10 +48,10 @@ export default class AttrNetwork extends Component {
       // legendWidth = 135,
       // legendHH = (!merge && nullList.length) ? (nullList.length * rowHeight + rowHeight + 10) : 0,
       fontSize = 13,
-      colorDic = that.props.eventColorList,
-      colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6', ];
-      let cn = 0,
-      colorMap = {},
+      colorDic = that.props.eventColorList;
+      // colorList = ['#F3CEF1', '#DEDEDE', '#FBD2CF', '#CDB9FF', '#E2E0B5', '#D4D4E9', '#BDF4F7', '#E4ECA9', '#FFEB9F', '#C1BBEB', '#B6D0F7', '#F9E0E8', '#E7C2E6', ];
+      // let cn = 0,
+      let colorMap = {},
       attrSet = {},
       hullList = [];
 
@@ -71,12 +71,12 @@ export default class AttrNetwork extends Component {
       nodes[i].x = ScaleX(nodes[i].x);
       nodes[i].y = ScaleY(nodes[i].y);
       if (!(nodes[i].attrName in colorMap)) {
-        colorMap[nodes[i].attrName] = colorList[cn];
+        colorMap[nodes[i].attrName] = '#dedede';//colorList[cn];
         attrSet[nodes[i].attrName] = [
           [nodes[i].x, nodes[i].y]
         ];
-        cn++;
-        if (cn === colorList.length) cn = 0;
+        // cn++;
+        // if (cn === colorList.length) cn = 0;
       } else {
         attrSet[nodes[i].attrName].push([nodes[i].x, nodes[i].y]);
       }
