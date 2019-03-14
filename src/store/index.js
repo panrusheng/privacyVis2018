@@ -150,9 +150,9 @@ class AppStore {
 
         if (attr.type === 'numerical') {
           let range = attr.range
-          let min = range[0], delta = (range[1] - range[0]) / (attr.list.t0.length - 1);
+          let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
           attr.breakPoints = attr.splitPoints;
-          attr.data = attr.list.t0.map((a, i) => {return {label: min + delta * i, value: a};})
+          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
