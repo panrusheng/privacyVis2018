@@ -54,12 +54,15 @@ export default class AttrNetwork extends Component {
     let safeRange = [pro - riskLimit, pro + riskLimit];
     const marginY = 50,
       marginX = 35,
-      r = 10, height = hh - 2 * marginY - 20, width = ww - marginX * 2;
+      r = 10,
+      height = hh - 2 * marginY - 20,
+      width = ww - marginX * 2;
     let ScaleB, ScaleA;
     let ticks = [];
     let range = d3.extent(data, d => d.cor);
     // if (that.state.showP) {
-    let safeHeight = 40, safeY;
+    let safeHeight = 40,
+      safeY;
     let ScaleX = d3.scaleLinear().domain(d3.extent(data, d => d.eventLists.length)).range([r + 2, width - r - 2]);
 
     const g = d3
@@ -83,9 +86,20 @@ export default class AttrNetwork extends Component {
         .domain([safeRange[0], safeRange[1]])
         .range([height, height - safeHeight]);
       let tickA = ScaleA.ticks(5);
-      ticks = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
-      ticks.push({v: safeRange[0].toFixed(2), y: height});
-      ticks.push({v: safeRange[1].toFixed(2), y: height - safeHeight});
+      ticks = tickA.map((t) => {
+        return {
+          v: t,
+          y: ScaleA(t)
+        }
+      });
+      ticks.push({
+        v: safeRange[0].toFixed(2),
+        y: height
+      });
+      ticks.push({
+        v: safeRange[1].toFixed(2),
+        y: height - safeHeight
+      });
     } else if (rangeChange[3] === safeRange[1]) {
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
@@ -95,9 +109,20 @@ export default class AttrNetwork extends Component {
         .domain([safeRange[0], safeRange[1]])
         .range([safeHeight, 0]);
       let tickB = ScaleB.ticks(5);
-      ticks = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
-      ticks.push({v: safeRange[1].toFixed(2), y: 0});
-      ticks.push({v: safeRange[0].toFixed(2), y: safeHeight});
+      ticks = tickB.map((t) => {
+        return {
+          v: t,
+          y: ScaleB(t)
+        }
+      });
+      ticks.push({
+        v: safeRange[1].toFixed(2),
+        y: 0
+      });
+      ticks.push({
+        v: safeRange[0].toFixed(2),
+        y: safeHeight
+      });
     } else {
       let scale = (height - safeHeight) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
       safeY = scale * (range[1] - safeRange[1]);
@@ -108,12 +133,28 @@ export default class AttrNetwork extends Component {
         .domain([safeRange[1], range[1]])
         .range([safeY, 0]);
       let tickB = ScaleB.ticks(3);
-      tickB = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
+      tickB = tickB.map((t) => {
+        return {
+          v: t,
+          y: ScaleB(t)
+        }
+      });
       let tickA = ScaleA.ticks(3);
-      tickA = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
+      tickA = tickA.map((t) => {
+        return {
+          v: t,
+          y: ScaleA(t)
+        }
+      });
       ticks = [...tickA, ...tickB];
-      ticks.push({v: safeRange[1].toFixed(2), y: safeY});
-      ticks.push({v: safeRange[0].toFixed(2), y: safeY + safeHeight});
+      ticks.push({
+        v: safeRange[1].toFixed(2),
+        y: safeY
+      });
+      ticks.push({
+        v: safeRange[0].toFixed(2),
+        y: safeY + safeHeight
+      });
     }
     // } else {
     //   range[0] = (range[0] < safeRange[1] && range[0] > safeRange[0])? safeRange[1]: range[0];
@@ -127,7 +168,7 @@ export default class AttrNetwork extends Component {
     for (let i = 0; i < data.length; i++) {
       let p = data[i].cor;
       if (p <= pro + riskLimit && p >= pro - riskLimit) continue;
-      let y = (p > pro) ? ScaleA(p): ScaleB(p),
+      let y = (p > pro) ? ScaleA(p) : ScaleB(p),
         num = data[i].eventLists.length,
         x = ScaleX(num);
       dataList.push({
@@ -143,7 +184,7 @@ export default class AttrNetwork extends Component {
     // safeRange = safeRange.map((d) => {
     //   return d < range[0] ? range[0] : d
     // });
-    
+
     // g.append('g')
     //   .attr('class', 'cor-chart')
     //   .attr('transform', 'translate(0,' + (hh - marginY) + ')')
@@ -160,12 +201,12 @@ export default class AttrNetwork extends Component {
       .enter();
     tickSvg.append("line")
       .attr('x1', 0)
-      .attr('x2', - 6)
+      .attr('x2', -6)
       .attr('y1', d => d.y)
       .attr('y2', d => d.y)
       .style('stroke', '#666')
       .style('stroke-width', 1);
-    
+
     tickSvg.append('text')
       .attr('x', -10)
       .attr('y', d => d.y + 5)
@@ -245,11 +286,8 @@ export default class AttrNetwork extends Component {
     g
       .append('g')
       .attr('class', 'cor-chart')
-      .call(d3.axisBottom(ScaleX))
-      .attr('x1', 0)
-      .attr('y1', height)
-      .attr('x2', 0)
-      .attr('y2', 0)
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(d3.axisBottom(ScaleX));
     g.append('text')
       .attr('class', 'cor-chart')
       .attr('y', height + 40)
@@ -303,6 +341,7 @@ export default class AttrNetwork extends Component {
           return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
         });
       });
+
     function ifAinB(a, b) {
       for (let i = 0; i < b.length; i++) {
         if (a === b[i]) return true;
