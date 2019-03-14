@@ -183,7 +183,6 @@ export default class AttrInitialize extends React.Component {
     const { selectedAttributes } = this.props.store;
     const cateAttrs = toJS(selectedAttributes).filter(({ type }) => type === 'categorical');
     let binMax = 10;
-    const binTotal = cateAttrs.reduce((p, v) => p + v.groups.length, 0);
     let rows = [];
 
     let lenArr = cateAttrs.map(({ groups }) => groups.length).filter(l => l <= binMax);
