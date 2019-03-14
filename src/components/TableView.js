@@ -99,13 +99,172 @@ export default class TableView extends React.Component {
   drawBarChart(adjusted) {
     let barList = this.getBarList();
     const { columns } = this.cachedData;
-    let width = (879 - (adjusted ? 8 : 0)) / columns.length;
+    let widthSvg = (940 - (adjusted ? 8 : 0));
+    const { eventColorList } = this.props.store;
     
-    if (width < 60) width = 60;
+    const width = (widthSvg - 60) / columns.length;
+    const height = 200;
+    let mWidth = width - 10
+    let mHeight = height - 50;
 
-    columns.forEach((col, index) => {
-      this.renderBarChart(barList[index], col, width);
-    });
+    let svg = d3.select('#header-barchart');
+    svg.html('');
+
+    let xScale = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([0, mWidth]);
+    let yScale = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([height, 0]);
+    svg.attr('width', widthSvg)
+      .attr('height', height);
+  
+    let recGroup = svg.append('g')
+      .attr('transform', 'translate(60, 0)');
+
+    for (let i = 0; i < columns.length; ++i) {
+      let data = barList[i];
+      let xSum = 0;
+      let rectList = recGroup.append('g')
+        .attr('transform', `translate(${5 + i * width}, 15)`)
+        .selectAll('rect')
+        .data(data)
+        .enter();
+
+      rectList.append('rect')
+        .style('fill', d => eventColorList[d.eventName])
+        .attr('x', d => {
+          let x = xSum * mWidth;
+          xSum += d.width;
+          return x;
+        })
+        .attr('y', d => {
+          return mHeight - d.height * mHeight;
+        })
+        .attr('width', d => {
+          return d.width * mWidth;
+        })
+        .attr('height', d => {
+          return d.height * mHeight;
+        });
+
+      xSum = 0;
+      rectList.append('rect')
+      .attr('class', 'state-bar')
+      .style('fill-opacity', 0)
+      .attr('x', (d) => {
+        let x = xSum * mWidth
+        xSum += d.width;
+        return x;
+      })
+      .attr('y', d => {
+        return 0;
+      })
+      .attr('width', d => {
+        return d.width * mWidth;
+      })
+      .attr('height', d => {
+        return mHeight;
+      })
+      .style('cursor', 'pointer')
+      .style('stroke-width', 3)
+      .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : 'none')
+      .on('mouseover', d => {
+        const x = d3.event.x + 15,
+          y = d3.event.y - 35;
+        d3.select('.tooltip').html(d.eventName)
+          .style('left', (x) + 'px')
+          .style('display', 'block')
+          .style('top', (y) + 'px');
+      })
+      .on('mouseout', () => {
+        d3.select('.tooltip').style('display', 'none')
+      })
+      .on('click', (d) => {
+        this.setState({ topDelEvent: d.eventName, orderCol: undefined });
+      })
+    }
+
+    svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      .attr('transform', 'translate(60, 0)')
+      .call(
+        d3.axisLeft(
+          d3.scaleLinear()
+          .domain([0, 1])
+          .range([mHeight + 15, 15])
+        )
+        .ticks(5)
+        .tickFormat(d => d * 100 + '%')
+      );
+
+    if (d3.selectAll('#biggerArrow'.length === 0)) {
+      svg.append('defs').attr('class', 'axis-ver')
+        .append('marker')
+        .attr('id', 'biggerArrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 8)
+        .attr('markerHeight', 8)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L10,0L0,4L3,0')
+        .style('fill', '#333');
+    }
+    svg.append('line')
+      .attr('x1', 60)
+      .attr('x2', 60)
+      .attr('y2', 0)
+      .attr('y1', mHeight+15)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+
+    svg
+      .append('line')
+      .attr('x1', 60)
+      .attr('y1', mHeight + 15)
+      .attr('x2', widthSvg)
+      .attr('y2', mHeight + 15)
+      .style('stroke', '#333')
+      .style('stoke-width', 2)
+      .style('stroke-dasharray', '3 1');
+    
+    let textGroup = svg.append('g')
+    .attr('transform', 'translate(60, 0)');
+    for (let i = 0; i < columns.length; ++i) {
+      let xSum = 0;
+      let data = barList[i];
+      let textList = textGroup.append('g')
+        .attr('transform', `translate(${5 + i * width}, 5)`)
+        .selectAll('rect')
+        .data(data)
+        .enter();
+
+      textList
+        .append('text')
+        .text(d => d.eventName && d.eventName.split(': ')[1])
+        .style("text-anchor", "middle")
+        .attr('x', d => {
+          let x = xSum * mWidth + 0.5 * d.width * mWidth;
+          xSum += d.width;
+          return x;
+        })
+        .attr('y', d => {
+          return mHeight + 30;
+        })
+        // .attr("transform", (d) => {
+        //   let x = xSum * mWidth + 0.5 * d.width * mWidth;
+        //   xSum += d.width;
+        //   let y = d.height * mHeight + 30;
+
+        //   return `translate(${x}, ${y}) rotate(15)`
+        // })
+    }
   }
 
   removeSelectedRowSelection() {
@@ -646,105 +805,31 @@ export default class TableView extends React.Component {
       let tot = 0;
       for (let eventName in eventCntMap) {
         if (eventName.split(': ')[0] !== attrName) continue;
-        barChart.push({
-          eventName,
-          width: eventCntMap[eventName],
-          height: (eventCntMap[eventName] - (deleteEventMap[eventName] || 0)) / eventCntMap[eventName],
-          count: eventCntMap[eventName],
-          deleted: deleteEventMap[eventName] || 0,
-        });
+        if (eventCntMap[eventName] == 0) {
+          barChart.push({
+            width: 0,
+            height: 0,
+            count: 0,
+          });
+        } else {
+          barChart.push({
+            eventName,
+            width: eventCntMap[eventName],
+            height: (eventCntMap[eventName] - (deleteEventMap[eventName] || 0)) / eventCntMap[eventName],
+            count: eventCntMap[eventName],
+            deleted: deleteEventMap[eventName] || 0,
+          });
+        }
 
         tot += eventCntMap[eventName];
       }
 
-      barChart.forEach(b => b.width /= tot);
+      if (tot > 0) barChart.forEach(b => b.width /= tot);
 
       barList.push(barChart);
     }
 
     return barList;
-  }
-
-  renderBarChart(data, col, width) {
-    const { eventColorList } = this.props.store;
-    
-    const height = 190;
-    let mWidth = width - 10;
-
-    let svg = d3.select('#barchart-' + col);
-    svg.html('');
-
-    let xScale = d3
-      .scaleLinear()
-      .domain([0, 1])
-      .range([0, mWidth]);
-    let yScale = d3
-      .scaleLinear()
-      .domain([0, 1])
-      .range([height, 0]);
-    
-    svg.attr('width', width)
-      .attr('height', height + 10);
-
-    let xSum = 0;
-  
-    let RectList = svg
-      .append('g')
-      .attr('transform', 'translate(5, 5)')
-      .selectAll('rect')
-      .data(data)
-      .enter();
-    RectList.append('rect')
-      .style('fill', d => eventColorList[d.eventName])
-      .attr('x', (d) => {
-        let x = xSum * mWidth
-        xSum += d.width;
-        return x;
-      })
-      .attr('y', d => {
-        return height - d.height * height;
-      })
-      .attr('width', d => {
-        return d.width * mWidth;
-      })
-      .attr('height', d => {
-        return d.height * height;
-      });
-    xSum = 0;
-    RectList.append('rect')
-      .attr('class', 'state-bar')
-      .style('fill-opacity', 0)
-      .attr('x', (d) => {
-        let x = xSum * mWidth
-        xSum += d.width;
-        return x;
-      })
-      .attr('y', d => {
-        return 0;
-      })
-      .attr('width', d => {
-        return d.width * mWidth;
-      })
-      .attr('height', d => {
-        return height;
-      })
-      .style('cursor', 'pointer')
-      .style('stroke-width', 3)
-      .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : 'none')
-      .on('mouseover', d => {
-        const x = d3.event.x + 15,
-          y = d3.event.y - 35;
-        d3.select('.tooltip').html(d.eventName)
-          .style('left', (x) + 'px')
-          .style('display', 'block')
-          .style('top', (y) + 'px');
-      })
-      .on('mouseout', () => {
-        d3.select('.tooltip').style('display', 'none')
-      })
-      .on('click', (d) => {
-        this.setState({ topDelEvent: d.eventName, orderCol: undefined });
-      })
   }
 
   renderEmpty() {
@@ -762,7 +847,7 @@ export default class TableView extends React.Component {
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
         </div>
-        <div className="wrapper" style={{ maxHeight: 'calc(100% - 255px)' }}>
+        <div className="wrapper" style={{ maxHeight: 'calc(100% - 210px)' }}>
           {this.renderTableHeaderLeft(rows)}
           {this.renderTableBody(rows, columns)}
         </div>
@@ -788,11 +873,6 @@ export default class TableView extends React.Component {
           </div>
         ))}
       </div>
-        <div className="table-header-desc">
-          {columns.map(col => (
-            <svg id={'barchart-' + col} style={ {borderRight: "1px solid #ccc"}}></svg>
-          ))}
-        </div>
       </div>
     )
   }
@@ -862,11 +942,8 @@ export default class TableView extends React.Component {
     const { mode } = this.state;
 
     return (
-      <div>
       <div className="table-header top-left" onClick={this.switchMode}>
         {mode === 1 ? 'ID' : 'Group'}
-      </div>
-      <div className="table-attr-desc">Desc</div>
       </div>
     )
   }
@@ -899,9 +976,12 @@ export default class TableView extends React.Component {
           )
         }
   
-        let delFlag = false, utility = row.extended[0].data[col].utility;
+        let delFlag = false, utility = 0;
+        if (row.extended.length > 0 && row.extended[0].data[col]) {
+          utility = row.extended[0].data[col].utility;
+        }
         for (let i = 0; i < row.extended.length; i++) {
-          if (row.extended[i].data[col].del) {
+          if (row.extended[i].data[col] && row.extended[i].data[col].del) {
             delFlag = true;
             break;
           }
@@ -1040,6 +1120,11 @@ export default class TableView extends React.Component {
               checked={this.state.unfoldAll}
               onChange={v => this.toggleUnfoldAll(v)}
             />
+          </div>
+        </div>
+        <div>
+          <div className="table-header-desc">
+            <svg id="header-barchart" />
           </div>
         </div>
         {this.renderTable()}
