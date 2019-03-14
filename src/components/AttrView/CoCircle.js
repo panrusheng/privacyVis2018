@@ -63,7 +63,12 @@ export default class AttrNetwork extends Component {
     // if (that.state.showP) {
     let safeHeight = 40,
       safeY;
-    let ScaleX = d3.scaleLinear().domain(d3.extent(data, d => d.eventLists.length)).range([r + 2, width - r - 2]);
+    const tickRange = d3.extent(data, d => d.eventLists.length);
+    let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 2, width - r - 2]);
+    let tickX = [];
+    for (let i = 0; i <= tickRange[1]; i++) {
+      tickX.push(i);
+    }
 
     const g = d3
       .select(gDOM)
@@ -213,6 +218,26 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', "end")
       .style('fill', '#666')
       .text(d => d.v);
+    
+    let tickXSvg = g.append('g')
+      .attr('class', 'cor-chart')
+      .selectAll('ticks')
+      .data(tickX)
+      .enter();
+    tickXSvg.append('text')
+      .attr('x', d => ScaleX(d))
+      .attr('y', height + 15)
+      .style('text-anchor', "middle")
+      .style('fill', '#666')
+      .text(d => d);
+
+    tickXSvg.append("line")
+      .attr('x1', d => ScaleX(d))
+      .attr('x2', d => ScaleX(d))
+      .attr('y1', height)
+      .attr('y2', height - 6)
+      .style('stroke', '#666')
+      .style('stroke-width', 1);
 
 
     // g.append('rect')
@@ -283,11 +308,12 @@ export default class AttrNetwork extends Component {
       .text('State sets')
       .style('font-size', 20);
 
-    g
-      .append('g')
-      .attr('class', 'cor-chart')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(ScaleX));
+    // g
+    //   .append('g')
+    //   .attr('class', 'cor-chart')
+    //   .attr('transform', 'translate(0,' + height + ')')
+    //   .call(d3.axisBottom(ScaleX.nice()));
+
     g.append('text')
       .attr('class', 'cor-chart')
       .attr('y', height + 40)
