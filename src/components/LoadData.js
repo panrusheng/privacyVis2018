@@ -24,11 +24,13 @@ const SearchAlgorithm = [ { name: 'K2', id: 'K2' },
 @observer
 export default class LoadData extends React.Component {
     state = {
-        currentDataset: null,
-        datasets: [],
+        currentDataset: 'user',
+        attrDescList: [],
         currentSelected: [],
         searchAlgorithm: 0,
     }
+
+    datasets = ['user', 'student', 'home'];
 
     constructor(props) {
         super(props);
@@ -53,7 +55,7 @@ export default class LoadData extends React.Component {
     }
 
     componentDidMount() {
-        this.getAllDataSet();
+        this.getDatasetDesc();
     }
 
     uploadDataset() {
@@ -63,7 +65,7 @@ export default class LoadData extends React.Component {
     handleConfirm() {
         if (!this.state.currentDataset) return;
         const attributes = [];
-        const li = this.state.datasets.find(item => item.dataset === this.state.currentDataset).attrList;
+        const li = this.state.attrDescList;
         
         li.forEach((attr, index) => {
             if (this.state.currentSelected[index] === 0) return;
@@ -75,6 +77,10 @@ export default class LoadData extends React.Component {
         this.props.store.setSystemStage(0);
         this.props.store.getGBN();
         // this.props.store.getAttrDistribution();
+    }
+
+    switchDataset(d) {
+        this.setState({ currentDataset: d }, () => this.getDatasetDesc());
     }
 
     toggleCheck(index) {
@@ -92,29 +98,28 @@ export default class LoadData extends React.Component {
         this.setState({ currentSelected });
     }
 
-    getAllDataSet() {
-        axis.post('/load_data')
-            .then(data => {
-                const attrList = [], selectedList = [];
-                for (const attrName in data.attList) {
-                    attrList.push({ attrName, ...data.attList[attrName] });
-                    selectedList.push(0);
-                }
+    getDatasetDesc() {
+        axis.post('/load_data', null, {
+            params: {
+                dataset: this.state.currentDataset,
+            }
+        })
+        .then(data => {
+            const attrList = [], selectedList = [];
+            for (const attrName in data.attList) {
+                attrList.push({ attrName, ...data.attList[attrName] });
+                selectedList.push(0);
+            }
 
-                this.setState({
-                    datasets: [{
-                        dataset: 'user',
-                        attrList,
-                    }],
-                    currentDataset: 'user',
-                    currentSelected: selectedList,
-                });
+            this.setState({
+                attrDescList: attrList,
+                currentSelected: selectedList,
             });
+        });
     }
 
     render() {
-        const { datasets, currentDataset, currentSelected } = this.state;
-        const currentAttrList = (datasets.find(item => item.dataset === currentDataset) || {}).attrList || [];
+        const { attrDescList, currentDataset, currentSelected } = this.state;
 
         return (
             <Modal
@@ -127,26 +132,28 @@ export default class LoadData extends React.Component {
                     <div className="attr-list">
                         <div className="attr-list-item">
                             <div style={{ width: '15px' }}/>
-                            <div style={{ width: '90px' }}>Attributes</div>
+                            <div style={{ width: '100px' }}>Attributes</div>
                             <div style={{ width: '100px' }}>Continuous</div>
-                            <div style={{ width: '450px' }}>Description</div>
+                            <div style={{ width: '440px' }}>Description</div>
                         </div>
-                        { currentAttrList.map((attr, index) => (
+                    </div>
+                    <div className="attr-list">
+                        { attrDescList.map((attr, index) => (
                             <div className="attr-list-item">
                                 <div onClick={() => this.toggleCheck(index)} style={{cursor: 'pointer'}} className="icon-button">{
                                     //checkedIndex.findIndex(item => item === index) >= 0 ? <img src={CheckedIcon} /> : <img src={NotCheckedIcon} />
                                     currentSelected[index] === 0 ? <img src={NotCheckedIcon} /> : (currentSelected[index] === 1 ? <img src={CheckedIcon} /> : <img src={HidenIcon}/>)
                                 }</div>
-                                <div style={{ width: '90px' }}>{attr.attrName}</div>
+                                <div style={{ width: '100px' }}>{attr.attrName}</div>
                                 <div style={{ width: '100px' }}>{attr.type === 'numerical'? 'yes':'no'}</div>
-                                <div style={{ width: '450px' }} className="desc">{attr.description}</div>
+                                <div style={{ width: '440px' }} className="desc">{attr.description}</div>
                             </div>
                         )) }
                     </div>
                     <div className="load-panel">
                         <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
                         <div className="datasets">
-                            { datasets.map(item => <div className={`button ${item.dataset === currentDataset ? 'active' : ''}`}>{item.dataset}</div>) }
+                            { this.datasets.map(d => <div onClick={() => this.switchDataset(d)} className={`button ${d === currentDataset ? 'active' : ''}`}>{d}</div>) }
                         </div>
                     </div>
                     <div className="load-panel">

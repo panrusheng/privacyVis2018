@@ -66,7 +66,7 @@ class AppStore {
   eventColorList = {};
 
   @observable
-  sensitiveCorrelation = false;
+  sensitiveCorrelation = {};
 
   senColor = [254, 41, 1];
   nonSenColor = [24, 102, 187];
