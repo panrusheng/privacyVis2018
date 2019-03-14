@@ -44,6 +44,8 @@ export default class AttrNetwork extends Component {
     eventName = (eventName === null) ? that.props.store.sensitiveEventList[0] : eventName;
     const corData = coData[eventName];
 
+    if (!corData) return;
+
     const {
       pro,
       data
