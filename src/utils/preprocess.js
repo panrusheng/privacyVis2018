@@ -11,6 +11,13 @@ export function decimalPrecision(numbers) {
 
     return res;
 }
+
+export function removeFractionIfInteger(num) {
+    let [i, f] = num.toString().split(".");
+    if (!f) return i;
+    else if (parseInt(f) === 0) return i;
+    else return num.toString();
+}
   
   
 export function dataPreprocess(data) {

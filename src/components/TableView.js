@@ -254,7 +254,7 @@ export default class TableView extends React.Component {
       let xSum = 0;
       let data = barList[i];
       let textList = textGroup.append('g')
-        .attr('transform', `translate(${5 + i * width}, 5)`)
+        .attr('transform', `translate(${margin / 2 + i * width}, 5)`)
         .selectAll('rect')
         .data(data)
         .enter();

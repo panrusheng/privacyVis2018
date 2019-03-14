@@ -5,7 +5,7 @@ import {
 } from 'mobx';
 import axios from '../utils/axios.js';
 import {
-  dataPreprocess, decimalPrecision
+  dataPreprocess, decimalPrecision, removeFractionIfInteger
 } from '../utils/preprocess.js';
 import * as d3 from 'd3';
 
@@ -150,9 +150,9 @@ class AppStore {
 
         if (attr.type === 'numerical') {
           let range = attr.range
-          let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
+          let min = range[0], delta = (range[1] - range[0]) / (attr.list.t0.length - 1);
           attr.breakPoints = attr.splitPoints;
-          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
+          attr.data = attr.list.t0.map((a, i) => {return {label: min + delta * i, value: a};})
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
@@ -768,7 +768,7 @@ class AppStore {
           if (i === breakPoints.length) max = labelMax;
           else max = breakPoints[i];
 
-          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + min.toFixed(2) + '~' + max.toFixed(2) + ']';
+          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + removeFractionIfInteger(min.toFixed(2)) + '~' + removeFractionIfInteger(max.toFixed(2)) + ']';
 
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;

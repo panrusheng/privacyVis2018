@@ -129,6 +129,12 @@ export default class LoadData extends React.Component {
                 wrapClassName="attr-select-panel"
             >
                 <div className="load-data">
+                    <div className="dateset-list">
+                        <div style={{ marginBottom: 10 }}>Datasets</div>
+                        <div className="datasets">
+                            { this.datasets.map(d => <div onClick={() => this.switchDataset(d)} className={`button ${d === currentDataset ? 'active' : ''}`}>{d}</div>) }
+                        </div>
+                    </div>
                     <div className="attr-list">
                         <div className="attr-list-item">
                             <div style={{ width: '15px' }}/>
@@ -153,7 +159,7 @@ export default class LoadData extends React.Component {
                     <div className="load-panel">
                         <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
                         <div className="datasets">
-                            { this.datasets.map(d => <div onClick={() => this.switchDataset(d)} className={`button ${d === currentDataset ? 'active' : ''}`}>{d}</div>) }
+                            <div className={`button`}>{this.state.currentDataset}</div>
                         </div>
                     </div>
                     <div className="load-panel">
