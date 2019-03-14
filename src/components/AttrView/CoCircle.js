@@ -54,17 +54,19 @@ export default class AttrNetwork extends Component {
     let safeRange = [pro - riskLimit, pro + riskLimit];
     const marginY = 50,
       marginX = 35,
-      r = 10;
+      r = 10, height = hh - 2 * marginY - 20, width = ww - marginX * 2;
     let ScaleB, ScaleA;
     let ticks = [];
     let range = d3.extent(data, d => d.cor);
     // if (that.state.showP) {
     let safeHeight = 40, safeY;
+    let ScaleX = d3.scaleLinear().domain(d3.extent(data, d => d.eventLists.length)).range([r + 2, width - r - 2]);
 
     const g = d3
       .select(gDOM)
       .attr('width', ww)
-      .attr('height', hh);
+      .attr('height', hh)
+      .attr('transform', 'translate(' + marginX + ',' + (marginY + 20) + ')');
     d3.selectAll('.cor-chart').remove();
 
     let rangeChange = [safeRange[0], safeRange[1], range[0], range[1]];
@@ -75,43 +77,43 @@ export default class AttrNetwork extends Component {
       if (rangeChange[3] === safeRange[1]) return;
       ScaleA = d3.scaleLinear()
         .domain([safeRange[1], range[1]])
-        .range([marginY + safeHeight, hh - 3 * marginY]);
-      safeY = marginY;
+        .range([height - safeHeight, 0]);
+      safeY = height - safeHeight;
       ScaleB = d3.scaleLinear()
         .domain([safeRange[0], safeRange[1]])
-        .range([marginY, marginY + safeHeight]);
+        .range([height, height - safeHeight]);
       let tickA = ScaleA.ticks(5);
       ticks = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
-      ticks.push({v: safeRange[0].toFixed(2), y: marginY});
-      ticks.push({v: safeRange[1].toFixed(2), y: marginY + safeHeight});
+      ticks.push({v: safeRange[0].toFixed(2), y: height});
+      ticks.push({v: safeRange[1].toFixed(2), y: height - safeHeight});
     } else if (rangeChange[3] === safeRange[1]) {
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
-        .range([marginY, hh - 3 * marginY - safeHeight]);
-      safeY = hh - 3 * marginY - safeHeight;
+        .range([height, safeHeight]);
+      safeY = 0;
       ScaleA = d3.scaleLinear()
         .domain([safeRange[0], safeRange[1]])
-        .range([hh - 3 * marginY - safeHeight, hh - 3 * marginY]);
+        .range([safeHeight, 0]);
       let tickB = ScaleB.ticks(5);
       ticks = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
-      ticks.push({v: safeRange[1].toFixed(2), y: hh - 3 * marginY});
-      ticks.push({v: safeRange[0].toFixed(2), y: hh - 3 * marginY - safeHeight});
+      ticks.push({v: safeRange[1].toFixed(2), y: 0});
+      ticks.push({v: safeRange[0].toFixed(2), y: safeHeight});
     } else {
-      let scale = (hh - 4 * marginY - safeHeight) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
-      safeY = marginY + scale * (safeRange[0] - range[0]);
+      let scale = (height - safeHeight) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
+      safeY = scale * (range[1] - safeRange[1]);
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
-        .range([marginY, safeY + marginY])
+        .range([height, safeY + safeHeight])
       ScaleA = d3.scaleLinear()
         .domain([safeRange[1], range[1]])
-        .range([safeY + safeHeight, hh - 3 * marginY]);
+        .range([safeY, 0]);
       let tickB = ScaleB.ticks(3);
       tickB = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
       let tickA = ScaleA.ticks(3);
       tickA = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
       ticks = [...tickA, ...tickB];
-      ticks.push({v: safeRange[1].toFixed(2), y: safeY + safeHeight});
-      ticks.push({v: safeRange[0].toFixed(2), y: safeY});
+      ticks.push({v: safeRange[1].toFixed(2), y: safeY});
+      ticks.push({v: safeRange[0].toFixed(2), y: safeY + safeHeight});
     }
     // } else {
     //   range[0] = (range[0] < safeRange[1] && range[0] > safeRange[0])? safeRange[1]: range[0];
@@ -126,8 +128,8 @@ export default class AttrNetwork extends Component {
       let p = data[i].cor;
       if (p <= pro + riskLimit && p >= pro - riskLimit) continue;
       let y = (p > pro) ? ScaleA(p): ScaleB(p),
-        x = marginX + r + 2 + Math.random() * (ww - 2 * r - marginX),
-        num = data[i].eventLists.length;
+        num = data[i].eventLists.length,
+        x = ScaleX(num);
       dataList.push({
         d: makePolygon(num, r),
         x,
@@ -157,52 +159,63 @@ export default class AttrNetwork extends Component {
       .data(ticks)
       .enter();
     tickSvg.append("line")
-      .attr('x1', marginX)
-      .attr('x2', marginX - 6)
+      .attr('x1', 0)
+      .attr('x2', - 6)
       .attr('y1', d => d.y)
       .attr('y2', d => d.y)
       .style('stroke', '#666')
       .style('stroke-width', 1);
     
     tickSvg.append('text')
-      .attr('x', marginX - 10)
-      .attr('y', d => d.y)
+      .attr('x', -10)
+      .attr('y', d => d.y + 5)
       .style('text-anchor', "end")
       .style('fill', '#666')
       .text(d => d.v);
 
 
-    g.append('rect')
-      .attr('class', 'cor-chart')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', ww)
-      .attr('height', hh)
-      .style('opacity', 0)
-      .style('cursor', 'pointer')
-      .on('click', () => {
-        d3.selectAll('.eventSets').attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-      });
+    // g.append('rect')
+    //   .attr('class', 'cor-chart')
+    //   .attr('x', 0)
+    //   .attr('y', 0)
+    //   .attr('width', width)
+    //   .attr('height', height)
+    //   .style('opacity', 0)
+    //   .style('cursor', 'pointer')
+    //   .on('click', () => {
+    //     d3.selectAll('.eventSets').attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+    //   });
     g.append('rect')
       .attr('class', 'cor-chart')
       .attr('y', safeY)
-      .attr('x', marginX)
+      .attr('x', 0)
       .attr('height', safeHeight)
-      .attr('width', ww - marginX)
-      .style('fill', '#cdcdcd');
+      .attr('width', width)
+      .style('fill', 'rgb(0, 128, 0, 0.7)');
     g.append('line')
       .attr('class', 'cor-chart')
       .attr('y1', safeY + safeHeight / 2)
       .attr('y2', safeY + safeHeight / 2)
-      .attr('x1', marginX)
-      .attr('x2', ww)
+      .attr('x1', 0)
+      .attr('x2', width)
+      .style('stroke-width', 2)
       .style('stroke', '#333');
     g.append('line')
       .attr('class', 'cor-chart')
-      .attr('x1', marginX)
-      .attr('x2', marginX)
-      .attr('y1', marginY)
-      .attr('y2', hh - 2 * marginY)
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', height)
+      .attr('y2', -15)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+
+    g.append('line')
+      .attr('class', 'cor-chart')
+      .attr('x1', 0)
+      .attr('x2', width + 15)
+      .attr('y1', height)
+      .attr('y2', height)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -222,18 +235,40 @@ export default class AttrNetwork extends Component {
     }
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('y', hh - 2 * marginY + 5)
-      .attr('x', (ww - marginX) / 2)
-      .style('fill', '#666')
+      .attr('y', -marginY)
+      .attr('x', width / 2)
+      .style('fill', '#333')
       .style('text-anchor', 'middle')
+      .text('State sets')
+      .style('font-size', 20);
+    g.append('text')
+      .attr('class', 'cor-chart')
+      .attr('y', height + 20)
+      .attr('x', width + marginX - 10)
+      .style('fill', '#333')
+      .style('text-anchor', 'end')
+      .text('State number');
+    g.append('text')
+      .attr('class', 'cor-chart')
+      .attr('y', -20)
+      .attr('x', 10 - marginX)
+      .style('fill', '#333')
+      .style('text-anchor', 'start')
       .text('P(' + eventName + '|Events)');
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('y', safeY + safeHeight / 2 + 15)
-      .attr('x', marginX + 3)
-      .style('text-anchor', 'start')
-      .style('fill', '#666')
+      .attr('y', safeY + safeHeight / 2 - 5)
+      .attr('x', width / 2)
+      .style('text-anchor', 'middle')
+      .style('fill', '#333')
       .text('P(' + eventName + ')');
+    g.append('text')
+      .attr('class', 'cor-chart')
+      .attr('y', safeY + safeHeight / 2 + 15)
+      .attr('x', width / 2)
+      .style('text-anchor', 'middle')
+      .style('fill', '#333')
+      .text('No-risk zone');
     g.selectAll('sets')
       .data(dataList)
       .enter()
@@ -241,12 +276,12 @@ export default class AttrNetwork extends Component {
       .attr('class', 'eventSets cor-chart')
       .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
       .attr('d', d => d.d)
-      .style('fill', '#666')
-      .style('fill-opacity', 0.2)
+      .style('fill', '#9e4a12')
+      .style('fill-opacity', 0.3)
       .style('cursor', 'pointer')
       .on('mouseover', d => {
         d3.selectAll(".eventSets")
-          .style('stroke', dd => (d === dd) ? '#1866bb' : 'none')
+          .style('stroke', dd => (d === dd) ? '#333' : 'none')
         d3.selectAll('.eventNodes')
           .style('stroke', dd => ifAinB(dd.id, d.list) ? '#333' : 'none');
       })

@@ -120,7 +120,22 @@ export default class DistTrimming extends React.Component {
     const binTotal = cateAttrs.reduce((p, v) => p + v.data.length, 0);
     let rows = [];
 
-    for (let i =0 ; i < Math.ceil(binTotal / cateAttrs.length); ++i) {
+    let lenArr = cateAttrs.map(({ data }) => data.length).filter(l => l <= binMax);
+    lenArr.sort((a, b) => a - b);
+    let temp = [];
+    let cur = 0;
+    for (let i = 0; i < lenArr.length; ++i) {
+      if (cur > temp.length - 1) temp.push(0);
+
+      if (temp[cur] + lenArr[i] <= binMax) {
+        temp[cur] += lenArr[i];
+      } else {
+        temp.push(0);
+        temp[++cur] = lenArr[i];
+      }
+    }
+    
+    for (let i =0 ; i < temp.length; ++i) {
       rows.push({ total: 0, attrs: [] });
     }
   
@@ -135,7 +150,12 @@ export default class DistTrimming extends React.Component {
       }
 
       if (t < 0) {
-        rows.push({ attrs: [attr], total: attr.data.length });
+        let emptyRow = rows.findIndex(r => r.total === 0);
+        if (emptyRow >= 0) {
+          rows[emptyRow].attrs.push(attr);
+          rows[emptyRow].total = attr.data.length;
+        }
+        else rows.push({ attrs: [attr], total: attr.data.length });
       } else {
         rows[t].attrs.push(attr);
         rows[t].total += attr.data.length;
