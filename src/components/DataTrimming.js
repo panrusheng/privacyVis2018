@@ -210,7 +210,7 @@ export default class DistTrimming extends React.Component {
               <div key={idx} style={{ display: 'flex' }}>
                 { row.map((attr) => (
                   <div className="chart" key={'trim-' + attr.attrName}>
-                    <div className="attr-info">
+                    <div className="attr-info" style={{marginBottom: 20}}>
                       <div className="title">{attr.attrName}</div>
                       <div className="form-block">
                         <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>

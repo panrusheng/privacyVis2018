@@ -196,17 +196,17 @@ export default class TableView extends React.Component {
         .style('cursor', 'pointer')
         .style('stroke-width', 3)
         .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : 'none')
-        // .on('mouseover', d => {
-        //   const x = d3.event.x + 15,
-        //     y = d3.event.y - 35;
-        //   d3.select('.tooltip').html(d.eventName)
-        //     .style('left', (x) + 'px')
-        //     .style('display', 'block')
-        //     .style('top', (y) + 'px');
-        // })
-        // .on('mouseout', () => {
-        //   d3.select('.tooltip').style('display', 'none')
-        // })
+        .on('mouseover', d => {
+          const x = d3.event.x + 15,
+            y = d3.event.y - 35;
+          d3.select('.tooltip').html((d.height * 100).toFixed(1) + '%')
+            .style('left', (x) + 'px')
+            .style('display', 'block')
+            .style('top', (y) + 'px');
+        })
+        .on('mouseout', () => {
+          d3.select('.tooltip').style('display', 'none')
+        })
         .on('click', (d) => {
           this.setState({ topDelEvent: d.eventName, orderCol: undefined });
         })
