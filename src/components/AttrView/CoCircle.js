@@ -241,9 +241,18 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', 'middle')
       .text('State sets')
       .style('font-size', 20);
+
+    g
+      .append('g')
+      .attr('class', 'cor-chart')
+      .call(d3.axisBottom(ScaleX))
+      .attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', 0)
+      .attr('y2', 0)
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('y', height + 20)
+      .attr('y', height + 40)
       .attr('x', width + marginX - 10)
       .style('fill', '#333')
       .style('text-anchor', 'end')
