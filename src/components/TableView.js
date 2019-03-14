@@ -123,6 +123,29 @@ export default class TableView extends React.Component {
     svg.attr('width', widthSvg)
       .attr('height', height);
 
+    let axis = svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      .attr('transform', 'translate(' + margin + ', 0)')
+      .call(
+        d3.axisLeft(
+          d3.scaleLinear()
+            .domain([0, 1])
+            .range([mHeight + 15, 15])
+        )
+          .ticks(5)
+          .tickFormat(d => d * 100 + '%')
+      );
+
+    axis.selectAll('.tick').each(function() {
+      let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
+      axis.append('line')
+        .attr('x1', 0)
+        .attr('x2', widthSvg - margin)
+        .attr('y1', y)
+        .attr('y2', y)
+        .style('stroke', '#ececec')
+    })
     let recGroup = svg.append('g')
       .attr('transform', 'translate(' + margin + ', 0)');
 
@@ -187,21 +210,16 @@ export default class TableView extends React.Component {
         .on('click', (d) => {
           this.setState({ topDelEvent: d.eventName, orderCol: undefined });
         })
-    }
 
-    svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      .attr('transform', 'translate(' + margin + ', 0)')
-      .call(
-        d3.axisLeft(
-          d3.scaleLinear()
-            .domain([0, 1])
-            .range([mHeight + 15, 15])
-        )
-          .ticks(5)
-          .tickFormat(d => d * 100 + '%')
-      );
+      rectList.append('line')
+      .attr('x1', mWidth + marginChart)
+      .attr('x2', mWidth + marginChart)
+      .attr('y1', 0)
+      .attr('y2', mHeight)
+      .style('stroke', '#ccc')
+      .style('stroke-dashArray', '2 2')
+      .style('stroke-width', 1);
+    }
 
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')

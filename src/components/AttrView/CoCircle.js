@@ -66,7 +66,7 @@ export default class AttrNetwork extends Component {
     const tickRange = d3.extent(data, d => d.eventLists.length);
     let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 2, width - r - 2]);
     let tickX = [];
-    for (let i = 0; i <= tickRange[1]; i++) {
+    for (let i = 1; i <= tickRange[1]; i++) {
       tickX.push(i);
     }
 
@@ -97,14 +97,14 @@ export default class AttrNetwork extends Component {
           y: ScaleA(t)
         }
       });
-      ticks.push({
-        v: safeRange[0].toFixed(2),
-        y: height
-      });
-      ticks.push({
-        v: safeRange[1].toFixed(2),
-        y: height - safeHeight
-      });
+      // ticks.push({
+      //   v: safeRange[0].toFixed(2),
+      //   y: height
+      // });
+      // ticks.push({
+      //   v: safeRange[1].toFixed(2),
+      //   y: height - safeHeight
+      // });
     } else if (rangeChange[3] === safeRange[1]) {
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
@@ -120,14 +120,14 @@ export default class AttrNetwork extends Component {
           y: ScaleB(t)
         }
       });
-      ticks.push({
-        v: safeRange[1].toFixed(2),
-        y: 0
-      });
-      ticks.push({
-        v: safeRange[0].toFixed(2),
-        y: safeHeight
-      });
+      // ticks.push({
+      //   v: safeRange[1].toFixed(2),
+      //   y: 0
+      // });
+      // ticks.push({
+      //   v: safeRange[0].toFixed(2),
+      //   y: safeHeight
+      // });
     } else {
       let scale = (height - safeHeight) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
       safeY = scale * (range[1] - safeRange[1]);
@@ -152,14 +152,14 @@ export default class AttrNetwork extends Component {
         }
       });
       ticks = [...tickA, ...tickB];
-      ticks.push({
-        v: safeRange[1].toFixed(2),
-        y: safeY
-      });
-      ticks.push({
-        v: safeRange[0].toFixed(2),
-        y: safeY + safeHeight
-      });
+      // ticks.push({
+      //   v: safeRange[1].toFixed(2),
+      //   y: safeY
+      // });
+      // ticks.push({
+      //   v: safeRange[0].toFixed(2),
+      //   y: safeY + safeHeight
+      // });
     }
     // } else {
     //   range[0] = (range[0] < safeRange[1] && range[0] > safeRange[0])? safeRange[1]: range[0];
@@ -265,7 +265,7 @@ export default class AttrNetwork extends Component {
       .attr('x1', 0)
       .attr('x2', width)
       .style('stroke-width', 2)
-      .style('stroke', '#333');
+      .style('stroke', '#fff');
     g.append('line')
       .attr('class', 'cor-chart')
       .attr('x1', 0)
@@ -327,21 +327,21 @@ export default class AttrNetwork extends Component {
       .attr('x', 10 - marginX)
       .style('fill', '#333')
       .style('text-anchor', 'start')
-      .text('P(' + eventName + '|Events)');
+      .text('P(' + eventName + '|Set)');
     g.append('text')
       .attr('class', 'cor-chart')
       .attr('y', safeY + safeHeight / 2 - 5)
       .attr('x', width / 2)
       .style('text-anchor', 'middle')
-      .style('fill', '#333')
+      .style('fill', '#fff')
       .text('P(' + eventName + ')');
     g.append('text')
       .attr('class', 'cor-chart')
       .attr('y', safeY + safeHeight / 2 + 15)
       .attr('x', width / 2)
       .style('text-anchor', 'middle')
-      .style('fill', '#333')
-      .text('No-risk zone');
+      .style('fill', '#fff')
+      .text('No-risk zone: ' + safeRange[0].toFixed(2) + '~' + safeRange[1].toFixed(2));
     g.selectAll('sets')
       .data(dataList)
       .enter()
