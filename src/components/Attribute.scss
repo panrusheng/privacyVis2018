@@ -16,7 +16,10 @@
     border:solid 1px #999;
     // border-radius: 5px; 
   }
-
+  .attr-svg {
+    display: flex;
+    flex-direction: row;
+  }
   .attr-network {
     position: relative;
     border-radius: 5px;

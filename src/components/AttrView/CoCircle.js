@@ -52,14 +52,14 @@ export default class AttrNetwork extends Component {
     } = corData;
     const riskLimit = this.props.store.riskLimit;
     let safeRange = [pro - riskLimit, pro + riskLimit];
-    const marginX = 50,
-      marginY = 20,
+    const marginY = 50,
+      marginX = 35,
       r = 10;
     let ScaleB, ScaleA;
     let ticks = [];
     let range = d3.extent(data, d => d.cor);
     // if (that.state.showP) {
-    let safeWidth = 40, safeX;
+    let safeHeight = 40, safeY;
 
     const g = d3
       .select(gDOM)
@@ -75,43 +75,43 @@ export default class AttrNetwork extends Component {
       if (rangeChange[3] === safeRange[1]) return;
       ScaleA = d3.scaleLinear()
         .domain([safeRange[1], range[1]])
-        .range([marginX + safeWidth, ww - 3 * marginX]);
-      safeX = 0;
+        .range([marginY + safeHeight, hh - 3 * marginY]);
+      safeY = marginY;
       ScaleB = d3.scaleLinear()
         .domain([safeRange[0], safeRange[1]])
-        .range([marginX, marginX + safeWidth]);
+        .range([marginY, marginY + safeHeight]);
       let tickA = ScaleA.ticks(5);
-      ticks = tickA.map((t) => { return {v: t, x: ScaleA(t)} });
-      ticks.push({v: safeRange[0].toFixed(2), x: marginX});
-      ticks.push({v: safeRange[1].toFixed(2), x: marginX + safeWidth});
+      ticks = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
+      ticks.push({v: safeRange[0].toFixed(2), y: marginY});
+      ticks.push({v: safeRange[1].toFixed(2), y: marginY + safeHeight});
     } else if (rangeChange[3] === safeRange[1]) {
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
-        .range([marginX, ww - 3 * marginX - safeWidth]);
-      safeX = ww - 3 * marginX - safeWidth;
+        .range([marginY, hh - 3 * marginY - safeHeight]);
+      safeY = hh - 3 * marginY - safeHeight;
       ScaleA = d3.scaleLinear()
         .domain([safeRange[0], safeRange[1]])
-        .range([ww - 3 * marginX - safeWidth, ww - 3 * marginX]);
+        .range([hh - 3 * marginY - safeHeight, hh - 3 * marginY]);
       let tickB = ScaleB.ticks(5);
-      ticks = tickB.map((t) => { return {v: t, x: ScaleB(t)} });
-      ticks.push({v: safeRange[1].toFixed(2), x: ww - 3 * marginX});
-      ticks.push({v: safeRange[0].toFixed(2), x: ww - 3 * marginX - safeWidth});
+      ticks = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
+      ticks.push({v: safeRange[1].toFixed(2), y: hh - 3 * marginY});
+      ticks.push({v: safeRange[0].toFixed(2), y: hh - 3 * marginY - safeHeight});
     } else {
-      let scale = (ww - 4 * marginX - safeWidth) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
-      safeX = marginX + scale * (safeRange[0] - range[0]);
+      let scale = (hh - 4 * marginY - safeHeight) / (safeRange[0] - range[0] + range[1] - safeRange[1]);
+      safeY = marginY + scale * (safeRange[0] - range[0]);
       ScaleB = d3.scaleLinear()
         .domain([range[0], safeRange[0]])
-        .range([marginX, safeX])
+        .range([marginY, safeY + marginY])
       ScaleA = d3.scaleLinear()
         .domain([safeRange[1], range[1]])
-        .range([safeX + safeWidth, ww - 3 * marginX]);
+        .range([safeY + safeHeight, hh - 3 * marginY]);
       let tickB = ScaleB.ticks(3);
-      tickB = tickB.map((t) => { return {v: t, x: ScaleB(t)} });
+      tickB = tickB.map((t) => { return {v: t, y: ScaleB(t)} });
       let tickA = ScaleA.ticks(3);
-      tickA = tickA.map((t) => { return {v: t, x: ScaleA(t)} });
+      tickA = tickA.map((t) => { return {v: t, y: ScaleA(t)} });
       ticks = [...tickA, ...tickB];
-      ticks.push({v: safeRange[1].toFixed(2), x: safeX + safeWidth});
-      ticks.push({v: safeRange[0].toFixed(2), x: safeX});
+      ticks.push({v: safeRange[1].toFixed(2), y: safeY + safeHeight});
+      ticks.push({v: safeRange[0].toFixed(2), y: safeY});
     }
     // } else {
     //   range[0] = (range[0] < safeRange[1] && range[0] > safeRange[0])? safeRange[1]: range[0];
@@ -125,8 +125,8 @@ export default class AttrNetwork extends Component {
     for (let i = 0; i < data.length; i++) {
       let p = data[i].cor;
       if (p <= pro + riskLimit && p >= pro - riskLimit) continue;
-      let x = (p > pro) ? ScaleA(p): ScaleB(p),
-        y = r + 2 + Math.random() * (hh - 2 * marginY),
+      let y = (p > pro) ? ScaleA(p): ScaleB(p),
+        x = marginX + r + 2 + Math.random() * (ww - 2 * r - marginX),
         num = data[i].eventLists.length;
       dataList.push({
         d: makePolygon(num, r),
@@ -157,17 +157,17 @@ export default class AttrNetwork extends Component {
       .data(ticks)
       .enter();
     tickSvg.append("line")
-      .attr('x1', d => d.x)
-      .attr('x2', d => d.x)
-      .attr('y1', hh - marginY)
-      .attr('y2', hh - marginY + 6)
+      .attr('x1', marginX)
+      .attr('x2', marginX - 6)
+      .attr('y1', d => d.y)
+      .attr('y2', d => d.y)
       .style('stroke', '#666')
       .style('stroke-width', 1);
     
     tickSvg.append('text')
-      .attr('x', d => d.x)
-      .attr('y', hh - marginY + 20)
-      .style('text-anchor', "middle")
+      .attr('x', marginX - 10)
+      .attr('y', d => d.y)
+      .style('text-anchor', "end")
       .style('fill', '#666')
       .text(d => d.v);
 
@@ -185,24 +185,24 @@ export default class AttrNetwork extends Component {
       });
     g.append('rect')
       .attr('class', 'cor-chart')
-      .attr('x', safeX)
-      .attr('y', 0)
-      .attr('width', safeWidth)
-      .attr('height', hh - marginY)
+      .attr('y', safeY)
+      .attr('x', marginX)
+      .attr('height', safeHeight)
+      .attr('width', ww - marginX)
       .style('fill', '#cdcdcd');
     g.append('line')
       .attr('class', 'cor-chart')
-      .attr('x1', safeX + safeWidth / 2)
-      .attr('x2', safeX + safeWidth / 2)
-      .attr('y1', 0)
-      .attr('y2', hh - marginY)
+      .attr('y1', safeY + safeHeight / 2)
+      .attr('y2', safeY + safeHeight / 2)
+      .attr('x1', marginX)
+      .attr('x2', ww)
       .style('stroke', '#333');
     g.append('line')
       .attr('class', 'cor-chart')
       .attr('x1', marginX)
-      .attr('x2', ww - 2.5 * marginX)
-      .attr('y1', hh - marginY)
-      .attr('y2', hh - marginY)
+      .attr('x2', marginX)
+      .attr('y1', marginY)
+      .attr('y2', hh - 2 * marginY)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -222,14 +222,16 @@ export default class AttrNetwork extends Component {
     }
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('x', ww - 2.5 * marginX + 5)
-      .attr('y', 2.5 * marginY)
+      .attr('y', hh - 2 * marginY + 5)
+      .attr('x', (ww - marginX) / 2)
       .style('fill', '#666')
+      .style('text-anchor', 'middle')
       .text('P(' + eventName + '|Events)');
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('x', safeX + safeWidth / 2 + 5)
-      .attr('y', hh - marginY - 15)
+      .attr('y', safeY + safeHeight / 2 + 15)
+      .attr('x', marginX + 3)
+      .style('text-anchor', 'start')
       .style('fill', '#666')
       .text('P(' + eventName + ')');
     g.selectAll('sets')
@@ -254,10 +256,9 @@ export default class AttrNetwork extends Component {
       })
       .on('click', d => {
         d3.selectAll('.eventSets').attr('transform', dd => {
-          return 'translate(' + dd.x + ',' + ((dd.list.length === d.list.length) ? r : r + (hh - 2 * marginY)) + ')';
+          return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
         });
       });
-
     function ifAinB(a, b) {
       for (let i = 0; i < b.length; i++) {
         if (a === b[i]) return true;

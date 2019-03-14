@@ -9,6 +9,9 @@
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border: solid 1px #999; }
+  .attribute-view .attr-svg {
+    display: flex;
+    flex-direction: row; }
   .attribute-view .attr-network {
     position: relative;
     border-radius: 5px; }
