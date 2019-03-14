@@ -104,7 +104,8 @@ export default class TableView extends React.Component {
     
     const width = (widthSvg - 60) / columns.length;
     const height = 200;
-    let mWidth = width - 10
+    let margin = (width - 160) > 0 ? width - 160 : 0;
+    let mWidth = width - margin;
     let mHeight = height - 50;
 
     let svg = d3.select('#header-barchart');
@@ -120,7 +121,34 @@ export default class TableView extends React.Component {
       .range([height, 0]);
     svg.attr('width', widthSvg)
       .attr('height', height);
-  
+
+      
+    let axis = svg
+    .append('g')
+    .attr('class', 'axis-ver')
+    .attr('transform', 'translate(60, 0)')
+    .call(
+      d3.axisLeft(
+        d3.scaleLinear()
+        .domain([0, 1])
+        .range([mHeight + 15, 15])
+      )
+      .ticks(5)
+      .tickFormat(d => d * 100 + '%')
+    );
+
+    let backLines = svg.append('g').attr('transform', 'translate(60, 0)');
+    
+    axis.selectAll('.tick').each(function() {
+      let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
+      backLines.append('line')
+        .attr('x1', 0)
+        .attr('x2', widthSvg)
+        .attr('y1', y)
+        .attr('y2', y)
+        .style('stroke', '#ececec')
+    });
+      
     let recGroup = svg.append('g')
       .attr('transform', 'translate(60, 0)');
 
@@ -128,7 +156,7 @@ export default class TableView extends React.Component {
       let data = barList[i];
       let xSum = 0;
       let rectList = recGroup.append('g')
-        .attr('transform', `translate(${5 + i * width}, 15)`)
+        .attr('transform', `translate(${margin / 2 + i * width}, 15)`)
         .selectAll('rect')
         .data(data)
         .enter();
@@ -186,21 +214,7 @@ export default class TableView extends React.Component {
         this.setState({ topDelEvent: d.eventName, orderCol: undefined });
       })
     }
-
-    svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      .attr('transform', 'translate(60, 0)')
-      .call(
-        d3.axisLeft(
-          d3.scaleLinear()
-          .domain([0, 1])
-          .range([mHeight + 15, 15])
-        )
-        .ticks(5)
-        .tickFormat(d => d * 100 + '%')
-      );
-
+    
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
         .append('marker')

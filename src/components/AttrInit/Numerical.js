@@ -79,6 +79,29 @@ export default class Numerical extends React.Component {
       .attr('height', height)
       .append('g')
       .attr('transform', 'translate(' + marginLeft + ', 0)');
+    
+    let axis = svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      // .attr("transform", "translate(0," + height + ")")
+      .call(
+        d3.axisLeft(yScale)
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', 0)
+      .attr('y2', 0);
+
+    let backLines = svg.append('g');
+      
+    axis.selectAll('.tick').each(function() {
+      let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
+      backLines.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y)
+        .attr('y2', y)
+        .style('stroke', '#ececec')
+    })
 
     let breakIndex = 0;
     let lastWidth = 0;
@@ -115,7 +138,7 @@ export default class Numerical extends React.Component {
         .data([values])
         .attr('d', area)
         .style('fill', this.props.eventColorList[eventName])
-        .style('opacity', attr.sensitive? 0.5 : "")
+        .style('opacity', attr.sensitive? 0.5 : 1)
         .attr('clip-path', `url(#${attrName + breakIndex})`)
         .on('mouseover', () => {
           if (attr.sensitive) return;
@@ -171,16 +194,6 @@ export default class Numerical extends React.Component {
       .attr('x2', chartWidth + marginAxis)
       .attr('y2', height)
 
-    svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      // .attr("transform", "translate(0," + height + ")")
-      .call(
-        d3.axisLeft(yScale)
-      ).attr('x1', 0)
-      .attr('y1', height)
-      .attr('x2', 0)
-      .attr('y2', 0)
   
     if (d3.selectAll('#biggerArrow'.length === 0)) {
       svg.append('defs').attr('class', 'axis-ver')
