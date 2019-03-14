@@ -767,8 +767,10 @@ class AppStore {
           else min = breakPoints[i - 1];
           if (i === breakPoints.length) max = labelMax;
           else max = breakPoints[i];
+          min = (min - parseInt(min) === 0) ? min : min.toFixed(2);
+          max = (max - parseInt(max) === 0) ? max : max.toFixed(2);
 
-          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + removeFractionIfInteger(min.toFixed(2)) + '~' + removeFractionIfInteger(max.toFixed(2)) + ']';
+          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + min + '~' + max + ']';
 
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;

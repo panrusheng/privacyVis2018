@@ -102,6 +102,85 @@ export default class NumeTrim extends React.Component {
         .style('stroke-width', 1);
     }
 
+    svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      .attr("transform", "translate(0," + height + ")")
+      .call(
+        d3.axisBottom(
+          d3
+          .scaleLinear()
+          .range([0, width - marginAxis - marginLeft])
+          .domain(d3.extent(labels))
+        )
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', chartWidth + marginAxis)
+      .attr('y2', height)
+    svg.append('text')
+      .attr('x', chartWidth + marginAxis)
+      .attr('y', height + 30)
+      .style('text-anchor', 'end')
+      .text('Value');
+    let axis = svg
+      .append('g')
+      .attr('class', 'axis-ver')
+      // .attr("transform", "translate(0," + height + ")")
+      .call(
+        d3.axisLeft(yScale)
+      ).attr('x1', 0)
+      .attr('y1', height)
+      .attr('x2', 0)
+      .attr('y2', 0)
+    svg.append('text')
+      .attr('x', 0)
+      .attr('y', -5)
+      .style('text-anchor', 'middle')
+      .text('Amount');
+    
+    let backLines = svg.append('g');
+      
+    axis.selectAll('.tick').each(function() {
+      let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
+      backLines.append('line')
+        .attr('x1', 0)
+        .attr('x2', chartWidth)
+        .attr('y1', y)
+        .attr('y2', y)
+        .style('stroke', '#ececec')
+    })
+
+    if (d3.selectAll('#biggerArrow'.length === 0)) {
+      svg.append('defs').attr('class', 'axis-ver')
+        .append('marker')
+        .attr('id', 'biggerArrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 8)
+        .attr('markerHeight', 8)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L10,0L0,4L3,0')
+        .style('fill', '#333');
+    }
+    svg.append('line')
+      .attr('x1', 0)
+      .attr('x2', chartWidth + marginAxis)
+      .attr('y1', height)
+      .attr('y2', height)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+    svg.append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', height)
+      .attr('y2', 0)
+      .attr('marker-end', 'url(#biggerArrow)')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+
     // svg
     //   .append('path')
     //   .attr('d', areaNeg(curV))
@@ -115,7 +194,7 @@ export default class NumeTrim extends React.Component {
         .style('fill', 'url(#trim-stripe)');
     }
     const triV = data.map(item => item.triV);
-      svg.append('path')
+    svg.append('path')
         .attr('d', area(triV))
         .style('stroke', 'none')
         .style('fill', '#d0e0f0');
@@ -163,63 +242,6 @@ export default class NumeTrim extends React.Component {
       .on('mouseout', () => {
         d3.select('.tooltip').style('display', 'none')
       });
-
-    svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      .attr("transform", "translate(0," + height + ")")
-      .call(
-        d3.axisBottom(
-          d3
-          .scaleLinear()
-          .range([0, width - marginAxis - marginLeft])
-          .domain(d3.extent(labels))
-        )
-      ).attr('x1', 0)
-      .attr('y1', height)
-      .attr('x2', chartWidth + marginAxis)
-      .attr('y2', height)
-    svg
-      .append('g')
-      .attr('class', 'axis-ver')
-      // .attr("transform", "translate(0," + height + ")")
-      .call(
-        d3.axisLeft(yScale)
-      ).attr('x1', 0)
-      .attr('y1', height)
-      .attr('x2', 0)
-      .attr('y2', 0)
-
-    if (d3.selectAll('#biggerArrow'.length === 0)) {
-      svg.append('defs').attr('class', 'axis-ver')
-        .append('marker')
-        .attr('id', 'biggerArrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 10)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#333');
-    }
-    svg.append('line')
-      .attr('x1', 0)
-      .attr('x2', chartWidth + marginAxis)
-      .attr('y1', height)
-      .attr('y2', height)
-      .attr('marker-end', 'url(#biggerArrow)')
-      .style('stroke', '#333')
-      .style('stroke-width', 2);
-    svg.append('line')
-      .attr('x1', 0)
-      .attr('x2', 0)
-      .attr('y1', height)
-      .attr('y2', 0)
-      .attr('marker-end', 'url(#biggerArrow)')
-      .style('stroke', '#333')
-      .style('stroke-width', 2);
 
     if (trimmed) {
       svg.append('rect')
