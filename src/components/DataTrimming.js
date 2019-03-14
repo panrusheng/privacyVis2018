@@ -119,7 +119,7 @@ export default class DistTrimming extends React.Component {
     let binMax = 10;
     let rows = [];
 
-    let lenArr = cateAttrs.map(({ groups }) => groups.length).filter(l => l <= binMax);
+    let lenArr = cateAttrs.map(({ data }) => data.length).filter(l => l <= binMax);
     lenArr.sort((a, b) => a - b);
     let temp = [];
     let cur = 0;
@@ -142,8 +142,8 @@ export default class DistTrimming extends React.Component {
       let max = -1;
       let t = -1;
       for (let i = 0; i < rows.length; ++i) {
-        if (rows[i].total + attr.groups.length <= binMax && binMax - rows[i].total - attr.groups.length > max) {
-          max = binMax - rows[i].total - attr.groups.length;
+        if (rows[i].total + attr.data.length <= binMax && binMax - rows[i].total - attr.data.length > max) {
+          max = binMax - rows[i].total - attr.data.length;
           t = i;
         } 
       }
@@ -152,12 +152,12 @@ export default class DistTrimming extends React.Component {
         let emptyRow = rows.findIndex(r => r.total === 0);
         if (emptyRow >= 0) {
           rows[emptyRow].attrs.push(attr);
-          rows[emptyRow].total = attr.groups.length;
+          rows[emptyRow].total = attr.data.length;
         }
-        else rows.push({ attrs: [attr], total: attr.groups.length });
+        else rows.push({ attrs: [attr], total: attr.data.length });
       } else {
         rows[t].attrs.push(attr);
-        rows[t].total += attr.groups.length;
+        rows[t].total += attr.data.length;
       }
     })
 
