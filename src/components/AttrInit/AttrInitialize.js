@@ -186,7 +186,22 @@ export default class AttrInitialize extends React.Component {
     const binTotal = cateAttrs.reduce((p, v) => p + v.groups.length, 0);
     let rows = [];
 
-    for (let i =0 ; i < Math.ceil(binTotal / binMax); ++i) {
+    let lenArr = cateAttrs.map(({ groups }) => groups.length).filter(l => l <= binMax);
+    lenArr.sort((a, b) => a - b);
+    let temp = [];
+    let cur = 0;
+    for (let i = 0; i < lenArr.length; ++i) {
+      if (cur > temp.length - 1) temp.push(0);
+
+      if (temp[cur] + lenArr[i] <= binMax) {
+        temp[cur] += lenArr[i];
+      } else {
+        temp.push(0);
+        temp[++cur] = lenArr[i];
+      }
+    }
+    
+    for (let i =0 ; i < temp.length; ++i) {
       rows.push({ total: 0, attrs: [] });
     }
   
