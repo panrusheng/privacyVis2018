@@ -37,12 +37,7 @@ export default class Attribute extends React.Component {
       .attr('class', 'lodDisable');
   }
   forceDirected(n, l) {
-    let links = [];
-    for (let i = 0; i < l.length; i++) {
-      let ll = toJS(l[i]);
-      ll.value = ll.value - ll.cpt[1];
-      links.push(ll);
-    }
+    const links = l;
     const nodes = n;
     let simulation = d3
       .forceSimulation(nodes)
@@ -181,9 +176,9 @@ export default class Attribute extends React.Component {
   render() {
     // this.props.store.getGBN();
     let data = toJS(this.props.store.GBN); // deep copy
-    let canvasA = { ww: 940, hh: 800 };
-    let canvasB = { ww: 940, hh: 60 };
-    const filterRange = [0, d3.max(toJS(data.links), d => Math.abs(d.value - d.cpt[1]))];
+    let canvasA = { ww: 840, hh: 860 };
+    let canvasB = { ww: 100, hh: 860 };
+    const filterRange = [0, d3.max(toJS(data.links), d => Math.abs(d.value))];
     let layout = this.forceDirected(data.nodes, data.links);
     this.props.store.setGraphLayout(this.mergeGraph(layout, data.nodes, data.links));
     if (this.state.mergeAttribute) {
@@ -212,32 +207,34 @@ export default class Attribute extends React.Component {
             />
           </div>
         </div>
-        <div className="attr-network">
-          <svg width={canvasA.ww} height={canvasA.hh}>
-            <AttrNetwork
-              data={layout}
-              canvas={canvasA}
-              filter={this.state.filterValue}
-              nullList={data.nullNodes}
-              eventColorList={this.props.store.eventColorList}
-              change={this.changeState}
-            />
-          </svg>
-          {(data.nullNodes.length)?(<div className="irr-events">
-            <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
-            <div className="irr-li">
-              { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }
-            </div>
-          </div>):(<div />)}
-        </div>
-        <div className="correlation-chart">
-          <svg width={canvasB.ww} height={canvasB.hh}>
-            <CoCircle
-              coData={this.props.store.sensitiveCorrelation}
-              eventName={this.state.selectEvent}
-              canvas={canvasB}
-            />
-          </svg>
+        <div className="attr-svg">
+          <div className="attr-network">
+            <svg width={canvasA.ww} height={canvasA.hh}>
+              <AttrNetwork
+                data={layout}
+                canvas={canvasA}
+                filter={this.state.filterValue}
+                nullList={data.nullNodes}
+                eventColorList={this.props.store.eventColorList}
+                change={this.changeState}
+              />
+            </svg>
+            {(data.nullNodes.length)?(<div className="irr-events">
+              <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
+              <div className="irr-li">
+                { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }
+              </div>
+            </div>):(<div />)}
+          </div>
+          <div className="correlation-chart">
+            <svg width={canvasB.ww} height={canvasB.hh}>
+              <CoCircle
+                coData={this.props.store.sensitiveCorrelation}
+                eventName={this.state.selectEvent}
+                canvas={canvasB}
+              />
+            </svg>
+          </div>
         </div>
         <div className="gbn-legend">
               <div className='gbn-legend-unit'>
