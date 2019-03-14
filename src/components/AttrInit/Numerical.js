@@ -97,7 +97,7 @@ export default class Numerical extends React.Component {
       let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
       backLines.append('line')
         .attr('x1', 0)
-        .attr('x2', width)
+        .attr('x2', chartWidth)
         .attr('y1', y)
         .attr('y2', y)
         .style('stroke', '#ececec')
@@ -169,7 +169,7 @@ export default class Numerical extends React.Component {
       .on('mouseover', (d, i) => {
         const x = d3.event.x + 15,
           y = d3.event.y - 35;
-        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + data[i].label + '): ' + d)
+        d3.select('.tooltip').html(chartThis.props.attr.attrName + '(' + data[i].label.toFixed(2) + '): ' + d)
           .style('left', (x) + 'px')
           .style('display', 'block')
           .style('top', (y) + 'px');
@@ -217,6 +217,12 @@ export default class Numerical extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
+    svg.append('text')
+      .attr('x', chartWidth + marginAxis)
+      .attr('y', height + 30)
+      .style('text-anchor', 'end')
+      .text('Value');
+
     svg.append('line')
       .attr('x1', 0)
       .attr('x2', 0)
@@ -225,6 +231,11 @@ export default class Numerical extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
+    svg.append('text')
+      .attr('x', 0)
+      .attr('y', -5)
+      .style('text-anchor', 'middle')
+      .text('Amount');
 
     // add break points to group attributes
     const chartThis = this;
@@ -235,7 +246,7 @@ export default class Numerical extends React.Component {
       .data(breakPoints)
       .enter()
       .append('line')
-      .attr('y1', 0)
+      .attr('y1', 5)
       .attr('y2', height)
       .attr('x1', d => ((d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1)) + 1)
       .attr('x2', d => ((d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1)) + 1)
@@ -271,11 +282,11 @@ export default class Numerical extends React.Component {
       .data(breakPoints)
       .enter()
       .append('text')
-      .attr('y', () => 6)
+      .attr('y', () => 11)
       .attr('x', d => {
-        return (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 8;
+        return (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 10;
       })
-      .text(d => (d).toFixed(2))
+      .text(d => (d -parseInt(d) === 0) ? d : (d).toFixed(2))
       .style('text-anchor', 'start')
       .style('fill', '#333');
 
@@ -286,7 +297,7 @@ export default class Numerical extends React.Component {
       .enter()
       .append('circle')
       .attr('r', () => 5)
-      .attr('cy', 0)
+      .attr('cy', 5)
       .attr('cx', d => (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 2)
       .attr('stroke', '#333')
       .attr('fill', '#fff')

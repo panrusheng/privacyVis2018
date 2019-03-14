@@ -104,7 +104,12 @@ export default class Categorical extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
-      svg.append('line')
+    svg.append('text')
+      .attr('x', chartWidth + marginAxis)
+      .attr('y', height + 30)
+      .style('text-anchor', 'end')
+      .text('Category');
+    svg.append('line')
       .attr('x1', 0)
       .attr('x2', 0)
       .attr('y1', height)
@@ -112,6 +117,11 @@ export default class Categorical extends React.Component {
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
+    svg.append('text')
+      .attr('x', 0)
+      .attr('y', -5)
+      .style('text-anchor', 'middle')
+      .text('Amount');
 
     const svgText = svg
       .append('g')

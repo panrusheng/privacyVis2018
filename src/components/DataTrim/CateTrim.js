@@ -170,6 +170,16 @@ export default class CateTrim extends React.Component {
       .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
       .style('text-anchor', 'middle')
       .text(d => (d.triV === d.oriV) ? "" : d.triV);
+    svg.append('text')
+      .attr('x', 0)
+      .attr('y', -5)
+      .style('text-anchor', 'middle')
+      .text('Amount');
+    svg.append('text')
+      .attr('x', chartWidth + marginAxis)
+      .attr('y', height + 30)
+      .style('text-anchor', 'end')
+      .text('Category');
 
     if (trimmed) {
       svg.append('rect')
