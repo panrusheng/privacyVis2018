@@ -151,7 +151,7 @@ class AppStore {
         if (attr.type === 'numerical') {
           let range = attr.range
           let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
-          attr.breakPoints = attr.splitPoints;
+          attr.breakPoints = attr.splitPoints.map(p => p + min);
           attr.data = attr.list.map((a, i) => {return {label: parseFloat((min + delta * i).toFixed(2)), value: a};})
         } else {
           attr.groups = [];
@@ -438,7 +438,9 @@ class AppStore {
       e.attrName = attr.attrName;
       if (attr.type === 'numerical') {
         const labels = attr.data.map(item => item.label);
+        const [min] = attr.range;
         e.splitPoints = toJS(attr.breakPoints);
+        e.splitPoints.forEach((a, idx) => e.splitPoints[idx] -= min);
         e.splitPoints.sort((a, b) => a - b);
       } else {
         e.groups = attr.groups.map(g => ({
@@ -651,7 +653,7 @@ class AppStore {
         if (attr.type === 'numerical') {
           let range = attr.range
           let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
-          attr.breakPoints = attr.splitPoints;
+          attr.breakPoints = attr.splitPoints.map(p => p + min);
           attr.data = attr.list.map((a, i) => {
             return {
               label: min + delta * i,
@@ -749,7 +751,7 @@ class AppStore {
       eventColorList[attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
       'rgba(' + this.nonSenColor.join(',') + ',' + (attr.utility / 1.3 + 0.1) + ')';
       if (attr.type === 'numerical') {
-        let [labelMin, labelMax] = d3.extent(attr.data.map(({ label }) => label));
+        let [labelMin, labelMax] = attr.range;
         let fixedSize;
         if (decimalCntMap.has(attrName)) fixedSize = decimalCntMap.get(attrName);
         else {
@@ -766,11 +768,10 @@ class AppStore {
           else min = breakPoints[i - 1];
           if (i === breakPoints.length) max = labelMax;
           else max = breakPoints[i];
-          min = (min - parseInt(min) === 0) ? min : min.toFixed(2);
-          max = (max - parseInt(max) === 0) ? max : max.toFixed(2);
+          min = (min - parseInt(min) === 0) ? min : parseFloat(min.toFixed(2));
+          max = (max - parseInt(max) === 0) ? max : parseFloat(max.toFixed(2));
 
           let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + min + '~' + max + ']';
-
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;
           eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count, attrName };
