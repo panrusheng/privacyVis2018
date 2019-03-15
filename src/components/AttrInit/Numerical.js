@@ -252,29 +252,7 @@ export default class Numerical extends React.Component {
       .attr('x2', d => ((d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1)) + 1)
       .style('stroke', '#333')
       .style('stroke-dasharray', '10 5')
-      .attr('class', 'breakpoint')
-      .on('click', (d, i) => {
-        d3.event.stopPropagation();
-        this.props.removeBreakPoint &&
-          this.props.removeBreakPoint(this.props.attr.attrName, i);
-      })
       .attr('class', 'break-point')
-      .call(
-        d3
-          .drag()
-          .on('drag', function (d, i) {
-            const [x] = d3.mouse(dom);
-            let value = (x / chartWidth) * lDiff + labelMin;
-            if (value < 0) value = 0;
-            if (value > 1) value = 1;
-
-            chartThis.props.updateBreakPoint(
-              chartThis.props.attr.attrName,
-              i,
-              value
-            );
-          })
-      );
 
     svg
       .append('g')
@@ -304,6 +282,13 @@ export default class Numerical extends React.Component {
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
       .on('click', (d, i) => {
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
+        this.props.removeBreakPoint &&
+          this.props.removeBreakPoint(this.props.attr.attrName, i);
+      })
+      .on('contextmenu', (d, i) => {
+        d3.event.preventDefault();
         d3.event.stopPropagation();
         this.props.removeBreakPoint &&
           this.props.removeBreakPoint(this.props.attr.attrName, i);
@@ -313,7 +298,7 @@ export default class Numerical extends React.Component {
           .drag()
           .on('drag', function (d, i) {
             const [x, y] = d3.mouse(dom);
-            let value = (x / (chartWidth)) * lDiff + labelMin;
+            let value = ((x - marginLeft) / (chartWidth)) * lDiff + labelMin;
 
             if (value < labelMin) value = labelMin;
             if (value > labelMax) value = labelMax;
@@ -333,27 +318,24 @@ export default class Numerical extends React.Component {
     const type = e.target.tagName;
     let point;
     const [ labelMin, labelMax ] = d3.extent(this.props.attr.data.map(({label}) => label));
+    const width = this.props.width;
+    const marginAxis = 15, marginLeft = 30;
+    const chartWidth = width - marginAxis - marginLeft;
 
     switch (type) {
       case 'path':
         {
           const {
-            width
-          } = this.props;
-          const {
             left
           } = e.target.getBoundingClientRect();
           const x = e.clientX - left;
-          point = (x / width) * (labelMax - labelMin) + labelMin;
+          point = (x / chartWidth) * (labelMax - labelMin) + labelMin;
           break;
         }
       case 'svg':
         {
-          const {
-            width
-          } = this.props;
-          const x = e.clientX - e.target.getBoundingClientRect().left;
-          point = (x / width) * (labelMax - labelMin) + labelMin;
+          const x = e.clientX - e.target.getBoundingClientRect().left - 30;
+          point = (x / chartWidth) * (labelMax - labelMin) + labelMin;
           break;
         }
       default:
