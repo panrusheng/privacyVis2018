@@ -209,42 +209,74 @@ export default class AttrNetwork extends Component {
       .attr('x2', -6)
       .attr('y1', d => d.y)
       .attr('y2', d => d.y)
-      .style('stroke', '#666')
+      .style('stroke', '#333')
       .style('stroke-width', 1);
 
     tickSvg.append('text')
       .attr('x', -10)
       .attr('y', d => d.y + 5)
       .style('text-anchor', "end")
-      .style('fill', '#666')
+      .style('fill', '#333')
       .text(d => d.v);
     
     let tickXSvg = g.append('g')
       .attr('class', 'cor-chart')
       .selectAll('ticks')
       .data(tickX)
-      .enter();
-    tickXSvg.append('text')
-      .attr('x', d => ScaleX(d))
-      .attr('y', height + 15)
-      .style('text-anchor', "middle")
-      .style('fill', '#666')
-      .text(d => d);
-
-    tickXSvg.append("line")
-      .attr('x1', d => ScaleX(d))
-      .attr('x2', d => ScaleX(d))
-      .attr('y1', height)
-      .attr('y2', height + 6)
-      .style('stroke', '#666')
-      .style('stroke-width', 1);
-    
-      tickXSvg.append("line")
+      .enter()
+      .append("line")
       .attr('x1', d => ScaleX(d))
       .attr('x2', d => ScaleX(d))
       .attr('y1', height)
       .attr('y2', 0)
       .style('stroke', '#ececec');
+
+    g.selectAll('sets')
+      .data(dataList)
+      .enter()
+      // .append('path')
+      .append('circle')
+      .attr('r', r)
+      .attr('class', 'eventSets cor-chart')
+      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
+      // .attr('d', d => d.d)
+      .style('fill', '#9e4a12')
+      .style('fill-opacity', 0.3)
+      .style('cursor', 'pointer')
+      .on('mouseover', d => {
+        d3.selectAll(".eventSets")
+          .style('stroke', dd => (d === dd) ? '#333' : 'none')
+        d3.selectAll('.eventNodes')
+          .style('stroke', dd => ifAinB(dd.id, d.list) ? '#333' : 'none');
+      })
+      .on('mouseout', () => {
+        d3.selectAll('.eventNodes').style('stroke', 'none');
+        d3.selectAll('.eventSets').style('stroke', 'none');
+      })
+      .on('click', d => {
+        d3.selectAll('.eventSets').attr('transform', dd => {
+          return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
+        });
+      });
+    let tickXSvg2 = g.append('g')
+      .attr('class', 'cor-chart')
+      .selectAll('ticks')
+      .data(tickX)
+      .enter()
+    tickXSvg2.append('text')
+      .attr('x', d => ScaleX(d))
+      .attr('y', height + 15)
+      .style('text-anchor', "middle")
+      .style('fill', '#333')
+      .text(d => d);
+
+    tickXSvg2.append("line")
+      .attr('x1', d => ScaleX(d))
+      .attr('x2', d => ScaleX(d))
+      .attr('y1', height)
+      .attr('y2', height + 6)
+      .style('stroke', '#333')
+      .style('stroke-width', 1);
 
 
     // g.append('rect')
@@ -349,33 +381,7 @@ export default class AttrNetwork extends Component {
       .style('text-anchor', 'middle')
       .style('fill', '#fff')
       .text('No-risk zone: ' + safeRange[0].toFixed(2) + '~' + safeRange[1].toFixed(2));
-    g.selectAll('sets')
-      .data(dataList)
-      .enter()
-      // .append('path')
-      .append('circle')
-      .attr('r', r)
-      .attr('class', 'eventSets cor-chart')
-      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-      // .attr('d', d => d.d)
-      .style('fill', '#9e4a12')
-      .style('fill-opacity', 0.3)
-      .style('cursor', 'pointer')
-      .on('mouseover', d => {
-        d3.selectAll(".eventSets")
-          .style('stroke', dd => (d === dd) ? '#333' : 'none')
-        d3.selectAll('.eventNodes')
-          .style('stroke', dd => ifAinB(dd.id, d.list) ? '#333' : 'none');
-      })
-      .on('mouseout', () => {
-        d3.selectAll('.eventNodes').style('stroke', 'none');
-        d3.selectAll('.eventSets').style('stroke', 'none');
-      })
-      .on('click', d => {
-        d3.selectAll('.eventSets').attr('transform', dd => {
-          return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
-        });
-      });
+    
 
     function ifAinB(a, b) {
       for (let i = 0; i < b.length; i++) {

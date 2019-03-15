@@ -114,9 +114,9 @@
         }
         .mod-report {
             display: flex;
-            height:260px;
+            height:280px;
             margin: 10px;
-            width:380px;
+            width:410px;
             border-radius: 5px;
             // border: solid 1px #ccc;
             background-color: #efefef;
@@ -126,6 +126,12 @@
                 text-align: center;
                 font-size: 20px;
                 margin: 10px;
+            }
+            .report-subtitle {
+                font-size: 15px;
+                margin-left: 20px;
+                line-height: 20px;
+                margin-bottom: 5px;
             }
             .report-h {
                 color: #1866bb;

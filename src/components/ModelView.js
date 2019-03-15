@@ -70,7 +70,16 @@ export default class ModelView extends React.Component {
       const max = Math.max(...bars);
       const scaleX = d3.scaleLinear().domain([0, max]).range([0, width - margin - marginLeft]).nice();
       const tickX = scaleX.ticks(5);
-
+      barChart.selectAll('tick')
+      .data(tickX)
+      .enter()
+      .append('line')
+      .attr('transform', d => 'translate(' + scaleX(d) + ', 0)')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', height - margin - marginTop)
+      .style('stroke', '#ececec');
       barChart.selectAll('bars')
         .data(bars)
         .enter()
@@ -79,7 +88,7 @@ export default class ModelView extends React.Component {
         .attr('y', (d, i) => i * hh + (i + 1) * gap)
         .attr('width', d => scaleX(d))
         .attr('height', hh)
-        .style('fill', (d, i) => (i === 0) ? '#d0e0f0' : (i % 2) ? '#dedede' : 'rgba(254,41,1, 0.3)')
+        .style('fill', (d, i) => (i === 0) ? '#d0e0f0' : (i % 2) ? '#dedede' : '#ffbfb3')
         .style('stroke', '#fff');
 
       if (d3.selectAll('#arrow-axis'.length == 0)) {
@@ -116,7 +125,7 @@ export default class ModelView extends React.Component {
         .attr('x2', width - margin - marginLeft + 10)
         .attr('y2', height - margin - marginTop)
         .attr('marker-end', 'url(#arrow-axis)')
-        .style('stroke', '#666')
+        .style('stroke', '#333')
         .style('stroke-width', 2);
       let tx = barChart.selectAll('tick')
         .data(tickX)
@@ -125,15 +134,20 @@ export default class ModelView extends React.Component {
         .attr('transform', d => 'translate(' + scaleX(d) + ',' + (height - marginTop - margin) + ')');
       tx.append('line')
         .attr('x1', 0)
-        .attr('y1', -3)
+        .attr('y1', 3)
         .attr('x2', 0)
         .attr('y2', 0)
-        .style('stroke', '#666')
+        .style('stroke', '#333')
         .style('stroke-width', 2);
       tx.append('text')
         .attr('y', 15)
         .style('text-anchor', 'middle')
         .text(d => d);
+      barChart.append('text')
+      .attr('x', width - margin - marginLeft + 10)
+      .attr('y', height - margin - marginTop + 30)
+      .style('text-anchor', 'end')
+      .text('Amount')
     }
   }
 
@@ -360,12 +374,18 @@ export default class ModelView extends React.Component {
                     </div>
                     <div className='mod-report'>
                       <span className='report-title'>Report</span>
+                      <p className='report-subtitle'>Original occurrence number of {d.eventName} is {d.frequency}.</p>
+                      <p className='report-subtitle'>In the original dataset:</p>
                       <ul className='report-list'>
-                        <li>Original occurrence number is {d.frequency.toFixed(2)}.</li>
-                        <li>The specificity of original dataset is <span className='report-h'>{(d.oriD.specificity || 0).toFixed(2)}.</span></li>
-                        <li>The specificity of processed dataset is <span className='report-h'>{(d.proD.specificity || 0).toFixed(2)}.</span></li>
-                        <li>The sensitivity of original datasets is <span className='report-h'>{(d.oriD.sensitivity || 0).toFixed(2)}.</span></li>
-                        <li>The sensitivity of processed datasets is <span className='report-h'>{(d.proD.sensitivity || 0).toFixed(2)}.</span></li>
+                        <li><span className='report-h'>{d.oriD.TP + d.oriD.FP}</span> are identified as positives, and <span className='report-h'>{d.oriD.TP}</span> are true positives.</li>
+                        <li>The specificity is <span className='report-h'>{(d.oriD.specificity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity of the original datasets is <span className='report-h'>{(d.oriD.sensitivity || 0).toFixed(2)}.</span></li>
+                      </ul>
+                      <p className='report-subtitle'>In the processed dataset:</p>
+                      <ul>
+                        <li><span className='report-h'>{d.proD.TP + d.proD.FP}</span> are identified as positives, and <span className='report-h'>{d.proD.TP}</span> are true positives.</li>
+                        <li>The specificity of the processed dataset is <span className='report-h'>{(d.proD.specificity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity of the processed datasets is <span className='report-h'>{(d.proD.sensitivity || 0).toFixed(2)}.</span></li>
                       </ul>
                     </div>
                   </div>
