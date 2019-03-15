@@ -379,13 +379,13 @@ export default class ModelView extends React.Component {
                       <ul className='report-list'>
                         <li><span className='report-h'>{d.oriD.TP + d.oriD.FP}</span> are identified as positives, and <span className='report-h'>{d.oriD.TP}</span> are true positives.</li>
                         <li>The specificity is <span className='report-h'>{(d.oriD.specificity || 0).toFixed(2)}.</span></li>
-                        <li>The sensitivity of the original datasets is <span className='report-h'>{(d.oriD.sensitivity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity is <span className='report-h'>{(d.oriD.sensitivity || 0).toFixed(2)}.</span></li>
                       </ul>
                       <p className='report-subtitle'>In the processed dataset:</p>
                       <ul>
                         <li><span className='report-h'>{d.proD.TP + d.proD.FP}</span> are identified as positives, and <span className='report-h'>{d.proD.TP}</span> are true positives.</li>
-                        <li>The specificity of the processed dataset is <span className='report-h'>{(d.proD.specificity || 0).toFixed(2)}.</span></li>
-                        <li>The sensitivity of the processed datasets is <span className='report-h'>{(d.proD.sensitivity || 0).toFixed(2)}.</span></li>
+                        <li>The specificity is <span className='report-h'>{(d.proD.specificity || 0).toFixed(2)}.</span></li>
+                        <li>The sensitivity is <span className='report-h'>{(d.proD.sensitivity || 0).toFixed(2)}.</span></li>
                       </ul>
                     </div>
                   </div>
