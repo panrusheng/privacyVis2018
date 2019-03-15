@@ -146,6 +146,48 @@ export default class TableView extends React.Component {
         .attr('y2', y)
         .style('stroke', '#ececec')
     })
+    let attrName = [];
+    let textGroup = svg.append('g')
+      .attr('transform', 'translate(' + margin + ', 0)');
+    for (let i = 0; i < columns.length; ++i) {
+      let xSum = 0;
+      let data = barList[i];
+      let textList = textGroup.append('g')
+        .attr('transform', `translate(${marginChart + i * width}, 5)`)
+        .selectAll('rect')
+        .data(data)
+        .enter();
+
+      let textLength = d3.max(data, d => d.eventName ? d.eventName.split(': ')[1].length : 0);
+      let rotate = (textLength * data.length > 15);
+
+      textList
+        .append('text')
+        .text(d => d.eventName && d.eventName.split(': ')[1])
+        .style("text-anchor", rotate ? "end" : "middle")
+        .attr('transform', d => {
+          let x = xSum * mWidth + 0.5 * d.width * mWidth, y = mHeight + 22;
+          xSum += d.width;
+          if (d.eventName && attrName.length === i) attrName.push(d.eventName.split(': ')[0]);
+          return rotate ? `translate(${x}, ${y}) rotate(-20)` : `translate(${x}, ${y + 5})`;
+        })
+      // .attr('x', d => {
+      //   let x = xSum * mWidth + 0.5 * d.width * mWidth;
+      //   xSum += d.width;
+      //   return x;
+      // })
+      // .attr('y', d => {
+      //   return mHeight + 30;
+      // })
+      // .attr("transform", (d) => {
+      //   let x = xSum * mWidth + 0.5 * d.width * mWidth;
+      //   xSum += d.width;
+      //   let y = d.height * mHeight + 30;
+
+      //   return `translate(${x}, ${y}) rotate(15)`
+      // })
+    }
+
     let recGroup = svg.append('g')
       .attr('transform', 'translate(' + margin + ', 0)');
 
@@ -157,6 +199,14 @@ export default class TableView extends React.Component {
         .selectAll('rect')
         .data(data)
         .enter();
+      
+      recGroup.append('text')
+        .attr('x', mWidth / 2)
+        .attr('y', -5)
+        .attr('transform', `translate(${marginChart + i * width}, 15)`)
+        .style('text-anchor', 'middle')
+        .style('font-size', 18)
+        .text(attrName[i]);
 
       rectList.append('rect')
         .style('fill', d => eventColorList[d.eventName])
@@ -194,8 +244,8 @@ export default class TableView extends React.Component {
           return mHeight;
         })
         .style('cursor', 'pointer')
-        .style('stroke-width', 3)
-        .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : 'none')
+        .style('stroke-width', d => d.eventName === this.state.topDelEvent ? 3 : 1)
+        .style('stroke', d => d.eventName === this.state.topDelEvent ? '#1866BB' : '#fff')
         .on('mouseover', d => {
           const x = d3.event.x + 15,
             y = d3.event.y - 35;
@@ -253,46 +303,6 @@ export default class TableView extends React.Component {
       .style('stroke', '#333')
       .style('stoke-width', 2);
     // .style('stroke-dasharray', '3 1');
-
-    let textGroup = svg.append('g')
-      .attr('transform', 'translate(' + margin + ', 0)');
-    for (let i = 0; i < columns.length; ++i) {
-      let xSum = 0;
-      let data = barList[i];
-      let textList = textGroup.append('g')
-        .attr('transform', `translate(${marginChart + i * width}, 5)`)
-        .selectAll('rect')
-        .data(data)
-        .enter();
-
-      let textLength = d3.max(data, d => d.eventName ? d.eventName.split(': ')[1].length : 0);
-      let rotate = (textLength * data.length > 15);
-
-      textList
-        .append('text')
-        .text(d => d.eventName && d.eventName.split(': ')[1])
-        .style("text-anchor", rotate ? "end" : "middle")
-        .attr('transform', d => {
-          let x = xSum * mWidth + 0.5 * d.width * mWidth, y = mHeight + 22;
-          xSum += d.width;
-          return rotate ? `translate(${x}, ${y}) rotate(-15)` : `translate(${x}, ${y + 5})`;
-        })
-      // .attr('x', d => {
-      //   let x = xSum * mWidth + 0.5 * d.width * mWidth;
-      //   xSum += d.width;
-      //   return x;
-      // })
-      // .attr('y', d => {
-      //   return mHeight + 30;
-      // })
-      // .attr("transform", (d) => {
-      //   let x = xSum * mWidth + 0.5 * d.width * mWidth;
-      //   xSum += d.width;
-      //   let y = d.height * mHeight + 30;
-
-      //   return `translate(${x}, ${y}) rotate(15)`
-      // })
-    }
   }
 
   removeSelectedRowSelection() {
