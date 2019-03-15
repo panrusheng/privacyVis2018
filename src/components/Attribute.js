@@ -177,7 +177,7 @@ export default class Attribute extends React.Component {
     // this.props.store.getGBN();
     let data = toJS(this.props.store.GBN); // deep copy
     let canvasA = { ww: 840, hh: 860 };
-    let canvasB = { ww: 240, hh: 860 };
+    let canvasB = { ww: 220, hh: 960 };
     const filterRange = [0, d3.max(toJS(data.links), d => Math.abs(d.value))];
     let layout = this.forceDirected(data.nodes, data.links);
     this.props.store.setGraphLayout(this.mergeGraph(layout, data.nodes, data.links));
@@ -187,47 +187,69 @@ export default class Attribute extends React.Component {
     return (
       <div className="attribute-view">
         <div className="title">Inference Simulation View</div>
-        <div className="attr-operations">
-          <div className="operation">
-            <span className="label">Edge filter:</span>
-            <Slider
-              min={filterRange[0]}
-              max={filterRange[1]}
-              step={0.01}
-              onChange={value => this.setState({ filterValue: value })}
-              value={this.state.filterValue}
-            />
-            <span style = {{marginRight: 250}}>{filterRange[1] ? filterRange[1].toFixed(2) : 1}</span>
-          </div>
-          <div className="operation">
-            <span className="label">Merge by attributes:</span>
-            <Switch
-              style = {{marginRight: 260}}
-              checked={this.state.mergeAttribute}
-              onChange={value => this.setState({ mergeAttribute: value })}
-            />
-          </div>
-        </div>
-        <div className="attr-svg">
-          <div className="attr-network">
-            <svg width={canvasA.ww} height={canvasA.hh}>
-              <AttrNetwork
-                data={layout}
-                canvas={canvasA}
-                filter={this.state.filterValue}
-                nullList={data.nullNodes}
-                eventColorList={this.props.store.eventColorList}
-                change={this.changeState}
-              />
-            </svg>
-            {(data.nullNodes.length)?(<div className="irr-events">
-              <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
-              <div className="irr-li">
-                { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }
+        <div className="attr-mainContent">
+          <div className="attr-left">
+            <div className="attr-operations">
+              <div className="operation">
+                <span className="label">Edge filter:</span>
+                <Slider
+                  min={filterRange[0]}
+                  max={filterRange[1]}
+                  step={0.01}
+                  onChange={value => this.setState({ filterValue: value })}
+                  value={this.state.filterValue}
+                />
+                <span style = {{marginRight: 250}}>{filterRange[1] ? filterRange[1].toFixed(2) : 1}</span>
               </div>
-            </div>):(<div />)}
+              <div className="operation" style = {{marginRight: 25}}>
+                <span className="label">Merge by attributes:</span>
+                <Switch
+                  checked={this.state.mergeAttribute}
+                  onChange={value => this.setState({ mergeAttribute: value })}
+                />
+              </div>
+            </div>
+            <div className="attr-network">
+              <svg width={canvasA.ww} height={canvasA.hh}>
+                <AttrNetwork
+                  data={layout}
+                  canvas={canvasA}
+                  filter={this.state.filterValue}
+                  nullList={data.nullNodes}
+                  eventColorList={this.props.store.eventColorList}
+                  change={this.changeState}
+                />
+              </svg>
+              {(data.nullNodes.length)?(<div className="irr-events">
+                <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
+                <div className="irr-li">
+                  { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }
+                </div>
+              </div>):(<div />)}
+            </div>
+          <div className="gbn-legend">
+            <div className='gbn-legend-unit'>
+              <div className="gbn-sen" />
+              <label>Sensitive</label>
+            </div>
+            <div className='gbn-legend-unit'>
+              <div className="gbn-non" />
+              <label>Utility</label>
+            </div>
+            <div className='gbn-legend-unit'>
+              <div className="gbn-edge-o" />
+              <label>|P(Target|Source) - P(Target)|</label>
+            </div>
+            <div className='gbn-legend-unit'>
+              <div className="gbn-edge-np" />
+                <div className="gbn-edge-np-label">
+                  <label>+</label>
+                  <label>-</label>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="correlation-chart">
+          <div className="attr-right">
             <svg width={canvasB.ww} height={canvasB.hh}>
               <CoCircle
                 coData={this.props.store.sensitiveCorrelation}
@@ -237,27 +259,6 @@ export default class Attribute extends React.Component {
             </svg>
           </div>
         </div>
-        <div className="gbn-legend">
-              <div className='gbn-legend-unit'>
-                <div className="gbn-sen" />
-                <label>Sensitive</label>
-              </div>
-              <div className='gbn-legend-unit'>
-                <div className="gbn-non" />
-                <label>Utility</label>
-              </div>
-              <div className='gbn-legend-unit'>
-                <div className="gbn-edge-o" />
-                <label>|P(Target|Source) - P(Target)|</label>
-              </div>
-              <div className='gbn-legend-unit'>
-                <div className="gbn-edge-np" />
-                <div className="gbn-edge-np-label">
-                  <label>+</label>
-                  <label>-</label>
-                </div>
-              </div>
-            </div>
       </div>
     );
   }

@@ -64,7 +64,7 @@ export default class AttrNetwork extends Component {
     let safeHeight = 40,
       safeY;
     const tickRange = d3.extent(data, d => d.eventLists.length);
-    let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 2, width - r - 2]);
+    let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 5, width - r - 5]);
     let tickX = [];
     for (let i = 1; i <= tickRange[1]; i++) {
       tickX.push(i);
@@ -235,9 +235,16 @@ export default class AttrNetwork extends Component {
       .attr('x1', d => ScaleX(d))
       .attr('x2', d => ScaleX(d))
       .attr('y1', height)
-      .attr('y2', height - 6)
+      .attr('y2', height + 6)
       .style('stroke', '#666')
       .style('stroke-width', 1);
+    
+      tickXSvg.append("line")
+      .attr('x1', d => ScaleX(d))
+      .attr('x2', d => ScaleX(d))
+      .attr('y1', height)
+      .attr('y2', 0)
+      .style('stroke', '#ececec');
 
 
     // g.append('rect')
@@ -316,7 +323,7 @@ export default class AttrNetwork extends Component {
 
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('y', height + 40)
+      .attr('y', height + 30)
       .attr('x', width + 15)
       .style('fill', '#333')
       .style('text-anchor', 'end')
@@ -345,10 +352,12 @@ export default class AttrNetwork extends Component {
     g.selectAll('sets')
       .data(dataList)
       .enter()
-      .append('path')
+      // .append('path')
+      .append('circle')
+      .attr('r', r)
       .attr('class', 'eventSets cor-chart')
       .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
-      .attr('d', d => d.d)
+      // .attr('d', d => d.d)
       .style('fill', '#9e4a12')
       .style('fill-opacity', 0.3)
       .style('cursor', 'pointer')
