@@ -152,7 +152,7 @@ class AppStore {
           let range = attr.range
           let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
           attr.breakPoints = attr.splitPoints;
-          attr.data = attr.list.map((a, i) => {return {label: min + delta * i, value: a};})
+          attr.data = attr.list.map((a, i) => {return {label: parseFloat((min + delta * i).toFixed(2)), value: a};})
         } else {
           attr.groups = [];
           attr.data.forEach(d => {
@@ -743,7 +743,6 @@ class AppStore {
 
     if (total <= 0) return;
 
-    let getR = (ratio, min, max) => parseFloat(((max - min) * ratio + min).toFixed(2))
 
     this.selectedAttributes.forEach(attr => {
       const { attrName } = attr;

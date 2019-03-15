@@ -326,7 +326,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       )}
                     </div>
-                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 30)}
+                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 10 * (row.length - 1) )}
                   </div>
                 )) }
               </div>
