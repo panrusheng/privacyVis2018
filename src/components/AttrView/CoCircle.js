@@ -53,10 +53,10 @@ export default class AttrNetwork extends Component {
     const riskLimit = this.props.store.riskLimit;
     let safeRange = [pro - riskLimit, pro + riskLimit];
     const marginY = 50,
-      marginX = 35,
+      marginX = 45,
       r = 10,
       height = hh - 2 * marginY - 20,
-      width = ww - marginX * 2;
+      width = ww - marginX * 1.5;
     let ScaleB, ScaleA;
     let ticks = [];
     let range = d3.extent(data, d => d.cor);
@@ -317,7 +317,7 @@ export default class AttrNetwork extends Component {
     g.append('text')
       .attr('class', 'cor-chart')
       .attr('y', height + 40)
-      .attr('x', width + marginX - 10)
+      .attr('x', width + 15)
       .style('fill', '#333')
       .style('text-anchor', 'end')
       .text('State number');

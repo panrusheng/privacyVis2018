@@ -176,8 +176,8 @@ export default class Attribute extends React.Component {
   render() {
     // this.props.store.getGBN();
     let data = toJS(this.props.store.GBN); // deep copy
-    let canvasA = { ww: 680, hh: 860 };
-    let canvasB = { ww: 250, hh: 860 };
+    let canvasA = { ww: 840, hh: 860 };
+    let canvasB = { ww: 240, hh: 860 };
     const filterRange = [0, d3.max(toJS(data.links), d => Math.abs(d.value))];
     let layout = this.forceDirected(data.nodes, data.links);
     this.props.store.setGraphLayout(this.mergeGraph(layout, data.nodes, data.links));
@@ -199,9 +199,10 @@ export default class Attribute extends React.Component {
             />
             <span style = {{marginRight: 250}}>{filterRange[1] ? filterRange[1].toFixed(2) : 1}</span>
           </div>
-          <div className="operation r5">
+          <div className="operation">
             <span className="label">Merge by attributes:</span>
             <Switch
+              style = {{marginRight: 260}}
               checked={this.state.mergeAttribute}
               onChange={value => this.setState({ mergeAttribute: value })}
             />

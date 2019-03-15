@@ -23,6 +23,9 @@
   .attr-network {
     position: relative;
     border-radius: 5px;
+    margin-right: 10px;
+    padding-right: 10px;
+    border-right: 1px dotted #dedede;
     .irr-events {
       position: absolute;
       right: 0;
@@ -82,7 +85,7 @@
   .gbn-legend {
     display: flex;
     height: 50px;
-    margin: 5px 100px 0px 100px;
+    margin: 5px 350px 0px 100px;
     padding: 13px;
     text-align: center;
     border: 2px #ddd dashed;
