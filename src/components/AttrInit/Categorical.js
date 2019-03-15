@@ -105,8 +105,8 @@ export default class Categorical extends React.Component {
       .style('stroke', '#333')
       .style('stroke-width', 2);
     svg.append('text')
-      .attr('x', chartWidth + marginAxis)
-      .attr('y', height + 30)
+      .attr('x', chartWidth + marginAxis + 10)
+      .attr('y', height + 35)
       .style('text-anchor', 'end')
       .text('Category');
     svg.append('line')

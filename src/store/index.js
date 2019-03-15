@@ -731,7 +731,7 @@ class AppStore {
   }
 
   @action
-  updateEventUtility(fromGBNNodes) {
+  updateEventUtility() {
     let eventUtilityList = {};
     let eventColorList = toJS(this.eventColorList);
     let decimalCntMap = new Map();

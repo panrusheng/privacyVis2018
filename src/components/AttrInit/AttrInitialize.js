@@ -65,9 +65,8 @@ export default class AttrInitialize extends React.Component {
     const dom = this.wrapper;
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
-    const { height: h, width: w } = dom.getBoundingClientRect();
     let height = 200;
-    let width = w - 40;
+    let width = 740;
 
     if (
       height === this.state.attrSize.height &&
@@ -327,7 +326,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       )}
                     </div>
-                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 20)}
+                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 30)}
                   </div>
                 )) }
               </div>

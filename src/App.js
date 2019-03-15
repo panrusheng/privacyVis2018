@@ -41,7 +41,7 @@ class App extends React.Component {
           }
         </div>
         <div className="row">
-          <div className="col">
+          <div className="col" style={{ maxWidth: systemStage === 0 ? 810 : undefined }}>
             { systemStage === 0 && <AttrInitialize /> }
             { systemStage === 1 && <TableView selGroup={this.props.store.selGroup} /> }
             { systemStage === 2 && <DataTrimming /> }
