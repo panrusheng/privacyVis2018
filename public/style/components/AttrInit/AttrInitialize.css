@@ -26,7 +26,8 @@
     top: 530px;
     left: 905px; }
   .init-content .attr-init {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     height: 960px;
     width: 100%; }
@@ -48,7 +49,6 @@
       overflow: visible; }
     .init-content .attr-init .chart {
       flex: 1;
-      margin: 0 10px;
       padding: 20px 0; }
       .init-content .attr-init .chart:first-child {
         margin-left: 0; }

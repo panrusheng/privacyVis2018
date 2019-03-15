@@ -181,7 +181,7 @@ export default class AttrInitialize extends React.Component {
   getCatePerRow() {
     const { selectedAttributes } = this.props.store;
     const cateAttrs = toJS(selectedAttributes).filter(({ type }) => type === 'categorical');
-    let binMax = 10;
+    let binMax = 8;
     let rows = [];
 
     let lenArr = cateAttrs.map(({ groups }) => groups.length).filter(l => l <= binMax);
