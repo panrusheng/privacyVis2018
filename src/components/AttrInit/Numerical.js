@@ -91,7 +91,7 @@ export default class Numerical extends React.Component {
       .attr('x2', 0)
       .attr('y2', 0);
 
-    let backLines = svg.append('g');
+    let backLines = svg.append('g').attr('class', 'bg-line')
       
     axis.selectAll('.tick').each(function() {
       let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
@@ -281,12 +281,10 @@ export default class Numerical extends React.Component {
       .attr('fill', '#fff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
-      .on('click', (d, i) => {
-        d3.event.preventDefault();
-        d3.event.stopPropagation();
-        this.props.removeBreakPoint &&
-          this.props.removeBreakPoint(this.props.attr.attrName, i);
-      })
+      // .on('click', (d, i) => {
+      //   this.props.removeBreakPoint &&
+      //     this.props.removeBreakPoint(this.props.attr.attrName, i);
+      // })
       .on('contextmenu', (d, i) => {
         d3.event.preventDefault();
         d3.event.stopPropagation();

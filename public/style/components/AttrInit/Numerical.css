@@ -1,6 +1,8 @@
 .numerical-view {
   text-align: center;
   /* Style the dots by assigning a fill and stroke */ }
+  .numerical-view .bg-line {
+    pointer-events: none; }
   .numerical-view svg {
     user-select: none;
     overflow: visible; }
