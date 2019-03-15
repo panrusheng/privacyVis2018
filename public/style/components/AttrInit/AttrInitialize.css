@@ -26,7 +26,8 @@
     top: 530px;
     left: 905px; }
   .init-content .attr-init {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     height: 960px;
     width: 100%; }
