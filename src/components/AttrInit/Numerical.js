@@ -268,7 +268,14 @@ export default class Numerical extends React.Component {
       .style('text-anchor', 'start')
       .style('fill', '#333')
       .on('click', (d, idx) => {
-
+        const { x, y } = d3.event.target.getBoundingClientRect();
+        this.props.setInput({
+          inputAttr: this.props.attr,
+          inputIndex: idx,
+          inputX: x,
+          inputY: y,
+          inputValue: d,
+        });
       })
 
     svg
@@ -297,6 +304,7 @@ export default class Numerical extends React.Component {
       .call(
         d3
           .drag()
+          .on('start', () => this.props.setInput({ inputAttr: null }))
           .on('drag', function (d, i) {
             const [x, y] = d3.mouse(dom);
             let value = ((x - marginLeft) / (chartWidth)) * lDiff + labelMin;
@@ -360,7 +368,8 @@ export default class Numerical extends React.Component {
         onClick={
           this.handleChartClick
         }
-      /> </div>
+      />
+      </div>
     );
   }
 }

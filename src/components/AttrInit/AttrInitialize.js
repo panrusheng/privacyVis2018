@@ -30,6 +30,7 @@ export default class AttrInitialize extends React.Component {
     this.demergeGroup = this.demergeGroup.bind(this);
     this.scrollLeft = this.scrollLeft.bind(this);
     this.scrollRight = this.scrollRight.bind(this);
+    this.hideInputNumber = this.hideInputNumber.bind(this);
   }
 
   state = {
@@ -42,7 +43,12 @@ export default class AttrInitialize extends React.Component {
     attrSize: {
       height: 0,
       width: 0
-    }
+    },
+    inputAttr: null,
+    inputIndex: -1,
+    inputX: 0,
+    inputY: 0,
+    inputValue: 0,
   };
 
   componentDidMount() {
@@ -51,6 +57,8 @@ export default class AttrInitialize extends React.Component {
     if (this.wrapper) {
       this.setSize();
     }
+
+    window.addEventListener('mousedown', this.hideInputNumber);
   }
 
   componentDidUpdate() {
@@ -59,6 +67,14 @@ export default class AttrInitialize extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setSize);
+    window.removeEventListener('mousedown', this.hideInputNumber);
+  }
+
+  hideInputNumber(e) {
+    if (!this.state.inputAttr || (this.numInputContainer && this.numInputContainer.contains(e.target)) || e.target.classList.contains('breakpoint-label')) return;
+
+    this.props.store.updateBreakPoint(this.state.inputAttr.attrName, this.state.inputIndex, this.state.inputValue, true);
+    this.setState({ inputAttr: null });
   }
 
   setSize() {
@@ -245,6 +261,7 @@ export default class AttrInitialize extends React.Component {
             eventUtilityList={this.props.store.eventUtilityList}
             eventColorList={this.props.store.eventColorList}
             {...attrSize}
+            setInput={(opt) => this.setState(opt)}
           />
         );
       }
@@ -353,6 +370,9 @@ export default class AttrInitialize extends React.Component {
             >
               <div />
             </ContextMenuTrigger>
+            {this.state.inputAttr && <div ref={dom => this.numInputContainer = dom} className="num-input" style={{ position: 'fixed', top: this.state.inputY, left: this.state.inputX }}>
+              <InputNumber size="small" onChange={v => this.setState({ inputValue: v })} value={this.state.inputValue} min={this.state.inputAttr.range[0]} max={this.state.inputAttr.range[1]} step={0.01} />
+            </div>}
           </div>
         </div>
       </div>

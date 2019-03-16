@@ -368,7 +368,7 @@ class AppStore {
 
     if (index < 0) return;
     const attr = toJS(this.selectedAttributes[index]);
-    attr.breakPoints = [...new Set([...attr.breakPoints, parseFloat(point)])];
+    attr.breakPoints = [...new Set([...attr.breakPoints, parseFloat(point.toFixed(2))])];
     this.selectedAttributes.splice(index, 1, attr);
     this.editGBN();
     this.updateEventUtility();
@@ -388,18 +388,18 @@ class AppStore {
   }
 
   @action
-  updateBreakPoint(attrName, pIndex, value) {
+  updateBreakPoint(attrName, pIndex, value, editGBN) {
     const index = this.selectedAttributes.findIndex(
       item => item.attrName === attrName
     );
     if (index < 0) return;
 
     const attr =toJS(this.selectedAttributes[index]);
-    attr.breakPoints.splice(pIndex, 1, parseFloat(value));
+    attr.breakPoints.splice(pIndex, 1, parseFloat(value.toFixed(2)));
     this.selectedAttributes.splice(index, 1, attr);
 
     this.updateEventUtility();
-    // this.editGBN();
+    editGBN && this.editGBN();
   }
 
   @action
