@@ -78,7 +78,7 @@ export default class TableView extends React.Component {
     this.drawBarChart(adjusted);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     if (this.props.store.dataGroups.length !== this.state.foldState.length) {
       let foldState = new Array(this.props.store.dataGroups.length).fill(true);
       if (foldState.length > 0) foldState[0] = false;
@@ -89,6 +89,15 @@ export default class TableView extends React.Component {
     this.removeDupSelection();
     // this.removeSelectedRowSelection();
     this.drawBarChart(adjusted);
+
+    if (this.state.mode !== 1 && this.state.topDelEvent && this.state.topDelEvent !== prevState.topDelEvent) {
+      this.tableBody.scrollTop = 0;
+      const { rows } = this.cachedData;
+      let foldState = new Array(this.props.store.dataGroups.length).fill(true);
+      foldState[rows[0].id] = false;
+      this.setState({ foldState });
+      this.props.store.recNum = rows[0].id;
+    }
   }
 
   componentWillUnmount() {
@@ -258,7 +267,10 @@ export default class TableView extends React.Component {
           d3.select('.tooltip').style('display', 'none')
         })
         .on('click', (d) => {
-          this.setState({ topDelEvent: d.eventName, orderCol: undefined });
+          this.setState({
+            topDelEvent: d.eventName,
+            orderCol: undefined
+          });
         })
 
       rectList.append('line')
@@ -870,6 +882,22 @@ export default class TableView extends React.Component {
     return barList;
   }
 
+  handleHeaderMouseOver(attrName, e) {
+    let attr = this.props.store.selectedAttributes.find(a => a.attrName === attrName);
+    if (attr) {  
+      d3.select('.tooltip').html(attr.description)
+        .style('left', (e.clientX + 15) + 'px')
+        .style('display', 'block')
+        .style('top', (e.clientY - 35) + 'px');
+    } else {
+      d3.select('.tooltip').style('display', 'none');
+    }
+  }
+
+  handleHeaderMouseLeave() {
+    d3.select('.tooltip').style('display', 'none');
+  }
+
   renderEmpty() {
     return <div>No Attribute</div>;
   }
@@ -905,7 +933,7 @@ export default class TableView extends React.Component {
       >
         <div className="table-row">
           {columns.map(col => (
-            <div className="table-cell" key={"c" + col} onClick={() => this.setOrder(col)}>
+            <div onMouseOver={e => this.handleHeaderMouseOver(col, e)} onMouseLeave={this.handleHeaderMouseLeave}  className="table-cell" key={"c" + col} onClick={() => this.setOrder(col)}>
               {col}
               {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
             </div>

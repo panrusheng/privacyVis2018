@@ -147,6 +147,9 @@ class AppStore {
         attr.sensitive = (this.selectedAttributes.find(({
           attrName
         }) => attrName === attr.attrName) || {}).sensitive;
+        attr.description =  (this.selectedAttributes.find(({
+          attrName
+        }) => attrName === attr.attrName) || {}).description;
 
         if (attr.type === 'numerical') {
           let range = attr.range
@@ -653,7 +656,6 @@ class AppStore {
         if (attr.type === 'numerical') {
           let range = attr.range
           let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
-          attr.breakPoints = attr.splitPoints.map(p => p + min);
           attr.data = attr.list.map((a, i) => {
             return {
               label: min + delta * i,

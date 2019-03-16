@@ -184,6 +184,22 @@ export default class DistTrimming extends React.Component {
     }
   }
 
+  handleTitleMouseOver(e, attrName) {
+    let attr = this.props.store.selectedAttributes.find(a => a.attrName === attrName);
+    if (attr) {  
+      d3.select('.tooltip').html(attr.description)
+        .style('left', (e.clientX + 15) + 'px')
+        .style('display', 'block')
+        .style('top', (e.clientY - 35) + 'px');
+    } else {
+      d3.select('.tooltip').style('display', 'none');
+    }
+  }
+
+  handleTitleMouseLeave() {
+    d3.select('.tooltip').style('display', 'none');
+  }
+
   render() {
     const trimList = toJS(this.props.store.trimList);
     // const flag = (trimList || []).length * (this.state.attrSize.width + 35) > 940;
@@ -198,7 +214,7 @@ export default class DistTrimming extends React.Component {
             {trimList.filter(attr => attr.type === 'numerical').map(attr => (
               <div className="chart" key={'trim-' + attr.attrName}>
                 <div className="attr-info">
-                  <div className="title" >{attr.attrName}</div>
+                  <div className="title" onMouseLeave={this.handleTitleMouseLeave} onMouseOver={e => this.handleTitleMouseOver(e, attr.attrName)} >{attr.attrName}</div>
                   <div className="form-block">
                     <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>
                   </div>
@@ -211,7 +227,7 @@ export default class DistTrimming extends React.Component {
                 { row.map((attr) => (
                   <div className="chart" key={'trim-' + attr.attrName}>
                     <div className="attr-info" style={{marginBottom: 20}}>
-                      <div className="title">{attr.attrName}</div>
+                      <div className="title" onMouseLeave={this.handleTitleMouseLeave} onMouseOver={e => this.handleTitleMouseOver(e, attr.attrName)} >{attr.attrName}</div>
                       <div className="form-block">
                         <Button onClick={() => this.trim(attr.attrName) }>{attr.trimmed? "Cancel" : "Trim"}</Button>
                       </div>

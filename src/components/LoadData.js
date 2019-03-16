@@ -69,7 +69,7 @@ export default class LoadData extends React.Component {
         
         li.forEach((attr, index) => {
             if (this.state.currentSelected[index] === 0) return;
-            attributes.push({ attrName: attr.attrName, sensitive: this.state.currentSelected[index] === 2 });
+            attributes.push({description: attr.description, attrName: attr.attrName, sensitive: this.state.currentSelected[index] === 2 });
         });
 
         this.props.store.selectedAttributes = attributes;
