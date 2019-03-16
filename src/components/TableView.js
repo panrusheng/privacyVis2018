@@ -215,7 +215,22 @@ export default class TableView extends React.Component {
         .attr('transform', `translate(${marginChart + i * width}, 20)`)
         .style('text-anchor', 'middle')
         .style('font-size', 18)
-        .text(attrName[i]);
+        .text(attrName[i])
+        .on('mouseover', () => {
+          let attr = this.props.store.selectedAttributes.find(a => a.attrName === attrName[i]);
+          if (attr) {  
+            d3.select('.tooltip').html(attr.description)
+              .style('left', (d3.event.x + 15) + 'px')
+              .style('display', 'block')
+              .style('top', (d3.event.y - 35) + 'px');
+          } else {
+            d3.select('.tooltip').style('display', 'none');
+          }
+        })
+        .on('mouseleave', () => {
+          d3.select('.tooltip').style('display', 'none');
+        })
+        .style('cursor', 'default');
 
       rectList.append('rect')
         .style('fill', d => eventColorList[d.eventName])
@@ -933,7 +948,7 @@ export default class TableView extends React.Component {
       >
         <div className="table-row">
           {columns.map(col => (
-            <div onMouseOver={e => this.handleHeaderMouseOver(col, e)} onMouseLeave={this.handleHeaderMouseLeave}  className="table-cell" key={"c" + col} onClick={() => this.setOrder(col)}>
+            <div className="table-cell" key={"c" + col} onClick={() => this.setOrder(col)}>
               {col}
               {orderCol === col && (<span><img src={order === DESC ? DescIcon : AscIcon} /></span>)}
             </div>
