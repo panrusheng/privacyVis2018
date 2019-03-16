@@ -122,7 +122,8 @@ export default class Categorical extends React.Component {
       .attr('y', -5)
       .style('text-anchor', 'middle')
       .text('Amount');
-
+    let textLength = d3.max(data, d => d.name.length);
+    let rotate = (textLength > rectWidth / 7);
     const svgText = svg
       .append('g')
       .selectAll('text')
@@ -132,9 +133,13 @@ export default class Categorical extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('y', height + 5)
-      .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
-      .style('text-anchor', 'middle')
+      .attr('transform', (d, i) => {
+        let x = i * rectWidth + rectWidth / 2, y = height + 5;
+        return rotate ? `translate(${x}, ${y}) rotate(-20)` : `translate(${x}, ${y + 5})`;
+      })
+      // .attr('y', height + 5)
+      // .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
+      .style('text-anchor', rotate ? 'end' : 'middle')
       .text(d => d.name);
     svgText.append('text')
       .attr('class', 'label')

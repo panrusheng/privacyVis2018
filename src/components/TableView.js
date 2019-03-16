@@ -116,7 +116,7 @@ export default class TableView extends React.Component {
     const height = 200;
     let marginChart = width / 10 < 5 ? 5 : width / 10;
     let mWidth = width - marginChart * 2;
-    let mHeight = height - 50;
+    let mHeight = height - 60;
 
     let svg = d3.select('#header-barchart');
     svg.html('');
@@ -140,7 +140,7 @@ export default class TableView extends React.Component {
         d3.axisLeft(
           d3.scaleLinear()
             .domain([0, 1])
-            .range([mHeight + 15, 15])
+            .range([mHeight + 20, 20])
         )
           .ticks(5)
           .tickFormat(d => d * 100 + '%')
@@ -175,7 +175,7 @@ export default class TableView extends React.Component {
         .text(d => d.eventName && d.eventName.split(': ')[1])
         .style("text-anchor", rotate ? "end" : "middle")
         .attr('transform', d => {
-          let x = xSum * mWidth + 0.5 * d.width * mWidth, y = mHeight + 22;
+          let x = xSum * mWidth + 0.5 * d.width * mWidth, y = mHeight + 27;
           xSum += d.width;
           if (d.eventName && attrName.length === i) attrName.push(d.eventName.split(': ')[0]);
           return rotate ? `translate(${x}, ${y}) rotate(-20)` : `translate(${x}, ${y + 5})`;
@@ -204,7 +204,7 @@ export default class TableView extends React.Component {
       let data = barList[i];
       let xSum = 0;
       let rectList = recGroup.append('g')
-        .attr('transform', `translate(${marginChart + i * width}, 15)`)
+        .attr('transform', `translate(${marginChart + i * width}, 20)`)
         .selectAll('rect')
         .data(data)
         .enter();
@@ -212,7 +212,7 @@ export default class TableView extends React.Component {
       recGroup.append('text')
         .attr('x', mWidth / 2)
         .attr('y', -5)
-        .attr('transform', `translate(${marginChart + i * width}, 15)`)
+        .attr('transform', `translate(${marginChart + i * width}, 20)`)
         .style('text-anchor', 'middle')
         .style('font-size', 18)
         .text(attrName[i]);
@@ -301,7 +301,7 @@ export default class TableView extends React.Component {
       .attr('x1', margin)
       .attr('x2', margin)
       .attr('y2', 0)
-      .attr('y1', mHeight + 15)
+      .attr('y1', mHeight + 20)
       .attr('marker-end', 'url(#biggerArrow)')
       .style('stroke', '#333')
       .style('stroke-width', 2);
@@ -309,9 +309,9 @@ export default class TableView extends React.Component {
     svg
       .append('line')
       .attr('x1', margin)
-      .attr('y1', mHeight + 15)
+      .attr('y1', mHeight + 20)
       .attr('x2', widthSvg)
-      .attr('y2', mHeight + 15)
+      .attr('y2', mHeight + 20)
       .style('stroke', '#333')
       .style('stoke-width', 2);
     // .style('stroke-dasharray', '3 1');

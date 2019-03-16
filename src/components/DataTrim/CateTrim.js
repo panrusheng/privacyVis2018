@@ -141,6 +141,9 @@ export default class CateTrim extends React.Component {
       .style('stroke', '#333')
       .style('stroke-width', 2);
 
+    let textLength = d3.max(data, d => d.category.length);
+    let rotate = (textLength > rectWidth / 7);
+
     let textSvg = svg
       .append('g')
       .selectAll('text')
@@ -150,9 +153,13 @@ export default class CateTrim extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('y', (d, i) => height + 5)
-      .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
-      .style('text-anchor', 'middle')
+      .attr('transform', (d, i) => {
+        let x = i * rectWidth + rectWidth / 2, y = height + 5;
+        return rotate ? `translate(${x}, ${y}) rotate(-20)` : `translate(${x}, ${y + 5})`;
+      })
+      // .attr('y', (d, i) => height + 5)
+      // .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
+      .style('text-anchor', rotate ? 'end' : 'middle')
       .text(d => d.category);
     textSvg.append('text')
       .attr('class', 'label')
@@ -177,7 +184,7 @@ export default class CateTrim extends React.Component {
       .text('Amount');
     svg.append('text')
       .attr('x', chartWidth + marginAxis)
-      .attr('y', height + 30)
+      .attr('y', height + 40)
       .style('text-anchor', 'end')
       .text('Category');
 

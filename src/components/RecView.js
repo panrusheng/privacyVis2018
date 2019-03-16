@@ -247,9 +247,9 @@ export default class RecView extends React.Component {
                 ))}
               </div>
               <div className='rec-selection'>
-                <RadioGroup onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
+                <RadioGroup className='rec-selection' onChange={e => this.setState({ select: e.target.value })} value={this.state.select} id="solution-selected">
                 {deleteList && deleteList.map((d, i) => (
-                  <Radio value={i} key={'radio' + i}>{"Utility loss: " + d.uL.toFixed(2)}</Radio>
+                  <Radio value={i} key={'radio' + i} style={{width: ww, paddingLeft: 45}}>{"Utility loss: " + d.uL.toFixed(2)}</Radio>
                 ))}
                 </RadioGroup>
               </div>
