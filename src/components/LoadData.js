@@ -24,13 +24,13 @@ const SearchAlgorithm = [ { name: 'K2', id: 'K2' },
 @observer
 export default class LoadData extends React.Component {
     state = {
-        currentDataset: 'user',
+        currentDataset: 'graduate',
         attrDescList: [],
         currentSelected: [],
         searchAlgorithm: 0,
     }
 
-    datasets = ['user', 'student', 'home'];
+    datasets = ['graduate', 'student', 'home'];
 
     constructor(props) {
         super(props);

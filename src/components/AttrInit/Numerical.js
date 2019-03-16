@@ -266,7 +266,10 @@ export default class Numerical extends React.Component {
       })
       .text(d => (d -parseInt(d) === 0) ? d : (d).toFixed(2))
       .style('text-anchor', 'start')
-      .style('fill', '#333');
+      .style('fill', '#333')
+      .on('click', (d, idx) => {
+
+      })
 
     svg
       .append('g')
