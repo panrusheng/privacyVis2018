@@ -8,6 +8,8 @@
 .init-content {
   height: 960px;
   width: 100%; }
+  .init-content .react-contextmenu {
+    z-index: 99; }
   .init-content .init-left {
     text-align: center;
     width: 50px;

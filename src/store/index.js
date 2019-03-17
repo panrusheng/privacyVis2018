@@ -771,17 +771,17 @@ class AppStore {
           else min = breakPoints[i - 1];
           if (i === breakPoints.length) max = labelMax;
           else max = breakPoints[i];
-          min = (min - parseInt(min) === 0) ? min : parseFloat(min.toFixed(2));
-          max = (max - parseInt(max) === 0) ? max : parseFloat(max.toFixed(2));
 
-          let eventName = attrName + ': ' + (min === labelMin ? '[' : '(') + min + '~' + max + ']';
+          let fixedMin = (min - parseInt(min) === 0) ? min : min.toFixed(2);
+          let fixedMax = (max - parseInt(max) === 0) ? max : max.toFixed(2);
+
+          let eventName = attrName + ': ' + (i === 0 ? '[' : '(') + fixedMin + '~' + fixedMax + ']';
           let count = this.getCount(attr.data, min, max, i === 0);
           let utility = attr.utility * (total - count) / total;
           eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count, attrName };
           eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
-
       } else {
         attr.groups.forEach(({ name, value }) => {
           let id = attrName + ": " + name;
@@ -797,6 +797,7 @@ class AppStore {
         })
       }
     });
+
 
     this.eventUtilityList = eventUtilityList;
     this.eventColorList = eventColorList;
