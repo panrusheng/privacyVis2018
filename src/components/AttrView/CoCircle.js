@@ -65,6 +65,7 @@ export default class AttrNetwork extends Component {
       safeY;
     const tickRange = d3.extent(data, d => d.eventLists.length);
     let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 5, width - r - 5]);
+    let ScaleR = d3.scaleLinear().domain(d3.extent(data, d => (d.cor >= pro + riskLimit || d.cor <= pro - riskLimit)?d.freq : 1)).range([r - 5, r + 5]);
     let tickX = [];
     for (let i = 1; i <= tickRange[1]; i++) {
       tickX.push(i);
@@ -175,11 +176,15 @@ export default class AttrNetwork extends Component {
       if (p <= pro + riskLimit && p >= pro - riskLimit) continue;
       let y = (p > pro) ? ScaleA(p) : ScaleB(p),
         num = data[i].eventLists.length,
-        x = ScaleX(num);
+        x = ScaleX(num),
+        r = ScaleR(data[i].freq);
       dataList.push({
         d: makePolygon(num, r),
         x,
         y,
+        r,
+        freq: data[i].freq,
+        cor: data[i].cor,
         list: data[i].eventLists
       })
     }
@@ -236,7 +241,7 @@ export default class AttrNetwork extends Component {
       .enter()
       // .append('path')
       .append('circle')
-      .attr('r', r)
+      .attr('r', d => d.r)
       .attr('class', 'eventSets cor-chart')
       .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
       // .attr('d', d => d.d)
@@ -244,12 +249,20 @@ export default class AttrNetwork extends Component {
       .style('fill-opacity', 0.3)
       .style('cursor', 'pointer')
       .on('mouseover', d => {
+        const x = d3.event.x - d.x,
+          y = d3.event.y - 65;
+        d3.select('.tooltip').html('Record amount: ' + d.freq + '</br> P('+ eventName +'|set): ' + d.cor.toFixed(2))
+          .style('left', (x) + 'px')
+          .style('display', 'block')
+          .style('top', (y) + 'px');
         d3.selectAll(".eventSets")
           .style('stroke', dd => (d === dd) ? '#333' : 'none')
         d3.selectAll('.eventNodes')
           .style('stroke', dd => ifAinB(dd.id, d.list) ? '#333' : 'none');
       })
       .on('mouseout', () => {
+        d3.select('.tooltip')
+          .style('display', 'none')
         d3.selectAll('.eventNodes').style('stroke', 'none');
         d3.selectAll('.eventSets').style('stroke', 'none');
       })
@@ -265,7 +278,7 @@ export default class AttrNetwork extends Component {
       .enter()
     tickXSvg2.append('text')
       .attr('x', d => ScaleX(d))
-      .attr('y', height + 15)
+      .attr('y', height + 20)
       .style('text-anchor', "middle")
       .style('fill', '#333')
       .text(d => d);
@@ -376,10 +389,11 @@ export default class AttrNetwork extends Component {
       .text('P(' + eventName + ')');
     g.append('text')
       .attr('class', 'cor-chart')
-      .attr('y', safeY + safeHeight / 2 + 15)
-      .attr('x', width / 2)
+      // .attr('y', safeY + safeHeight / 2 + 15)
+      // .attr('x', width / 2)
+      .attr('transform', 'translate(' + (width + 5) + ',' + (safeY + safeHeight / 2) + ') rotate(90)')
       .style('text-anchor', 'middle')
-      .style('fill', '#fff')
+      .style('fill', 'rgb(0, 128, 0)')
       .text('No-risk zone: ' + safeRange[0].toFixed(2) + '~' + safeRange[1].toFixed(2));
     
 
