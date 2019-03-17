@@ -419,7 +419,8 @@ class AppStore {
 
     let eventUtilityList = toJS(this.eventUtilityList);
     let eventColorList = toJS(this.eventColorList);
-
+    eventColorList[attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+    'rgba(' + this.nonSenColor.join(',') + ',' + (value / 1.3 + 0.1) + ')';
     for (const eventName in eventUtilityList) {
       let a = eventName.split(':')[0];
       if (a !== attrName) continue;

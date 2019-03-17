@@ -87,6 +87,7 @@ export default class RecView extends Component {
       let d = "M0, 0 L" + (-2 * r) + "," + 2 * 1.732 * r +
         "L" + 2 * r + "," + 2 * 1.732 * r;
       for (let j = start; j <= end; j++) {
+        if (nodes[i].value < 0) continue;
         let a = j * angle + 1;
         let tri = {
           x: x,
