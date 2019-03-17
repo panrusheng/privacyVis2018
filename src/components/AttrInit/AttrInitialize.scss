@@ -11,6 +11,9 @@
 .init-content {
   height: 960px;
   width: 100%;
+  .react-contextmenu {
+    z-index: 99;
+  }
 
   .init-left {
     text-align: center;

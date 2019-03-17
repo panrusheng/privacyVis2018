@@ -6,7 +6,7 @@ import { ContextMenu, ContextMenuTrigger } from 'react-contextmenu';
 import { hideMenu } from 'react-contextmenu/modules/actions';
 import MergePanel from './MergePanel.js';
 import { inject, observer } from 'mobx-react';
-import { InputNumber, Button } from 'antd';
+import { InputNumber, Input } from 'antd';
 import * as d3 from 'd3';
 import leftIcon from '../../assets/image/left-arrow.svg';
 import rightIcon from '../../assets/image/right-arrow.svg';
@@ -70,11 +70,32 @@ export default class AttrInitialize extends React.Component {
     window.removeEventListener('mousedown', this.hideInputNumber);
   }
 
-  hideInputNumber(e) {
-    if (!this.state.inputAttr || (this.numInputContainer && this.numInputContainer.contains(e.target)) || e.target.classList.contains('breakpoint-label')) return;
+  hideInputNumber(e, pressEnter = false) {
+    if (!this.state.inputAttr || (!pressEnter && this.numInputContainer && this.numInputContainer.contains(e.target)) || e.target.classList.contains('breakpoint-label')) return;
 
-    this.props.store.updateBreakPoint(this.state.inputAttr.attrName, this.state.inputIndex, this.state.inputValue, true);
+    let value = parseFloat(this.state.inputValue);
+    if (isNaN(value)) return this.setState({ inputAttr: null });
+    
+    if (value < this.state.inputAttr.range[0]) value = this.state.inputAttr.range[0];
+    if (value > this.state.inputAttr.range[1]) value = this.state.inputAttr.range[1];
+
+    this.props.store.updateBreakPoint(this.state.inputAttr.attrName, this.state.inputIndex, value, true);
     this.setState({ inputAttr: null });
+  }
+
+  handleTitleMouseOver(e, attr) {
+    if (attr) {  
+      d3.select('.tooltip').html(attr.description)
+        .style('left', (e.clientX + 15) + 'px')
+        .style('display', 'block')
+        .style('top', (e.clientY - 35) + 'px');
+    } else {
+      d3.select('.tooltip').style('display', 'none');
+    }
+  }
+
+  handleTitleMouseLeave() {
+    d3.select('.tooltip').style('display', 'none');
   }
 
   setSize() {
@@ -304,10 +325,13 @@ export default class AttrInitialize extends React.Component {
                 <div className="attr-info" style={attr.type === 'numerical' ? { height: 45, display:  'flex', justifyContent: 'center',
                   alignItems: 'center' } : undefined}>
                   <div className="title"
-                  style={attr.type === 'numerical' ? {
-                    marginRight: 15,
-                    display: 'flex',
-                    alignItems: 'center'} : undefined} >{attr.attrName}</div>
+                    onMouseOver={(e) => this.handleTitleMouseOver(e, attr)}
+                    onMouseLeave={this.handleTitleMouseLeave}
+                    style={attr.type === 'numerical' ? {
+                      marginRight: 15,
+                      display: 'flex',
+                      alignItems: 'center'} : undefined} 
+                  >{attr.attrName}</div>
                   {attr.sensitive?(
                   <div className="form-block" style={{color: '#FE2901', 'fontSize': 25}}>
                     Sensitive
@@ -329,7 +353,9 @@ export default class AttrInitialize extends React.Component {
                 { row.map((attr) => (
                   <div className="chart" key={attr.attrName}>
                     <div className="attr-info">
-                      <div className="title">{attr.attrName}</div>
+                      <div className="title"
+                        onMouseOver={(e) => this.handleTitleMouseOver(e, attr)}
+                        onMouseLeave={this.handleTitleMouseLeave}>{attr.attrName}</div>
                       {attr.sensitive?(
                       <div className="form-block">
                         <p style={{color: '#FE2901', 'fontSize': 25}}>Sensitive</p>
@@ -370,8 +396,8 @@ export default class AttrInitialize extends React.Component {
             >
               <div />
             </ContextMenuTrigger>
-            {this.state.inputAttr && <div ref={dom => this.numInputContainer = dom} className="num-input" style={{ position: 'fixed', top: this.state.inputY, left: this.state.inputX }}>
-              <InputNumber size="small" onChange={v => this.setState({ inputValue: v })} value={this.state.inputValue} min={this.state.inputAttr.range[0]} max={this.state.inputAttr.range[1]} step={0.01} />
+            {this.state.inputAttr && <div ref={dom => this.numInputContainer = dom} className="num-input" style={{ position: 'fixed', top: this.state.inputY, left: this.state.inputX, width: 60 }}>
+              <Input size="small" onPressEnter={e => this.hideInputNumber(e, true)} onChange={e => this.setState({ inputValue: e.target.value })} value={this.state.inputValue} />
             </div>}
           </div>
         </div>
