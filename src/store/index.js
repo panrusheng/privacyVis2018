@@ -561,23 +561,12 @@ class AppStore {
       groups.forEach(g => {
         g.records.forEach(({ data }) => {
           data.forEach((atVal) => {
-            const { attName, value} = atVal;
+            const { attName } = atVal;
             let u = 0;
           
-            if (typeMap[attName] === 'categorical') {
-              let eventName = attName + ': ' + value;
-              if (this.eventUtilityList[eventName]) {
-                u = this.eventUtilityList[eventName].utility;
-              }
-            } else {
-              for (const eventName in this.eventUtilityList) {
-                if (this.eventUtilityList[eventName].attrName !== attName) continue;
-                const { min, max, includeMin, utility } = this.eventUtilityList[eventName];
-                if ((value > min || (includeMin && value === min)) && value <= max) {
-                  u = utility;
-                  break;
-                }
-              }
+            let eventName = attName + ': ' + g.data[attName];
+            if (this.eventUtilityList[eventName]) {
+              u = this.eventUtilityList[eventName].utility;
             }
 
             atVal.utility = u;
@@ -783,7 +772,7 @@ class AppStore {
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
       } else {
-        attr.groups.forEach(({ name, value }) => {
+        attr.groups.forEach(({ name, value, categories }) => {
           let id = attrName + ": " + name;
           let utility = attr.utility * (total - value) / total;
           eventUtilityList[id] = {
@@ -791,13 +780,15 @@ class AppStore {
             utility: attr.utility * (total - value) / total,
             count: value,
             attrName,
+            categories
           };
+
+          console.log(toJS(categories));
           eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         })
       }
     });
-
 
     this.eventUtilityList = eventUtilityList;
     this.eventColorList = eventColorList;

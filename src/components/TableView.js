@@ -824,7 +824,7 @@ export default class TableView extends React.Component {
               cnt++;
             }
           } else {
-            if (value === eventName.split(': ')[1]) {
+            if (value === eventName.split(': ')[1] || eventUtilityList[eventName].categories.find(v => v.category === value)) {
               cnt++;
             }
           }
