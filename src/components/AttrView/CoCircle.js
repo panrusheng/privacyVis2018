@@ -51,8 +51,8 @@ export default class AttrNetwork extends Component {
       data
     } = corData;
     const riskLimit = this.props.store.riskLimit;
-    console.log(riskLimit);
     let safeRange = [pro - riskLimit, pro + riskLimit];
+    safeRange[0] = safeRange[0] > 0 ? safeRange[0] : 0;
     const marginY = 50,
       marginX = 45,
       r = 10,

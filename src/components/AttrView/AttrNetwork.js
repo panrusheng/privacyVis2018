@@ -362,8 +362,21 @@ export default class AttrNetwork extends Component {
           .style('fill', '#fff');
         sourceDetail
           .append('path')
+          .attr('class', 'eventNodes')
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / sourceList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / sourceList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / sourceList.length + ',0')
-          .style('fill', dd => colorDic[dd]);//nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88');
+          .style('fill', dd => colorDic[dd])
+          .on('mouseover', dd => {
+            d3.selectAll('.eventSets').style('stroke', ddd => ifAinB(dd, ddd.list) ? '#1866bb' : 'none');
+            d3.selectAll('.eventNodes').style('stroke', ddd => (ddd === dd) ? '#333' : 'none');
+          })
+          .on('mouseout', () => {      
+            d3.selectAll('.eventSets').style('stroke', 'none');
+            d3.selectAll('.eventNodes').style('stroke', 'none');
+          })
+          .on('click', dd => {
+            if (colorDic[dd] === 'rgb(' + [254,41,1].join(',') + ')')
+            that.props.change(dd);
+          });//nodes[d.source.index].value < 0 ? '#FE2901' : '#7bbc88');
         // .on('mouseover', dd => {
         //   const x = d3.event.x + 5,
         //     y = d3.event.y - 35;
@@ -402,8 +415,21 @@ export default class AttrNetwork extends Component {
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
           .style('fill',  '#fff');
         targetDetail.append('path')
+          .attr('class', 'eventNodes')
           .attr('d', (dd, i) => 'M' + (i * 2 * w) / targetList.length + ', 0 L' + ((i + 1 / 2) * 2 * w) / targetList.length + ',' + triH + 'L' + ((i + 1) * 2 * w) / targetList.length + ',0')
-          .style('fill',  dd => colorDic[dd]);//nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');
+          .style('fill',  dd => colorDic[dd])
+          .on('mouseover', dd => {
+            d3.selectAll('.eventSets').style('stroke', ddd => ifAinB(dd, ddd.list) ? '#1866bb' : 'none');
+            d3.selectAll('.eventNodes').style('stroke', ddd => (ddd === dd) ? '#333' : 'none');
+          })
+          .on('mouseout', () => {      
+            d3.selectAll('.eventSets').style('stroke', 'none');
+            d3.selectAll('.eventNodes').style('stroke', 'none');
+          })
+          .on('click', dd => {
+            if (colorDic[dd] === 'rgb(' + [254,41,1].join(',') + ')')
+            that.props.change(dd);
+          });//nodes[d.target.index].value < 0 ? '#FE2901' : '#7bbc88');
         // .on('mouseover', dd => {
         //   const x = d3.event.x + 5,
         //     y = d3.event.y - 35;
@@ -760,6 +786,7 @@ export default class AttrNetwork extends Component {
       })
       .on('click', d => {
         if (merge) return;
+        if (colorDic[d.id] === 'rgb(' + [254,41,1].join(',') + ')')
         that.props.change(d.id);
       });
 
