@@ -168,7 +168,7 @@ export default class TableView extends React.Component {
         .enter();
 
       let textLength = d3.max(data, d => d.eventName ? d.eventName.split(': ')[1].length : 0);
-      let rotate = (textLength * data.length > 15);
+      let rotate = (textLength * data.length > 13);
 
       textList
         .append('text')
