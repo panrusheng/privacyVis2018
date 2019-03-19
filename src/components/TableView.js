@@ -928,7 +928,7 @@ export default class TableView extends React.Component {
           {this.renderTableHeaderTopLeft()}
           {this.renderTableHeaderTop(columns)}
         </div>
-        <div className="wrapper" style={{ maxHeight: 'calc(100% - 210px)' }}>
+        <div className="wrapper" style={{ maxHeight: 'calc(100% - 40px)' }}>
           {this.renderTableHeaderLeft(rows)}
           {this.renderTableBody(rows, columns)}
         </div>

@@ -103,7 +103,7 @@ export default class AttrInitialize extends React.Component {
     const count = (this.props.store.selectedAttributes || []).length;
     if (!count || !dom) return;
     let height = 200;
-    let width = 740;
+    let width = 768;
 
     if (
       height === this.state.attrSize.height &&
@@ -218,7 +218,7 @@ export default class AttrInitialize extends React.Component {
   getCatePerRow() {
     const { selectedAttributes } = this.props.store;
     const cateAttrs = toJS(selectedAttributes).filter(({ type }) => type === 'categorical');
-    let binMax = 8;
+    let binMax = 10;
     let rows = [];
 
     let lenArr = cateAttrs.map(({ groups }) => groups.length).filter(l => l <= binMax);
@@ -273,7 +273,7 @@ export default class AttrInitialize extends React.Component {
       return b.total - a.total;
     });
 
-    return rows.filter(r => r.total > 0).map(({ attrs }) => attrs);
+    return rows.filter(r => r.total > 0);
   }
 
   renderAttr(attr, width) {
@@ -359,8 +359,8 @@ export default class AttrInitialize extends React.Component {
               </div>
             ))}
             { rowCate.map((row, idx) => (
-              <div key={idx} style={{ display: 'flex' }}>
-                { row.map((attr) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                { row.attrs.map((attr) => (
                   <div className="chart" key={attr.attrName}>
                     <div className="attr-info">
                       <div className="title"
@@ -379,7 +379,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       )}
                     </div>
-                    {this.renderAttr(attr, this.state.attrSize.width / row.length - 10 * (row.length - 1) )}
+                    {this.renderAttr(attr, 45 + (this.state.attrSize.width - 60 * row.attrs.length + 15) * (attr.groups.length / row.total))}
                   </div>
                 )) }
               </div>

@@ -13,6 +13,7 @@ export default class CateTrim extends React.Component {
       .domain([0, Math.max(...dataValue)])
       .range([0, height - marginAxis]);
 
+
     const svg = d3
       .select(dom)
       .attr('width', width)
@@ -20,6 +21,8 @@ export default class CateTrim extends React.Component {
       .append('g')
       .attr('transform', 'translate(' + marginLeft + ', 0)');
     const rectWidth = (chartWidth) / data.length;
+
+    height = height - marginAxis;
 
     for (let i = 0; i < data.length; i++) {
       let pattern = svg.append('pattern')

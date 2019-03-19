@@ -10,6 +10,7 @@
   
   .trim-content {
     height: 895px;
+    padding-left: 8px;
     width: 940px;
 
     .trim-left {
@@ -37,6 +38,7 @@
       overflow: auto;
       position: relative;
       height: 890px;
+      padding-right: 8px;
       &::-webkit-scrollbar {
         width: 8px;
         border-radius: 4px;
@@ -62,8 +64,8 @@
       }
       .chart {
         flex: 1;
-        margin: 0 10px;
         padding: 20px 0;
+        max-width: fit-content;
       }
     
       .attr-info {
@@ -73,9 +75,7 @@
         justify-content: center;
         align-items: center;
         .title {
-          margin-left: 70px;
           margin-right: 5px;
-          display: 'flex';
           align-items: center;
           font-size: 24px;
           font-weight: 500;
@@ -83,6 +83,11 @@
     
         .form-block {
           padding: 5px 0;
+          .ant-btn{
+            width: 60px;
+            padding-left: 0;
+            padding-right: 0;
+          }
         }
       }
     }

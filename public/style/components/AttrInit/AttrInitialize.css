@@ -7,7 +7,8 @@
 
 .init-content {
   height: 960px;
-  width: 100%; }
+  width: 100%;
+  padding-left: 8px; }
   .init-content .react-contextmenu {
     z-index: 99; }
   .init-content .init-left {
@@ -32,7 +33,8 @@
     overflow-x: hidden;
     position: relative;
     height: 960px;
-    width: 100%; }
+    width: 100%;
+    padding-right: 8px; }
     .init-content .attr-init::-webkit-scrollbar {
       width: 8px;
       border-radius: 4px;
@@ -51,7 +53,8 @@
       overflow: visible; }
     .init-content .attr-init .chart {
       flex: 1;
-      padding: 20px 0; }
+      padding: 20px 0;
+      max-width: fit-content; }
       .init-content .attr-init .chart:first-child {
         margin-left: 0; }
       .init-content .attr-init .chart:last-child {

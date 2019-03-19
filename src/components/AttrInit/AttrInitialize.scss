@@ -11,6 +11,7 @@
 .init-content {
   height: 960px;
   width: 100%;
+  padding-left: 8px;
   .react-contextmenu {
     z-index: 99;
   }
@@ -42,6 +43,7 @@
     position: relative;
     height: 960px;
     width: 100%;
+    padding-right: 8px;
     &::-webkit-scrollbar {
       width: 8px;
       border-radius: 4px;
@@ -69,6 +71,7 @@
     .chart {
       flex: 1;
       padding: 20px 0;
+      max-width: fit-content;
 
       &:first-child {
         margin-left: 0;

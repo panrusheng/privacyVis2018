@@ -20,7 +20,7 @@
       .table-view .table-title .operation .ant-switch-checked {
         background: #1866bb; }
   .table-view .table {
-    height: calc(100% - 105px);
+    height: calc(100% - 300px);
     user-select: none; }
     .table-view .table.all-record .table-body .table-cell {
       height: 20px; }
