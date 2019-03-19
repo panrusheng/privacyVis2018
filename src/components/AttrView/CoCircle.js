@@ -266,12 +266,12 @@ export default class AttrNetwork extends Component {
           .style('display', 'none')
         d3.selectAll('.eventNodes').style('stroke', 'none');
         d3.selectAll('.eventSets').style('stroke', 'none');
-      })
-      .on('click', d => {
-        d3.selectAll('.eventSets').attr('transform', dd => {
-          return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
-        });
       });
+      // .on('click', d => {
+      //   d3.selectAll('.eventSets').attr('transform', dd => {
+      //     return 'translate(' + ((dd.list.length === d.list.length) ? (ww - r) : (marginX + r + 2)) + ',' + dd.y + ')';
+      //   });
+      // });
     let tickXSvg2 = g.append('g')
       .attr('class', 'cor-chart')
       .selectAll('ticks')
@@ -392,7 +392,7 @@ export default class AttrNetwork extends Component {
       .attr('class', 'cor-chart')
       // .attr('y', safeY + safeHeight / 2 + 15)
       // .attr('x', width / 2)
-      .attr('transform', 'translate(' + (width + 5) + ',' + (safeY + safeHeight / 2) + ') rotate(90)')
+      .attr('transform', 'translate(' + (width + 5) + ',' + ((safeY + safeHeight / 2) > 760 ? 760 :  (safeY + safeHeight / 2)) + ') rotate(90)')
       .style('text-anchor', 'middle')
       .style('fill', 'rgb(0, 128, 0)')
       .text('No-risk zone: ' + safeRange[0].toFixed(2) + '~' + safeRange[1].toFixed(2));
