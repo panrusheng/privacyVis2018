@@ -263,6 +263,16 @@ export default class AttrInitialize extends React.Component {
       }
     })
 
+    rows.forEach(row => {
+      row.attrs.sort((a, b) => {
+        return b.groups.length - a.groups.length;
+      });
+    });
+
+    rows.sort((a, b) => {
+      return b.total - a.total;
+    });
+
     return rows.filter(r => r.total > 0).map(({ attrs }) => attrs);
   }
 
