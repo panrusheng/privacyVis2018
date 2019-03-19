@@ -65,7 +65,7 @@ export default class AttrNetwork extends Component {
     let safeHeight = 40,
       safeY;
     const tickRange = d3.extent(data, d => d.eventLists.length);
-    let ScaleX = d3.scaleLinear().domain(tickRange).range([r + 5, width - r - 5]);
+    let ScaleX = d3.scaleLinear().domain(tickRange).range([0, width - r - 5]);
     let ScaleR = d3.scaleLinear().domain(d3.extent(data, d => (d.cor >= pro + riskLimit || d.cor <= pro - riskLimit)?d.freq : 1)).range([r - 5, r + 5]);
     let tickX = [];
     for (let i = 1; i <= tickRange[1]; i++) {
