@@ -157,13 +157,13 @@ export default class LoadData extends React.Component {
                         )) }
                     </div>
                     <div className="load-panel">
-                        <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload datasets as adversaries' background knowledge</div>
+                        <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload a dataset as adversaries' background knowledge</div>
                         <div className="datasets">
                             <div className={`button`}>{this.state.currentDataset}</div>
                         </div>
                     </div>
                     <div className="load-panel">
-                        <div style={{ marginBottom: 10 }}>Bayesian Network Search Algorithm</div>
+                        <div style={{ marginBottom: 10 }}>Bayesian network search algorithm:</div>
                         <div className="datasets">
                             { SearchAlgorithm.map(({name}, index) => (
                                 <div
@@ -175,7 +175,7 @@ export default class LoadData extends React.Component {
                         </div>
                     </div>
                     <div className="load-panel">
-                        Risk Limit: <InputNumber value={this.props.store.riskLimit} step={0.05} min={0} max={1} onChange={val => this.props.store.riskLimit = val} />
+                        Risk limit: <InputNumber value={this.props.store.riskLimit} step={0.05} min={0} max={1} onChange={val => this.props.store.riskLimit = val} />
                     </div>
                 </div>
             </Modal>
