@@ -220,7 +220,7 @@ export default class Attribute extends React.Component {
                   change={this.changeState}
                 />
               </svg>
-              {(data.nullNodes.length)?(<div className="irr-events">
+              {(data.nullNodes && data.nullNodes.length)?(<div className="irr-events">
                 <div style={{ fontSize: 18, textAlign: 'center' }}>Irrelevant events</div>
                 <div className="irr-li">
                   { data.nullNodes.map(({ id }) => <div className="irr">{id}</div>)  }

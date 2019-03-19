@@ -272,7 +272,6 @@ class AppStore {
       }
     } else {
       let flag = false;
-      newGBN.links = oL;
       // const pa = cpt[0],
       //   pa0 = 1 - pa,
       //   pb = cpt[1],
@@ -281,8 +280,8 @@ class AppStore {
       //   pab0 = pa * (1 - cpt[2]),
       //   pa0b = pa0 * cpt[3],
       //   pa0b0 = pa0 * (1 - cpt[3]);
-      const value = cpt[2]; //pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
-      for (let i = 0; i < newGBN.links.length; i++) {
+      const value = cpt[2] - cpt[1]; //pab * Math.log(pab / pa / pb) + pa0b * Math.log(pa0b / pa0 / pb) + pab0 * Math.log(pab0 / pa / pb0) + pab * Math.log(pa0b0 / pa0 / pb0);
+      for (let i = 0; i < oL.length; i++) {
         if (
           oL[i].source === source &&
           oL[i].target === target
@@ -300,6 +299,7 @@ class AppStore {
           value: value,
           cpt: cpt
         });
+      newGBN.links = oL;
     }
     this.GBN = newGBN;
   }
@@ -755,7 +755,6 @@ class AppStore {
             categories
           };
 
-          console.log(toJS(categories));
           eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
             'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         })

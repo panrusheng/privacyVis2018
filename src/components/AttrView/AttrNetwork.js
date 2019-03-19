@@ -206,6 +206,7 @@ export default class AttrNetwork extends Component {
       .on('click', () => {
         d3.selectAll('.edgeDetail').remove();
         d3.selectAll('.context-menu').remove();
+        addlink.style('opacity', 0);
       });
 
     g.append('defs')
@@ -471,10 +472,12 @@ export default class AttrNetwork extends Component {
           .style('fill', '#e7eff8')
           .style('stroke', '#1866BB')
           .style('stoke-width', 1);
-        let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
-          'P(' + nodes[targetID].id.slice(0, 3) + '):',
-          'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
-          'P(' + nodes[targetID].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):'
+        let sourceName = nodes[sourceID].id.split(': ')[1].length > 3 ? nodes[sourceID].id.split(': ')[1].slice(0, 3): nodes[sourceID].id.split(': ')[1];
+        let targetName = nodes[targetID].id.split(': ')[1].length > 3 ? nodes[targetID].id.split(': ')[1].slice(0, 3): nodes[targetID].id.split(': ')[1];
+        let titleList = ['P(' + sourceName + '):',
+          'P(' + targetName + '):',
+          'P(' + targetName + '|' + sourceName + '):',
+          'P(' + targetName + '|' + sourceName + '\'):'
         ]
         g.selectAll('fillEmpth')
           .data(titleList)
@@ -579,7 +582,6 @@ export default class AttrNetwork extends Component {
                   let txt = inp.node().value;
                   el.text(txt);
                   newCPT[ii] = parseFloat(txt);
-                  console.log(newCPT[ii]);
                   p_el.selectAll('.inputSVG').remove();
                 }
               });
