@@ -154,7 +154,7 @@ class AppStore {
         if (attr.type === 'numerical') {
           let range = attr.range
           let min = range[0], delta = (range[1] - range[0]) / (attr.list.length - 1);
-          attr.breakPoints = attr.splitPoints.map(p => p + min);
+          attr.breakPoints = attr.splitPoints;
           attr.data = attr.list.map((a, i) => {return {label: parseFloat((min + delta * i).toFixed(2)), value: a};})
         } else {
           attr.groups = [];
@@ -510,34 +510,6 @@ class AppStore {
         attrName,
         sensitive
       }) => sensitiveMap[attrName] = sensitive);
-
-      groups.forEach(g => {
-        let id = 0;
-
-        g.localGBN.nodes.map(node => {
-          let newId = id++;
-          let oldId = node.eventNo;
-          let attrName = node.id.substring(0, node.id.indexOf(':'));
-          node.value = sensitiveMap[attrName] ? -1 : node.value;
-
-          g.localGBN.links.forEach(link => {
-            if (link.source === oldId) {
-              link.source = newId;
-            }
-            if (link.target === oldId) {
-              link.target = newId;
-            }
-          });
-
-          g.recList.forEach(rec => {
-            let idx = rec.dL.findIndex(d => d === oldId);
-            if (idx >= 0) rec.dL[idx] = newId;
-          });
-
-          node.eventNo = newId;
-        });
-      });
-
       let recList = {};
       recList.group = groups.map(item => item.localGBN);
       recList.rec = groups.map(item => item.recList);

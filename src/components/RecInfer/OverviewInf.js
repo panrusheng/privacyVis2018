@@ -55,6 +55,8 @@ export default class RecView extends Component {
 
     const linkOpacity = d3.scaleLinear().domain([0, d3.max(links, d => Math.abs(d.value))]).range([0, 1]);
     let delList = [];
+    let eventNoList = [];
+  
     let triangleList,
       removeTri = [],
       preserveTri = [];
@@ -63,20 +65,23 @@ export default class RecView extends Component {
       nodes[i].y = ScaleY(nodes[i].y);
       nodes[i].del = false;
       del.push([]);
+      eventNoList.push(nodes[i].eventNo);
     }
     let start = 0,
       end = maxRec;
     if (selected === null || selected === undefined) {
       for (let i = 0; i < sch.length; i++) {
         for (let j = 0; j < sch[i].dL.length; j++) {
-          del[sch[i].dL[j]].push(i);
+          let eventNoIndex = eventNoList.findIndex(no => no === sch[i].dL[j]);
+          del[eventNoIndex].push(i);
         }
       }
     } else {
       start = selected;
       end = selected;
       for (let j = 0; j < sch[selected].dL.length; j++) {
-        del[sch[selected].dL[j]].push(selected);
+        let eventNoIndex = eventNoList.findIndex(no => no === sch[selected].dL[j]);
+        del[eventNoIndex].push(selected);
       }
     }
 
