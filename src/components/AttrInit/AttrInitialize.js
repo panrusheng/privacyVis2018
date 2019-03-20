@@ -273,6 +273,18 @@ export default class AttrInitialize extends React.Component {
       return b.total - a.total;
     });
 
+    if (rows.length === 2) {
+      if (rows[0].total === 7 && rows[1].total === 5 && rows[0].attrs[0].groups.length === 3) {
+        let attrs = [...rows[0].attrs, ...rows[1].attrs];
+        attrs.sort((a, b) => b.groups.length - a.groups.length)
+        rows[0].attrs = attrs.splice(0, 2);
+        rows[1].attrs = attrs;
+
+        rows[0].total = 6;
+        rows[1].total = 6;
+      }
+    }
+
     return rows.filter(r => r.total > 0);
   }
 
@@ -318,8 +330,14 @@ export default class AttrInitialize extends React.Component {
     const { selectedAttributes } = this.props.store;
     const { x, y, current, groups } = this.state;
     const flag = (selectedAttributes || []).length * (this.state.attrSize.width + 35) > 940;
-
     const rowCate = this.getCatePerRow();
+    let minRectWidth = this.state.attrSize.width;
+    let chartMargin = 15;
+    rowCate.forEach(({ attrs, total }) => {
+      let rw = (this.state.attrSize.width - 45 * attrs.length - chartMargin * (attrs.length - 1)) / total;
+      if (rw < minRectWidth) minRectWidth = rw;
+    });
+
     return (
       <div className="attr-init-view">
         <div className="view-title">Event Initialization View</div>
@@ -379,7 +397,7 @@ export default class AttrInitialize extends React.Component {
                       </div>
                       )}
                     </div>
-                    {this.renderAttr(attr, 45 + (this.state.attrSize.width - 60 * row.attrs.length + 15) * (attr.groups.length / row.total))}
+                    {this.renderAttr(attr, 45 + minRectWidth * attr.groups.length)}
                   </div>
                 )) }
               </div>
