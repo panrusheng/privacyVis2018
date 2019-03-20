@@ -145,7 +145,7 @@ export default class Categorical extends React.Component {
       .attr('class', 'label')
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
-      .attr('y', (d, i) => height - yScale(d.value))
+      .attr('y', (d, i) => height - yScale(d.value) > 185 ? height - yScale(d.value) - 18 : height - yScale(d.value))
       .attr('x', (d, i) => i * rectWidth + rectWidth / 2)
       .style('text-anchor', 'middle')
       .text(d => d.value);
