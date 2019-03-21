@@ -34,7 +34,7 @@ export default class DistTrimming extends React.Component {
   getCatePerRow() {
     const { trimList } = this.props.store;
     const cateAttrs = toJS(trimList).filter(({ type }) => type === 'categorical');
-    let binMax = 12;
+    let binMax = 10;
     let rows = [];
 
     let lenArr = cateAttrs.map(({ data }) => data.length).filter(l => l <= binMax);

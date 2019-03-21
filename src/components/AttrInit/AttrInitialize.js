@@ -340,7 +340,7 @@ export default class AttrInitialize extends React.Component {
 
     return (
       <div className="attr-init-view">
-        <div className="view-title">Event Initialization View</div>
+        <div className="view-title">State Initialization View</div>
         <div className="init-content">
           <div
             className="attr-init"

@@ -157,7 +157,7 @@ export default class CateTrim extends React.Component {
       .style('fill', '#333')
       .attr('dominant-baseline', 'text-before-edge')
       .attr('transform', (d, i) => {
-        let x = i * rectWidth + rectWidth / 2, y = height + 5;
+        let x = i * rectWidth + rectWidth / 2, y = height - 5;
         return rotate ? `translate(${x}, ${y}) rotate(-20)` : `translate(${x}, ${y + 5})`;
       })
       // .attr('y', (d, i) => height + 5)
@@ -187,7 +187,7 @@ export default class CateTrim extends React.Component {
       .text('Amount');
     svg.append('text')
       .attr('x', chartWidth + marginAxis)
-      .attr('y', height + 40)
+      .attr('y', height + 35)
       .style('text-anchor', 'end')
       .text('Category');
 
