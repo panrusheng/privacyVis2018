@@ -358,7 +358,7 @@ export default class AttrNetwork extends Component {
       .attr('x', width / 2)
       .style('fill', '#333')
       .style('text-anchor', 'middle')
-      .text('State sets')
+      .text('State set chart')
       .style('font-size', 20);
 
     // g
