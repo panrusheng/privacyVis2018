@@ -25,7 +25,7 @@
           position: absolute;
           right: 0;
           bottom: 0;
-          background-color: #dedede;
+          background-color: rgba(102, 102, 102, 0.1);
           padding: 15px; }
           .attribute-view .attr-mainContent .attr-left .attr-network .irr-events .irr {
             text-align: left;

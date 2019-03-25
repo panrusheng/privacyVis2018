@@ -30,7 +30,7 @@ export default class LoadData extends React.Component {
         searchAlgorithm: 0,
     }
 
-    datasets = ['graduate', 'student', 'home'];
+    datasets = ['graduate', 'student', 'home', 'home1', 'home2'];
 
     constructor(props) {
         super(props);
