@@ -675,6 +675,7 @@ export default class TableView extends React.Component {
             r.data[a.attName] = {
               value: a.value,
               utility: a.utility,
+              alpha: a.alpha,
               del: select === -1 ? deleteAttr.has(a.attName) : subgroupSelMap[select].deleteAttr.has(a.attName),
             };
           }
@@ -716,6 +717,7 @@ export default class TableView extends React.Component {
             er.data[a.attName] = {
               value: a.value,
               utility: a.utility,
+              alpha: a.alpha,
               del: select === -1 ? deleteAttr.has(a.attName) : subgroupSelMap[select].deleteAttr.has(a.attName)
             }
           }
@@ -914,7 +916,7 @@ export default class TableView extends React.Component {
   }
 
   renderEmpty() {
-    return <div>No Attribute</div>;
+    return <div style={{ height: 'calc(100% - 300px)' }}></div>;
   }
 
   renderTable() {
@@ -1041,14 +1043,14 @@ export default class TableView extends React.Component {
       {columns.map(col => {
         const { data } = row;
         if (!isGroup) {
-          const { utility, value, del } = data[col] || {};
+          const { utility, value, del, alpha } = data[col] || {};
           return (
             <div
-              key={col} data={value} className="table-cell tooltip-data" style={{ color: utility > 0.5 ? 'white' : '#333' }}>
+              key={col} data={value} className="table-cell tooltip-data" style={{ color: alpha > 0.5 ? 'white' : '#333' }}>
               <div
                 className={'bg' + (del ? ' del' : '')}
                 style={{
-                  backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+                  backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${alpha / 1.3 + 0.1})`,
                   backgroundSize: 'contain',
                   backgroundImage: del ? `url(${SlashIcon})` : undefined,
                 }}
@@ -1057,9 +1059,10 @@ export default class TableView extends React.Component {
           )
         }
 
-        let delFlag = false, utility = 0;
+        let delFlag = false, utility = 0, alpha;
         if (row.extended.length > 0 && row.extended[0].data[col]) {
           utility = row.extended[0].data[col].utility;
+          alpha = row.extended[0].data[col].alpha;
         }
         for (let i = 0; i < row.extended.length; i++) {
           if (row.extended[i].data[col] && row.extended[i].data[col].del) {
@@ -1069,7 +1072,7 @@ export default class TableView extends React.Component {
         }
         return (
           <div className="table-cell em" key={col} style={{
-            backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${utility / 1.3 + 0.1})`,
+            backgroundColor: utility < 0 ? 'white' : `rgba(24, 102, 187, ${alpha / 1.3 + 0.1})`,
             backgroundSize: 'contain',
             backgroundImage: delFlag ? `url(${SlashIcon})` : undefined,
           }}>

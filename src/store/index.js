@@ -10,6 +10,8 @@ import {
 import * as d3 from 'd3';
 
 class AppStore {
+  utilityMethod = "Probability";
+
   @observable
   riskLimit = 0.1;
 
@@ -136,6 +138,7 @@ class AppStore {
         attributes: JSON.stringify(atts),
         method: this.gbnSearchAlgorithm,
         riskLimit: this.riskLimit,
+        utility: this.utilityMethod === "Probability" ? "default" : "entropy"
       }
     }).then(data => {
       const { dataGBN, nodeList4links } = this.processGBNData(data.GBN);
@@ -535,13 +538,15 @@ class AppStore {
           data.forEach((atVal) => {
             const { attName } = atVal;
             let u = 0;
-          
+            let a = 0;
             let eventName = attName + ': ' + g.data[attName];
             if (this.eventUtilityList[eventName]) {
               u = this.eventUtilityList[eventName].utility;
+              a = this.eventUtilityList[eventName].alpha;
             }
 
             atVal.utility = u;
+            atVal.alpha = a;
           });
         })
       });
@@ -708,10 +713,15 @@ class AppStore {
     }
 
     if (total <= 0) return;
+    let uMin = -1;
+    let uMax = -1;
 
-
+    let attSenMap = {};
+    
     this.selectedAttributes.forEach(attr => {
       const { attrName } = attr;
+      attSenMap[attrName] = attr.sensitive;
+
       eventColorList[attrName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
       'rgba(' + this.nonSenColor.join(',') + ',' + (attr.utility / 1.3 + 0.1) + ')';
       if (attr.type === 'numerical') {
@@ -738,32 +748,55 @@ class AppStore {
 
           let eventName = attrName + ': ' + (i === 0 ? '[' : '(') + fixedMin + '~' + fixedMax + ']';
           let count = this.getCount(attr.data, min, max, i === 0);
-          let utility = attr.utility * (total - count) / total;
+          let utility
+          if (this.utilityMethod === "Probability") {
+            utility = attr.utility * (total - count) / total;
+          } else {
+            utility = - attr.utility * Math.log2(count / total);
+          }
+
+          if (uMin < 0 || uMin > utility) uMin = utility;
+          if (uMax < 0 || uMax < utility) uMax = utility;
+          
           eventUtilityList[eventName] = { utility, min, max, includeMin: i === 0, count, attrName };
-          eventColorList[eventName] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
-            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         }
       } else {
         attr.groups.forEach(({ name, value, categories }) => {
           let id = attrName + ": " + name;
-          let utility = attr.utility * (total - value) / total;
+          let utility;
+          if (this.utilityMethod === "Probability") {
+            utility = attr.utility * (total - value) / total;
+          } else {
+            utility = - attr.utility * Math.log2(value / total);
+          }
+
+          if (uMin < 0 || uMin > utility) uMin = utility;
+          if (uMax < 0 || uMax < utility) uMax = utility;
+
           eventUtilityList[id] = {
             id,
-            utility: attr.utility * (total - value) / total,
+            utility,
             count: value,
             attrName,
             categories
           };
-
-          eventColorList[id] = attr.sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
-            'rgba(' + this.nonSenColor.join(',') + ',' + (utility / 1.3 + 0.1) + ')';
         })
       }
     });
 
+    for (let eventName in eventUtilityList) {
+      let alpha = (eventUtilityList[eventName].utility - uMin) / (uMax - uMin);
+      let sensitive = attSenMap[eventName.split(':')[0]];
+      eventUtilityList[eventName].alpha = alpha;
+      eventColorList[eventName] = sensitive ? 'rgb(' + this.senColor.join(',') + ')' :
+      'rgba(' + this.nonSenColor.join(',') + ',' + (alpha / 1.3 + 0.1) + ')';
+    }
+
     this.eventUtilityList = eventUtilityList;
     this.eventColorList = eventColorList;
   }
+
+  
 
   getCount(data, min, max, includeMin) {
     let cnt = 0;

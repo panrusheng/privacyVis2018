@@ -7,6 +7,7 @@
     .datasets {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
 
         .button {
             height: 40px;
@@ -26,14 +27,11 @@
         }
     } 
     .load-panel {
-        margin-top: 10px;
         padding-top: 10px;
         border-top: 1px dotted #e8e8e8;
-
-
     }
     .attr-list {
-        max-height: 500px;
+        max-height: 400px;
         overflow-y: auto;
         line-height: 40px;
         &::-webkit-scrollbar {
