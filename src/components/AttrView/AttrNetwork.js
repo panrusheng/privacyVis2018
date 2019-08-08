@@ -453,10 +453,10 @@ export default class AttrNetwork extends Component {
       .on('contextmenu', d => {
         if (merge) return;
         d3.event.preventDefault();
-        const x = d3.event.x - 10 - 950,
+        const x = d3.event.x - 10 - 800,
           y = d3.event.y - 155,
           height = rowHeight * 5,
-          width = 115;
+          width = 85 * 2;
         let newCPT = d.cpt;
         let sourceID = d.source.index,
           targetID = d.target.index;
@@ -472,21 +472,30 @@ export default class AttrNetwork extends Component {
           .style('fill', '#e7eff8')
           .style('stroke', '#1866BB')
           .style('stoke-width', 1);
-        let sourceName = nodes[sourceID].id.split(': ')[1].length > 3 ? nodes[sourceID].id.split(': ')[1].slice(0, 3): nodes[sourceID].id.split(': ')[1];
-        let targetName = nodes[targetID].id.split(': ')[1].length > 3 ? nodes[targetID].id.split(': ')[1].slice(0, 3): nodes[targetID].id.split(': ')[1];
-        let titleList = ['P(' + sourceName + '):',
-          'P(' + targetName + '):',
-          'P(' + targetName + '|' + sourceName + '):',
-          'P(' + targetName + '|' + sourceName + '\'):'
+        let sourceName = nodes[sourceID].id;
+        let targetName = nodes[targetID].id;
+        let remark = ['A: ' + sourceName, 'B: '+ targetName];
+        let titleList = ['P(A):',
+          'P(B):',
+          'P(B|A):',
+          'P(B|A\'):'
         ]
+        g.selectAll('fillEmpth')
+          .data(remark)
+          .enter()
+          .append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', (dd, ii) => y + 17 + height / 5 * ii)
+          .text(dd => dd);
         g.selectAll('fillEmpth')
           .data(titleList)
           .enter()
           .append('text')
           .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', (d, i) => y + 17 + height / 5 * i)
-          .text(d => d);
+          .attr('x', (dd, ii) => ii % 2 ? x + 90 : x + 5)
+          .attr('y', (dd, ii) => ii % 2 ? y + 15 + height / 5 * ((ii - 1) / 2 + 2) :  y + 15 + height / 5 * (ii / 2 + 2))
+          .text(dd => dd);
         g.selectAll('split-line')
           .data([1, 2, 3, 4])
           .enter()
@@ -494,15 +503,15 @@ export default class AttrNetwork extends Component {
           .attr('class', 'context-menu')
           .attr('x1', x + 5)
           .attr('x2', x + width - 5)
-          .attr('y1', d => y - 5 + height / 5 * d)
-          .attr('y2', d => y - 5 + height / 5 * d)
+          .attr('y1', dd => y - 5 + height / 5 * dd)
+          .attr('y2', dd => y - 5 + height / 5 * dd)
           .style('stroke', '#74a3d6')
           .style('stroke-dasharray', '2 1');
         g.append('rect')
           .attr('class', 'context-menu')
-          .attr('x', x + width / 4)
+          .attr('x', x + width / 3)
           .attr('y', y - 1 + height / 5 * 4)
-          .attr('width', width / 2)
+          .attr('width', width / 3)
           .attr('height', height / 5 - 3)
           .attr('rx', 5)
           .attr('ry', 5)
@@ -539,8 +548,8 @@ export default class AttrNetwork extends Component {
           .data(d.cpt.map(n => parseFloat(n)))
           .enter()
           .append('text')
-          .attr('x', x + 81)
-          .attr('y', (dd, ii) => y + 16 + ii * height / 5)
+          .attr('x', (dd, ii) => ii % 2? x + 51 + width / 2 : x + 51)
+          .attr('y', (dd, ii) => ii % 2? y + 16 + ((ii - 1) / 2 + 2) * height / 5: y + 16 + (ii / 2 + 2) * height / 5)
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
           .attr('class', 'context-menu')
@@ -551,8 +560,8 @@ export default class AttrNetwork extends Component {
             let p_el = d3.select(p);
             let frm = p_el.append('foreignObject');
             let inp = frm
-              .attr('x', x + 80)
-              .attr('y', y - 5 + ii * height / 5)
+              .attr('x', ii % 2? x + 50 + width / 2 : x + 50)
+              .attr('y', ii % 2? y - 5 + ((ii - 1) / 2 + 2) * height / 5: y - 5 + (ii / 2 + 2) * height / 5)
               .attr('width', 35)
               .attr('height', rowHeight)
               .append('xhtml:form')
@@ -645,7 +654,7 @@ export default class AttrNetwork extends Component {
           .attr('target-index', i)
           .attr('y2', startY);
         const height = rowHeight * 5,
-          width = 115,
+          width = 85 * 2,
           x =
           (parseFloat(addlink.attr('x1')) +
             parseFloat(addlink.attr('x2')) -
@@ -669,19 +678,29 @@ export default class AttrNetwork extends Component {
           .style('fill', '#e7eff8')
           .style('stroke', '#1866bb')
           .style('stoke-width', 1);
-        let titleList = ['P(' + nodes[sourceID].id.slice(0, 3) + '):',
-          'P(' + nodes[i].id.slice(0, 3) + '):',
-          'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '):',
-          'P(' + nodes[i].id.slice(0, 3) + '|' + nodes[sourceID].id.slice(0, 3) + '\'):'
+        let sourceName = nodes[sourceID].id, targetName = nodes[i].id;
+        let remark = ['A: ' + sourceName, 'B: '+ targetName];
+        let titleList = ['P(A):',
+          'P(B):',
+          'P(B|A):',
+          'P(B|A\'):'
         ]
+        g.selectAll('fillEmpth')
+          .data(remark)
+          .enter()
+          .append('text')
+          .attr('class', 'context-menu')
+          .attr('x', x + 5)
+          .attr('y', (dd, ii) => y + 17 + height / 5 * ii)
+          .text(dd => dd);
         g.selectAll('fillEmpth')
           .data(titleList)
           .enter()
           .append('text')
           .attr('class', 'context-menu')
-          .attr('x', x + 5)
-          .attr('y', (d, i) => y + 17 + height / 5 * i)
-          .text(d => d);
+          .attr('x', (dd, ii) => ii % 2 ? x + 90 : x + 5)
+          .attr('y', (dd, ii) => ii % 2 ? y + 15 + height / 5 * ((ii - 1) / 2 + 2) :  y + 15 + height / 5 * (ii / 2 + 2))
+          .text(dd => dd);
         g.selectAll('split-line')
           .data([1, 2, 3, 4])
           .enter()
@@ -696,9 +715,9 @@ export default class AttrNetwork extends Component {
         g.append('rect')
           .attr('class', 'context-menu')
           .attr('id', 'edit-cpt-button')
-          .attr('x', x + width / 4)
+          .attr('x', x + width / 3)
           .attr('y', y - 1 + height / 5 * 4)
-          .attr('width', width / 2)
+          .attr('width', width / 3)
           .attr('height', height / 5 - 3)
           .attr('rx', 5)
           .attr('ry', 5)
@@ -736,8 +755,8 @@ export default class AttrNetwork extends Component {
           .enter()
           .append('text')
           .attr('class', 'context-menu')
-          .attr('x', x + 81)
-          .attr('y', (dd, ii) => y + 16 + ii * height / 5)
+          .attr('x', (dd, ii) => ii % 2? x + 51 + width / 2 : x + 51)
+          .attr('y', (dd, ii) => ii % 2? y + 16 + ((ii - 1) / 2 + 2) * height / 5: y + 16 + (ii / 2 + 2) * height / 5)
           .style('stroke-width', 5)
           .style('stroke-opacity', 0)
           .text(dd => dd.toFixed(2))
@@ -747,8 +766,8 @@ export default class AttrNetwork extends Component {
             let p_el = d3.select(p);
             let frm = p_el.append('foreignObject');
             let inp = frm
-              .attr('x', x + 80)
-              .attr('y', y - 5 + ii * height / 5)
+              .attr('x', ii % 2? x + 50 + width / 2 : x + 50)
+              .attr('y', ii % 2? y - 5 + ((ii - 1) / 2 + 2) * height / 5: y - 5 + (ii / 2 + 2) * height / 5)
               .attr('width', 35)
               .attr('height', rowHeight)
               .append('xhtml:form')
