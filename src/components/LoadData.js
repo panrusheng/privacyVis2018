@@ -44,13 +44,16 @@ export default class LoadData extends React.Component {
             const file = this.inputElem.files[0];
             const formData = new FormData();
             formData.set('dataset', file);
-            axios.post('/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                  }
-            }).then(() => {
-                // TODO
-            })
+            let name = this.inputElem.value.split('\\').pop().split('/').pop();;
+                console.log(name);
+                document.getElementById('adbkData').innerHTML = name;
+            // axios.post('/upload', formData, {
+            //     headers: {
+            //         'Content-Type': 'multipart/form-data'
+            //       }
+            // }).then(() => {
+            //     // TODO
+            // })
         };
     }
 
@@ -159,7 +162,7 @@ export default class LoadData extends React.Component {
                     <div className="load-panel">
                         <div style={{ cursor: 'pointer', marginBottom: 10 }} onClick={this.uploadDataset.bind(this)}>Upload a dataset as adversaries' background knowledge</div>
                         <div className="datasets">
-                            <div className={`button`}>{this.state.currentDataset}</div>
+                            <div className={`button`} id={'adbkData'}>{this.state.currentDataset}</div>
                         </div>
                     </div>
                     <div className="load-panel">

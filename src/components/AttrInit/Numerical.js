@@ -23,7 +23,7 @@ export default class Numerical extends React.Component {
       height,
     } = this.props;
     if (!attr || !this.chartDom) return;
-    
+
     this.draw(this.chartDom, attr, width, height);
   }
 
@@ -79,7 +79,7 @@ export default class Numerical extends React.Component {
       .attr('height', height)
       .append('g')
       .attr('transform', 'translate(' + marginLeft + ', 0)');
-    
+
     let axis = svg
       .append('g')
       .attr('class', 'axis-ver')
@@ -92,8 +92,8 @@ export default class Numerical extends React.Component {
       .attr('y2', 0);
 
     let backLines = svg.append('g').attr('class', 'bg-line')
-      
-    axis.selectAll('.tick').each(function() {
+
+    axis.selectAll('.tick').each(function () {
       let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
       backLines.append('line')
         .attr('x1', 0)
@@ -110,11 +110,11 @@ export default class Numerical extends React.Component {
     for (let eventName in this.props.eventUtilityList) eventNames.push(eventName);
     eventNames.sort((a, b) => this.props.eventUtilityList[a].min - this.props.eventUtilityList[b].min);
     let sortedBreakPoints = toJS(attr.breakPoints).sort((a, b) => a - b);
-    
+
     for (let i = 0; i < eventNames.length; ++i) {
       let eventName = eventNames[i];
       let attrName = eventName.split(':')[0];
-      if(attrName !== attr.attrName) continue;
+      if (attrName !== attr.attrName) continue;
       let { count } = this.props.eventUtilityList[eventName];
 
       let w;
@@ -138,14 +138,14 @@ export default class Numerical extends React.Component {
         .data([values])
         .attr('d', area)
         .style('fill', this.props.eventColorList[eventName])
-        .style('opacity', attr.sensitive? 0.5 : 1)
+        .style('opacity', attr.sensitive ? 0.5 : 1)
         .attr('clip-path', `url(#${attrName + breakIndex})`)
         .on('mouseover', () => {
           if (attr.sensitive) return;
           const x = d3.event.x + 15,
             y = d3.event.y - 35;
           d3.select('.tooltip')
-            .html(eventName + ': ' + count + '</br> Utility: ' + this.props.eventUtilityList[eventName].utility.toFixed(2) )
+            .html(eventName + ': ' + count + '</br> Utility: ' + this.props.eventUtilityList[eventName].utility.toFixed(2))
             .style('left', x + 'px')
             .style('top', y + 'px')
             .style('display', 'block');
@@ -185,30 +185,28 @@ export default class Numerical extends React.Component {
       .call(
         d3.axisBottom(
           d3
-          .scaleLinear()
-          .range([0, width - marginAxis - marginLeft])
-          .domain([labelMin, labelMax])
+            .scaleLinear()
+            .range([0, width - marginAxis - marginLeft])
+            .domain([labelMin, labelMax])
         )
       ).attr('x1', 0)
       .attr('y1', height)
       .attr('x2', chartWidth + marginAxis)
       .attr('y2', height)
 
-  
-    if (d3.selectAll('#biggerArrow'.length === 0)) {
-      svg.append('defs').attr('class', 'axis-ver')
-        .append('marker')
-        .attr('id', 'biggerArrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 10)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#333');
-    }
+
+    svg.append('defs').attr('class', 'axis-ver')
+      .append('marker')
+      .attr('id', 'biggerArrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 10)
+      .attr('refY', 0)
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 8)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#333');
     svg.append('line')
       .attr('x1', 0)
       .attr('x2', chartWidth + marginAxis)
@@ -264,7 +262,7 @@ export default class Numerical extends React.Component {
       .attr('x', d => {
         return (d - labelMin) / lDiff * ((chartWidth - 2) / chartWidth) * xScale(values.length - 1) + 10;
       })
-      .text(d => (d -parseInt(d) === 0) ? d : (d).toFixed(2))
+      .text(d => (d - parseInt(d) === 0) ? d : (d).toFixed(2))
       .style('text-anchor', 'start')
       .style('fill', '#333')
       .on('click', (d, idx) => {
@@ -326,7 +324,7 @@ export default class Numerical extends React.Component {
   handleChartClick(e) {
     const type = e.target.tagName;
     let point;
-    const [ labelMin, labelMax ] = d3.extent(this.props.attr.data.map(({label}) => label));
+    const [labelMin, labelMax] = d3.extent(this.props.attr.data.map(({ label }) => label));
     const width = this.props.width;
     const marginAxis = 15, marginLeft = 30;
     const chartWidth = width - marginAxis - marginLeft;
@@ -369,7 +367,7 @@ export default class Numerical extends React.Component {
           this.handleChartClick
         }
       />
-      </div>
+    </div>
     );
   }
 }

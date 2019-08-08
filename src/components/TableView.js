@@ -146,7 +146,7 @@ export default class TableView extends React.Component {
           .tickFormat(d => d * 100 + '%')
       );
 
-    axis.selectAll('.tick').each(function() {
+    axis.selectAll('.tick').each(function () {
       let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
       axis.append('line')
         .attr('x1', 0)
@@ -208,7 +208,7 @@ export default class TableView extends React.Component {
         .selectAll('rect')
         .data(data)
         .enter();
-      
+
       recGroup.append('text')
         .attr('x', mWidth / 2)
         .attr('y', -5)
@@ -218,7 +218,7 @@ export default class TableView extends React.Component {
         .text(attrName[i])
         .on('mouseover', () => {
           let attr = this.props.store.selectedAttributes.find(a => a.attrName === attrName[i]);
-          if (attr) {  
+          if (attr) {
             d3.select('.tooltip').html(attr.description)
               .style('left', (d3.event.x + 15) + 'px')
               .style('display', 'block')
@@ -256,13 +256,13 @@ export default class TableView extends React.Component {
         .attr('x', (d) => {
           let x = xSum * mWidth
           xSum += d.width;
-          return x;
+          return x - 1;
         })
         .attr('y', d => {
           return 0;
         })
         .attr('width', d => {
-          return d.width * mWidth;
+          return d.width * mWidth + 2;
         })
         .attr('height', d => {
           return mHeight;
@@ -289,29 +289,27 @@ export default class TableView extends React.Component {
         })
 
       rectList.append('line')
-      .attr('x1', mWidth + marginChart)
-      .attr('x2', mWidth + marginChart)
-      .attr('y1', 0)
-      .attr('y2', mHeight)
-      .style('stroke', '#ccc')
-      .style('stroke-dashArray', '2 2')
-      .style('stroke-width', 1);
+        .attr('x1', mWidth + marginChart)
+        .attr('x2', mWidth + marginChart)
+        .attr('y1', 0)
+        .attr('y2', mHeight)
+        .style('stroke', '#ccc')
+        .style('stroke-dashArray', '2 2')
+        .style('stroke-width', 1);
     }
 
-    if (d3.selectAll('#biggerArrow'.length === 0)) {
-      svg.append('defs').attr('class', 'axis-ver')
-        .append('marker')
-        .attr('id', 'biggerArrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 10)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#333');
-    }
+    svg.append('defs').attr('class', 'axis-ver')
+      .append('marker')
+      .attr('id', 'biggerArrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 10)
+      .attr('refY', 0)
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 8)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#333');
     svg.append('line')
       .attr('x1', margin)
       .attr('x2', margin)
@@ -899,7 +897,7 @@ export default class TableView extends React.Component {
 
   handleHeaderMouseOver(attrName, e) {
     let attr = this.props.store.selectedAttributes.find(a => a.attrName === attrName);
-    if (attr) {  
+    if (attr) {
       d3.select('.tooltip').html(attr.description)
         .style('left', (e.clientX + 15) + 'px')
         .style('display', 'block')

@@ -86,21 +86,19 @@ export default class NumeTrim extends React.Component {
       .append('g')
       .attr('transform', 'translate(' + marginLeft + ', 0)');
 
-    if (d3.selectAll('#trim-stripe'.length === 0)) {
-      let pattern = svg.append('pattern')
-        .attr('id', 'trim-stripe')
-        .attr('width', 4)
-        .attr('height', 4)
-        .attr('patternUnits', 'userSpaceOnUse');
-      pattern.append('rect')
-        .attr('width', 4)
-        .attr('height', 4)
-        .style('fill', '#d0e0f0')
-      pattern.append('path')
-        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-        .style('stroke', '#333')
-        .style('stroke-width', 1);
-    }
+    let pattern = svg.append('pattern')
+      .attr('id', 'trim-stripe')
+      .attr('width', 4)
+      .attr('height', 4)
+      .attr('patternUnits', 'userSpaceOnUse');
+    pattern.append('rect')
+      .attr('width', 4)
+      .attr('height', 4)
+      .style('fill', '#d0e0f0')
+    pattern.append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+      .style('stroke', '#333')
+      .style('stroke-width', 1);
 
     svg
       .append('g')
@@ -109,9 +107,9 @@ export default class NumeTrim extends React.Component {
       .call(
         d3.axisBottom(
           d3
-          .scaleLinear()
-          .range([0, width - marginAxis - marginLeft])
-          .domain(d3.extent(labels))
+            .scaleLinear()
+            .range([0, width - marginAxis - marginLeft])
+            .domain(d3.extent(labels))
         )
       ).attr('x1', 0)
       .attr('y1', height)
@@ -137,10 +135,10 @@ export default class NumeTrim extends React.Component {
       .attr('y', -5)
       .style('text-anchor', 'middle')
       .text('Amount');
-    
+
     let backLines = svg.append('g');
-      
-    axis.selectAll('.tick').each(function() {
+
+    axis.selectAll('.tick').each(function () {
       let y = parseFloat(d3.select(this).attr("transform").split(/[\(\),]/g)[2]);
       backLines.append('line')
         .attr('x1', 0)
@@ -149,21 +147,18 @@ export default class NumeTrim extends React.Component {
         .attr('y2', y)
         .style('stroke', '#ececec')
     })
-
-    if (d3.selectAll('#biggerArrow'.length === 0)) {
-      svg.append('defs').attr('class', 'axis-ver')
-        .append('marker')
-        .attr('id', 'biggerArrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 10)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#333');
-    }
+    svg.append('defs').attr('class', 'axis-ver')
+      .append('marker')
+      .attr('id', 'biggerArrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 10)
+      .attr('refY', 0)
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 8)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#333');
     svg.append('line')
       .attr('x1', 0)
       .attr('x2', chartWidth + marginAxis)
@@ -195,10 +190,10 @@ export default class NumeTrim extends React.Component {
     }
     const triV = data.map(item => item.triV);
     svg.append('path')
-        .attr('d', area(triV))
-        .style('stroke', 'none')
-        .style('fill', '#d0e0f0');
-    
+      .attr('d', area(triV))
+      .style('stroke', 'none')
+      .style('fill', '#d0e0f0');
+
     // svg.append('path')
     //   .attr('d', areaNeg(triV))
     //   .style('stroke', 'none')
@@ -227,7 +222,7 @@ export default class NumeTrim extends React.Component {
       .append('circle')
       .attr('cy', d => yScale(d.oriV))
       .attr('cx', (d, i) => xScale(i))
-      .attr('r', d => {return d.oriV === 0 ? 0: 2})
+      .attr('r', d => { return d.oriV === 0 ? 0 : 2 })
       // .style('stroke', '#1866BB')
       // .style('stroke-width', 2)
       .style('fill', '#1866BB')
@@ -245,18 +240,20 @@ export default class NumeTrim extends React.Component {
 
     if (trimmed) {
       svg.append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', chartWidth)
-      .attr('height', height)
-      .style('fill', '#333')
-      .style('opacity', 0.1);
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', chartWidth)
+        .attr('height', height)
+        .style('fill', '#333')
+        .style('opacity', 0.1);
     }
   }
 
   render() {
-    return (<div className="numerical-view" style={{width: 800,
-      textAlign: "center"}}>
+    return (<div className="numerical-view" style={{
+      width: 800,
+      textAlign: "center"
+    }}>
       <
         svg ref={
           dom => (this.chartDom = dom)

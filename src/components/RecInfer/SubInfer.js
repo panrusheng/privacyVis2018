@@ -70,20 +70,18 @@ export default class RecView extends Component {
 
     g.selectAll("*").remove();
 
-    if (d3.selectAll('#arrowSub'.length === 0)) {
-      g.append('defs')
-        .attr('class', "rec-small-" + num)
-        .append('marker')
-        .attr('id', 'arrowSub')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 13)
-        .attr('refY', 0)
-        .attr('markerWidth', 5)
-        .attr('markerHeight', 5)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0');
-    }
+    g.append('defs')
+      .attr('class', "rec-small-" + num)
+      .append('marker')
+      .attr('id', 'arrowSub')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 13)
+      .attr('refY', 0)
+      .attr('markerWidth', 5)
+      .attr('markerHeight', 5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0');
 
     g.append('g')
       .attr('class', "rec-small-" + num)
@@ -98,7 +96,7 @@ export default class RecView extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrowSub)')
       .style('stroke', '#666')
-      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '8 4')
+      .style('stroke-dasharray', d => d.value > 0 ? '1 0' : '8 4')
       .style('stroke-width', 2)
       .style('cursor', 'pointer');
 
@@ -170,19 +168,19 @@ export default class RecView extends Component {
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.ww
       }
-      height = {
+      height={
         this.props.hh
       }
-      />
+    />
     );
   }
 }

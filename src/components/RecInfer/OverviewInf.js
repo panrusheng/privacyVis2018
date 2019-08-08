@@ -56,7 +56,7 @@ export default class RecView extends Component {
     const linkOpacity = d3.scaleLinear().domain([0, d3.max(links, d => Math.abs(d.value))]).range([0, 1]);
     let delList = [];
     let eventNoList = [];
-  
+
     let triangleList,
       removeTri = [],
       preserveTri = [];
@@ -150,22 +150,19 @@ export default class RecView extends Component {
 
     g.selectAll("." + name).remove();
 
-    if (d3.selectAll('#arrow'.length === 0)) {
-      g.append('defs')
-        .attr('class', 'n2d')
-        .append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 13)
-        .attr('refY', 0)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 6)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#666');
-
-    }
+    g.append('defs')
+      .attr('class', 'n2d')
+      .append('marker')
+      .attr('id', 'arrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 13)
+      .attr('refY', 0)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#666');
 
     g.append('g')
       .attr('class', name)
@@ -180,7 +177,7 @@ export default class RecView extends Component {
       .attr('y2', d => nodes[d.target.index].y)
       .attr('marker-end', 'url(#arrow)')
       .style('stroke', '#666')
-      .style('stroke-dasharray', d => d.value > 0 ? '1 0': '8 4')
+      .style('stroke-dasharray', d => d.value > 0 ? '1 0' : '8 4')
       .style('stroke-width', 3)
       .style('cursor', 'pointer');
 
@@ -276,19 +273,19 @@ export default class RecView extends Component {
   }
 
   render() {
-    return ( <
-      g ref = {
+    return (<
+      g ref={
         g => {
           this.g = g;
         }
       }
-      width = {
+      width={
         this.props.ww
       }
-      height = {
+      height={
         this.props.hh
       }
-      />
+    />
     );
   }
 }

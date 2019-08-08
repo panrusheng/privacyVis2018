@@ -27,7 +27,7 @@ export default class Categorical extends React.Component {
 
     let colorDic = this.props.eventColorList;
     let uilityDic = this.props.eventUtilityList;
-    
+
     svg
       .append('g')
       .selectAll('rect')
@@ -35,7 +35,7 @@ export default class Categorical extends React.Component {
       .enter()
       .append('rect')
       .style('fill', (d) => colorDic[attrName + ': ' + d.name])
-      .style('opacity', attr.sensitive? 0.5 : "")
+      .style('opacity', attr.sensitive ? 0.5 : "")
       .style('stroke', '#fff')
       .style('stroke-width', 1)
       .attr('x', (d, i) => {
@@ -82,20 +82,18 @@ export default class Categorical extends React.Component {
 
     // axisElem.selectAll('text').remove();
     // axisElem.selectAll('.tick').remove();
-    if (d3.selectAll('#biggerArrow'.length === 0)) {
-      svg.append('defs').attr('class', 'axis-ver')
-        .append('marker')
-        .attr('id', 'biggerArrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 10)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-4L10,0L0,4L3,0')
-        .style('fill', '#333');
-    }
+    svg.append('defs').attr('class', 'axis-ver')
+      .append('marker')
+      .attr('id', 'biggerArrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 10)
+      .attr('refY', 0)
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 8)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4L3,0')
+      .style('fill', '#333');
     svg.append('line')
       .attr('x1', 0)
       .attr('x2', chartWidth + marginAxis)
@@ -155,12 +153,12 @@ export default class Categorical extends React.Component {
     const { attr, width, height } = this.props;
     if (!attr || !this.chartDom) return;
 
-    this.draw(this.chartDom, attr, width, height );
+    this.draw(this.chartDom, attr, width, height);
   }
 
   componentDidUpdate() {
     const { attr, width, height } = this.props;
-    this.draw(this.chartDom, attr, width, height );
+    this.draw(this.chartDom, attr, width, height);
   }
 
   render() {

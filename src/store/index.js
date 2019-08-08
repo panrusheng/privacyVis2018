@@ -692,7 +692,7 @@ class AppStore {
         trimList: JSON.stringify(this.trimList.filter(({ trimmed }) => trimmed).map(({ attrName }) => attrName)),
       }
     }).then(data => {
-      this.comparison = data || [];
+      this.comparison = data.reverse() || [];
     })
   }
 
